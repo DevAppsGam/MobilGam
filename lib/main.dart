@@ -1,16 +1,14 @@
-import 'dart:convert';
-
-import 'package:appgam/Pages/asesoresPage.dart';
-import 'package:appgam/Pages/gddsPage.dart';
-import 'package:appgam/Pages/operacionesPage.dart';
-import 'package:appgam/Pages/powerPage.dart';
-import 'package:appgam/Pages/promocionesPage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'Pages/asesoresPage.dart';
+import 'Pages/operacionesPage.dart';
+import 'Pages/gddsPage.dart';
+import 'Pages/powerPage.dart';
+import 'Pages/promocionesPage.dart';
 
 void main() => runApp(const LoginApp());
-
-String username='';
 
 class LoginApp extends StatelessWidget {
   const LoginApp({Key? key}) : super(key: key);
@@ -20,209 +18,211 @@ class LoginApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'GAM LOGIN',
-      home: LoginPage(),
-      routes: <String, WidgetBuilder>{
-        '/powerPage': (BuildContext context) => Power(),
-        '/asesoresPage': (BuildContext context) => Asesores(),
-        '/LoginPage': (BuildContext context) => LoginPage(),
-        '/promocionesPage': (BuildContext context) => Promociones(),
-        '/gddsPage': (BuildContext context) => Gdds(),
-        '/operacionesPage': (BuildContext context) => Operaciones(),
+      home: const LoginPage(),
+      routes: {
+        '/PowerPage': (_) => Power(),
+        '/asesoresPage': (_) => Asesores(),
+        '/LoginPage': (_) => LoginPage(),
+        '/promocionesPage': (_) => Promociones(),
+        '/gddsPage': (_) => Gdds(),
+        '/operacionesPage': (_) => Operaciones(),
       },
     );
   }
 }
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
+
+  @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController controllerUser = TextEditingController();
-  TextEditingController controllerPass = TextEditingController();
+  final TextEditingController controllerUser = TextEditingController();
+  final TextEditingController controllerPass = TextEditingController();
   String mensaje = '';
+
+  @override
+  void dispose() {
+    controllerUser.dispose();
+    controllerPass.dispose();
+    super.dispose();
+  }
 
   Future<void> login() async {
     final response = await http.post(
-      "http://192.168.1.98/gam/login.php" as Uri,
-        body: {
-          "username": controllerUser.text,
-          "password": controllerPass.text,
-        },
+      Uri.parse("http://192.168.1.98/gam/login.php"),
+      body: {
+        "username": controllerUser.text,
+        "password": controllerPass.text,
+      },
     );
-    var datauser=json.decode(response.body);
-    if(datauser.length==0){
+
+    final Map<String, dynamic> datauser =
+        jsonDecode(response.body) as Map<String, dynamic>;
+    if (datauser.isEmpty) {
       setState(() {
-        mensaje="USUARIO O CONTRASEÑA INCORRECTA";
+        mensaje = "USUARIO O CONTRASEÑA INCORRECTA";
       });
-    }else {
-      String userType = datauser[0]['tipo'];
+    } else {
+      final String userType = datauser['tipo'];
       switch (userType) {
         case 'admin':
-          Navigator.pushReplacementNamed(context, '/powerPage');
+          if (mounted) {
+            Navigator.pushReplacementNamed(context, '/PowerPage');
+          }
           break;
         case 'promocion':
-          Navigator.pushReplacementNamed(context, '/promocionesPage');
+          if (mounted) {
+            Navigator.pushReplacementNamed(context, '/promocionesPage');
+          }
           break;
         case 'gdd':
-          Navigator.pushReplacementNamed(context, '/gddsPage');
+          if (mounted) {
+            Navigator.pushReplacementNamed(context, '/gddsPage');
+          }
           break;
         case 'operacion':
-          Navigator.pushReplacementNamed(context, '/operacionesPage');
+          if (mounted) {
+            Navigator.pushReplacementNamed(context, '/operacionesPage');
+          }
           break;
         case 'agente':
-          Navigator.pushReplacementNamed(context, '/asesoresPage');
+          if (mounted) {
+            Navigator.pushReplacementNamed(context, '/asesoresPage');
+          }
           break;
         default:
-        // Si no coincide con ningún tipo de usuario conocido, se muestra un mensaje de error
-          setState(() {
-            mensaje = "TIPO DE USUARIO DESCONOCIDO";
-          });
+          if (mounted) {
+            setState(() {
+              mensaje = "TIPO DE USUARIO DESCONOCIDO";
+            });
+          }
       }
-      setState(() {
-        username=datauser[0]['username'];
-      });
     }
-    return datauser;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Form(
-        child: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/img/back.jpg"),
-              fit: BoxFit.cover,
-            ),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/img/back.jpg"),
+            fit: BoxFit.cover,
           ),
+        ),
+        child: SafeArea(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Container(
-                width: 170.0,
-                height: 170.0,
+              const Expanded(
+                flex: 2,
+                child: SizedBox(),
               ),
-              Container(
-                padding: const EdgeInsets.only(top: 200.0), // Ajusta el valor del top para mover la imagen hacia abajo
-                width: 170.0,
-                height: 225.0,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  image: DecorationImage(
-                    image: AssetImage("assets/img/LOGOGAM.png"),
-                    fit: BoxFit.cover,
+              Expanded(
+                flex: 3,
+                child: Container(
+                  alignment: Alignment.center,
+                  child: Image.asset(
+                    "assets/img/LOGOGAM.png",
+                    width: 170,
+                    height: 170,
                   ),
                 ),
-                alignment: Alignment.center,
               ),
-              Container(
-                height: MediaQuery.of(context).size.height/2,
-                width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.only(top:93),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      width: MediaQuery.of(context).size.width/1.2,
-                      padding: const EdgeInsets.only(
-                        top: 4,
-                        left: 16,
-                        right: 16,
-                        bottom: 4,
-                      ),
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(50)),
-                        color: Color.fromRGBO(246, 239, 111, 2),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 5,
-                          ),
-                        ],
-                      ),
-                      child: TextFormField(
-                        controller: controllerUser,
-                        decoration: const InputDecoration(
-                          hintText: 'USUARIO',
-                          icon: Icon(
-                            Icons.person_2_rounded,
-                            color: Colors.black,
+              Expanded(
+                flex: 4,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Container(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                          color: const Color.fromRGBO(246, 239, 111, 2),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 5,
+                            ),
+                          ],
+                        ),
+                        child: TextField(
+                          controller: controllerUser,
+                          decoration: const InputDecoration(
+                            hintText: 'USUARIO',
+                            prefixIcon: Icon(
+                              Icons.person_2_rounded,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width/1.2,
-                      height: 50,
-                      margin: const EdgeInsets.only(
-                        top: 32
-                      ),
-                      padding: const EdgeInsets.only(
-                        top: 4,
-                        left: 16,
-                        right: 16,
-                        bottom: 4
-                      ),
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(50)),
-                        color: Color.fromRGBO(246, 239, 111, 2),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 5,
-                          ),
-                        ],
-                      ),
-                      child: TextField(
-                        controller: controllerPass,
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                          icon: Icon(
-                            Icons.vpn_key,
-                            color: Colors.black,
-                          ),
-                          hintText: 'CONTRASEÑA',
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                          color: const Color.fromRGBO(246, 239, 111, 2),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 5,
+                            ),
+                          ],
                         ),
-                      ),
-                    ),
-                    const Align(
-                      alignment: Alignment.center,
-                      child: Padding(
-                          padding: EdgeInsets.only(
-                            top: 6,
-                            right: 32,
-                          ),
-                        child: Text(
-                          'RECUPERAR MI CONTRASEÑA',
-                          style: TextStyle(
-                            color: Color.fromRGBO(140, 169, 209, 2),
+                        child: TextField(
+                          controller: controllerPass,
+                          obscureText: true,
+                          decoration: const InputDecoration(
+                            prefixIcon: Icon(
+                              Icons.vpn_key,
+                              color: Colors.black,
+                            ),
+                            hintText: 'CONTRASEÑA',
                           ),
                         ),
                       ),
-                    ),
-                    const Spacer(),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: const Color(0xFF0270CE),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 32),
+                          child: Text(
+                            'RECUPERAR MI CONTRASEÑA',
+                            style: TextStyle(
+                              color: const Color.fromRGBO(140, 169, 209, 2),
+                            ),
+                          ),
                         ),
                       ),
-                      onPressed: () {
-                       login();
-                       Navigator.pop(context);
-                      },
-                      child: const Text('Ingresar'),
-                    ),
-                    Text(
-                      mensaje,
-                      style: const TextStyle(
-                        fontSize: 25,
-                        color: Colors.red
+                      const Spacer(),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: const Color(0xFF0270CE),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        onPressed: () {
+                          login();
+                        },
+                        child: const Text('Ingresar'),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      Text(
+                        mensaje,
+                        style: const TextStyle(
+                          fontSize: 25,
+                          color: Colors.red,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -231,5 +231,4 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-
 }

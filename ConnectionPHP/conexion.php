@@ -1,9 +1,7 @@
 <?php
 
-$connect=new mysqli("localhost","root","","gamusers");
-if($connect){
-
-}else{
+$connect = new mysqli("localhost", "root", "", "gamusers");
+if (!$connect) {
     echo "erro verifique ip";
     exit();
 }

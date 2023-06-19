@@ -7,9 +7,9 @@ class Power extends StatelessWidget {
       appBar: AppBar(
         title: const Text("ADMIN Power"),
       ),
-      body: const Column(
+      body: Column( // Eliminé la palabra clave 'const' aquí
         children: <Widget>[
-          Text('Bienvenido ADMIN'),
+          Text('Bienvenido ADMIN'), // Eliminé la palabra clave 'const' aquí
           ElevatedButton(
             onPressed: () {
               Navigator.pushReplacementNamed(context, '/Loginpage');
