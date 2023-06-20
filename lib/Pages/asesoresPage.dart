@@ -1,3 +1,4 @@
+import 'package:appgam/main.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -6,11 +7,52 @@ class Asesores extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "BIENVENIDO ASESOR",
-          style: TextStyle(
-            fontFamily: 'Montserrat',
+        title: GestureDetector(
+          onTap: () {
+            // Abrir el menú de navegación
+            Scaffold.of(context).openDrawer();
+          },
+          child: const Text(
+            "BIENVENIDO ASESOR",
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+            ),
           ),
+        ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            ListTile(
+              title: const Text(
+                'Opción 1',
+                style: TextStyle(
+                    fontFamily: 'Montserrat'
+                ),
+              ),
+              onTap: () {
+                // Acción al seleccionar la opción 1
+              },
+            ),
+            ListTile(
+              title: const Text(
+                  'Cerrar sesión',
+                style: TextStyle(
+                    fontFamily: 'Montserrat',
+                  color: Colors.deepOrange
+                ),
+              ),
+              onTap: () {
+                // Cerrar sesión y volver a cargar main.dart
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (BuildContext context) => const LoginPage()),
+                      (Route<dynamic> route) => false,
+                );
+              },
+            ),
+            // Agrega más ListTile para cada opción del menú
+          ],
         ),
       ),
       body: Container(
