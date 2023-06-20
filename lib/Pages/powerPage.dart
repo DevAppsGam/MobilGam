@@ -7,12 +7,17 @@ class Power extends StatelessWidget {
       appBar: AppBar(
         title: const Text("ADMIN Power"),
       ),
-      body: Column( // Eliminé la palabra clave 'const' aquí
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Text('Bienvenido ADMIN'), // Eliminé la palabra clave 'const' aquí
+          const Text(
+            'Bienvenido ADMIN',
+            style: TextStyle(fontSize: 24),
+          ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/Loginpage');
+              Navigator.pushReplacementNamed(context, '/LoginPage');
             },
             child: const Text('Ingresar'),
           ),

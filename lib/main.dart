@@ -21,12 +21,18 @@ class MyApp extends StatelessWidget {
       title: 'GAM LOGIN',
       home: const SplashScreen(),
       routes: {
-        '/PowerPage': (_) => Power(),
-        '/asesoresPage': (_) => Asesores(),
+        '/powerPage': (_) =>  Power(),
+        '/asesoresPage': (_) =>  Asesores(),
         '/LoginPage': (_) => const LoginPage(),
-        '/promocionesPage': (_) => Promociones(),
-        '/gddsPage': (_) => Gdds(),
-        '/operacionesPage': (_) => Operaciones(),
+        '/promocionesPage': (_) =>  Promociones(),
+        '/gddsPage': (_) =>  Gdds(),
+        '/operacionesPage': (_) =>  Operaciones(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/Power') {
+          return MaterialPageRoute(builder: (_) => Power());
+        }
+        return null;
       },
     );
   }
@@ -69,7 +75,6 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                //LOGO PANTALLA CARGA
                 'assets/img/LOGOGAM.png',
                 width: 150,
                 height: 150,
@@ -99,11 +104,35 @@ class _LoginPageState extends State<LoginPage> {
   String mensaje = '';
 
   Future<void> login() async {
+    final username = controllerUser.text;
+    final password = controllerPass.text;
+
+    if (username.isEmpty || password.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Campos Vacíos'),
+            content: const Text('Por favor, complete todos los campos.'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Aceptar'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+
     final response = await http.post(
       Uri.parse("http://192.168.1.98/gam/login.php"),
       body: {
-        "username": controllerUser.text,
-        "password": controllerPass.text,
+        "username": username,
+        "password": password,
       },
     );
 
@@ -118,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
       switch (userType) {
         case 'admin':
           if (mounted) {
-            Navigator.pushReplacementNamed(context, '/Power');
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Power()));
           }
           break;
         case 'promocion':
@@ -138,7 +167,11 @@ class _LoginPageState extends State<LoginPage> {
           break;
         case 'agente':
           if (mounted) {
-            Navigator.pushReplacementNamed(context, '/asesoresPage');
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => Asesores()),
+                  (Route<dynamic> route) => false,
+            );
           }
           break;
         default:
@@ -173,7 +206,6 @@ class _LoginPageState extends State<LoginPage> {
                   width: 170.0,
                   height: 250.0,
                 ),
-                //MENSAJE BIENVENIDO
                 const SizedBox(height: 20),
                 const Text(
                   '!BIENVENIDO!',
@@ -254,7 +286,7 @@ class _LoginPageState extends State<LoginPage> {
                 GestureDetector(
                   onTap: () {
                     const url = 'https://asesoresgam.com.mx/aviso-de-privacidad.php';
-                    launch(url); // Abrir el enlace en el navegador del dispositivo
+                    launchUrl(url as Uri);
                   },
                   child: const Text(
                     'Aviso de privacidad',
@@ -268,14 +300,37 @@ class _LoginPageState extends State<LoginPage> {
                 const Spacer(),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    primary: const Color.fromRGBO(242, 115, 23, 1),
+                    backgroundColor: const Color.fromRGBO(242, 115, 23, 1),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
                   onPressed: () {
-                    login();
-                    Navigator.pop(context);
+                    if (controllerUser.text.isEmpty ||
+                        controllerPass.text.isEmpty) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Campos vacíos'),
+                            content: const Text(
+                              'Por favor ingrese el usuario y la contraseña.',
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                child: const Text('Aceptar'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else {
+                      login();
+                      Navigator.pop(context);
+                    }
                   },
                   child: const Text(
                     'Ingresar',
