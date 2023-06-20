@@ -129,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     final response = await http.post(
-      Uri.parse("http://192.168.1.98/gam/login.php"),
+      Uri.parse("http://192.168.1.96/gam/login.php"),
       body: {
         "username": username,
         "password": password,
