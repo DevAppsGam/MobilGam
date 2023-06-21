@@ -1,6 +1,7 @@
 import 'package:appgam/main.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+//import 'package:appgam/Pages/MenuAsesores/vidaPage.dart';
 
 class Asesores extends StatelessWidget {
   @override
@@ -25,13 +26,19 @@ class Asesores extends StatelessWidget {
           children: [
             ListTile(
               title: const Text(
-                'Opción 1',
+                'INICIO',
                 style: TextStyle(
-                    fontFamily: 'Montserrat'
+                    fontFamily: 'Montserrat',
+                  color: Colors.blueAccent,
                 ),
               ),
               onTap: () {
-                // Acción al seleccionar la opción 1
+                // Cerrar sesión y volver a cargar main.dart
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (BuildContext context) => Asesores()),
+                      (Route<dynamic> route) => false,
+                );
               },
             ),
             ListTile(
@@ -72,7 +79,7 @@ class Asesores extends StatelessWidget {
                   fontFamily: 'Montserrat',
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey,
+                  color: Colors.blueGrey,
                 ),
               ),
             ),
