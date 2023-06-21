@@ -21,12 +21,12 @@ class MyApp extends StatelessWidget {
       title: 'GAM LOGIN',
       home: const SplashScreen(),
       routes: {
-        '/powerPage': (_) =>  Power(),
-        '/asesoresPage': (_) =>  Asesores(),
+        '/powerPage': (_) => Power(),
+        '/asesoresPage': (_) => Asesores(),
         '/LoginPage': (_) => const LoginPage(),
-        '/promocionesPage': (_) =>  Promociones(),
-        '/gddsPage': (_) =>  Gdds(),
-        '/operacionesPage': (_) =>  Operaciones(),
+        '/promocionesPage': (_) => Promociones(),
+        '/gddsPage': (_) => Gdds(),
+        '/operacionesPage': (_) => Operaciones(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/Power') {
@@ -102,6 +102,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController controllerUser = TextEditingController();
   final TextEditingController controllerPass = TextEditingController();
   String mensaje = '';
+  bool obscurePassword = true;
 
   Future<void> login() async {
     final username = controllerUser.text;
@@ -129,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     final response = await http.post(
-      Uri.parse("http://192.168.1.96/gam/login.php"),
+      Uri.parse("http://192.168.1.87/gam/login.php"),
       body: {
         "username": username,
         "password": password,
@@ -147,7 +148,8 @@ class _LoginPageState extends State<LoginPage> {
       switch (userType) {
         case 'admin':
           if (mounted) {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Power()));
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (_) => Power()));
           }
           break;
         case 'promocion':
@@ -182,6 +184,12 @@ class _LoginPageState extends State<LoginPage> {
           }
       }
     }
+  }
+
+  void togglePasswordVisibility() {
+    setState(() {
+      obscurePassword = !obscurePassword;
+    });
   }
 
   @override
@@ -270,8 +278,8 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   child: TextField(
                     controller: controllerPass,
-                    obscureText: true,
-                    decoration: const InputDecoration(
+                    obscureText: obscurePassword,
+                    decoration: InputDecoration(
                       icon: Icon(
                         Icons.vpn_key,
                         color: Colors.black,
@@ -279,13 +287,23 @@ class _LoginPageState extends State<LoginPage> {
                       hintText: 'CONTRASEÑA',
                       fillColor: Colors.transparent,
                       filled: true,
+                      suffixIcon: GestureDetector(
+                        onTap: togglePasswordVisibility,
+                        child: Icon(
+                          obscurePassword
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(height: 10),
                 GestureDetector(
                   onTap: () {
-                    const url = 'https://asesoresgam.com.mx/aviso-de-privacidad.php';
+                    const url =
+                        'https://asesoresgam.com.mx/aviso-de-privacidad.php';
                     launchUrl(url as Uri);
                   },
                   child: const Text(
@@ -339,13 +357,13 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                Align(
+                const Align(
                   alignment: Alignment.bottomCenter,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      const SizedBox(height: 50),
-                      const Text(
+                      SizedBox(height: 50),
+                      Text(
                         '© 2019 Grupo Administrativo Mexicano S.A de C.V | Todos los derechos reeservados',
                         style: TextStyle(
                           fontSize: 12,
