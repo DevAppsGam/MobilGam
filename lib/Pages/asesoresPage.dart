@@ -1,7 +1,11 @@
+import 'package:appgam/Pages/MenuAsesores/autosPage.dart';
+import 'package:appgam/Pages/MenuAsesores/gmmPage.dart';
+import 'package:appgam/Pages/MenuAsesores/recursosPage.dart';
+import 'package:appgam/Pages/MenuAsesores/siniestrosPage.dart';
 import 'package:appgam/main.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-//import 'package:appgam/Pages/MenuAsesores/vidaPage.dart';
+import 'package:appgam/Pages/MenuAsesores/vidaPage.dart';
 
 class Asesores extends StatelessWidget {
   @override
@@ -147,9 +151,35 @@ class IconWithText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        // Navegar a la página correspondiente al icono seleccionado
-      },
+        onTap: () {
+          if (title == 'VIDA') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Vida()),
+            );
+          } else if (title == 'SINIESTROS') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Siniestro()),
+            );
+          } else if (title == 'AUTOS') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Auto()),
+            );
+          } else if (title == 'GMM') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Gmm()),
+            );
+          } else if (title == 'RECURSOS') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Recurso()),
+            );
+          }
+        },
+
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
