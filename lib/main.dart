@@ -280,7 +280,7 @@ class _LoginPageState extends State<LoginPage> {
                     controller: controllerPass,
                     obscureText: obscurePassword,
                     decoration: InputDecoration(
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.vpn_key,
                         color: Colors.black,
                       ),

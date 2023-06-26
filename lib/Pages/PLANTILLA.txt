@@ -1,0 +1,38 @@
+import 'package:flutter/material.dart';
+
+class Vida extends StatelessWidget {
+  const Vida({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'BIENVENIDO ASESOR',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+          ),
+        ),
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/img/back.jpg'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: const Center(
+          child: Text(
+            'Página de Vida',
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
