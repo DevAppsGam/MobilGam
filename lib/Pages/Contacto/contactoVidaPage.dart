@@ -1,16 +1,14 @@
-import 'package:appgam/Pages/Contacto/contactoVidaPage.dart';
 import 'package:appgam/Pages/MenuAsesores/autosPage.dart';
 import 'package:appgam/Pages/MenuAsesores/gmmPage.dart';
 import 'package:appgam/Pages/MenuAsesores/recursosPage.dart';
 import 'package:appgam/Pages/MenuAsesores/siniestrosPage.dart';
+import 'package:appgam/Pages/MenuAsesores/vidaPage.dart';
+import 'package:appgam/Pages/asesoresPage.dart';
 import 'package:appgam/main.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:appgam/Pages/MenuAsesores/vidaPage.dart';
 
-class Asesores extends StatelessWidget {
-  const Asesores({super.key});
-
+class contactoVida extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,7 +58,7 @@ class Asesores extends StatelessWidget {
                 // Cerrar sesión y volver a cargar main.dart
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) =>  contactoVida()),
+                  MaterialPageRoute(builder: (BuildContext context) => contactoVida()),
                       (Route<dynamic> route) => false,
                 );
               },
@@ -100,7 +98,7 @@ class Asesores extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
-                'MENU',
+                'Contacto VIDA',
                 style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 24,
@@ -168,7 +166,7 @@ class IconWithText extends StatelessWidget {
   final String title;
   final Color? color;
 
-  const IconWithText({super.key, required this.icon, required this.title, this.color});
+  const IconWithText({required this.icon, required this.title, this.color});
 
   @override
   Widget build(BuildContext context) {
