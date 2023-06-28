@@ -1,8 +1,6 @@
 name: appgam
 description: A new Flutter project.
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-
 version: 1.0.0+1
 
 environment:
@@ -16,18 +14,17 @@ dependencies:
   http: any
   url_launcher: any
   flutter_screenutil: any
+  flutter_launcher_icons: ^0.9.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^2.0.0
 
 flutter:
-
   uses-material-design: true
   assets:
-        - assets/img/
+    - assets/img/
   fonts:
     - family: Montserrat
       fonts:
@@ -35,5 +32,7 @@ flutter:
         - asset: assets/fonts/Montserrat-Bold.ttf
           weight: 700
 
-
-
+flutter_icons:
+  android: true
+  ios: false
+  image_path: "assets/img/logoApp.png"
