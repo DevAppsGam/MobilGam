@@ -9,7 +9,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:appgam/Pages/MenuAsesores/vidaPage.dart';
 
 class contactoVida extends StatelessWidget {
-  const contactoVida({Key? key});
+  final String nombreUsuario;
+
+  const contactoVida({Key? key, required this.nombreUsuario});
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +21,9 @@ class contactoVida extends StatelessWidget {
           onTap: () {
             Scaffold.of(context).openDrawer();
           },
-          child: const Text(
-            "BIENVENIDO ASESOR",
-            style: TextStyle(
+          child: Text(
+            "BIENVENIDO $nombreUsuario",
+            style: const TextStyle(
               fontFamily: 'Montserrat',
             ),
           ),
@@ -41,7 +43,7 @@ class contactoVida extends StatelessWidget {
               onTap: () {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) =>  Asesores(nombreUsuario: '',)),
+                  MaterialPageRoute(builder: (BuildContext context) => Asesores(nombreUsuario: nombreUsuario)),
                       (Route<dynamic> route) => false,
                 );
               },
@@ -57,7 +59,7 @@ class contactoVida extends StatelessWidget {
               onTap: () {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) => const contactoVida()),
+                  MaterialPageRoute(builder: (BuildContext context) => contactoVida(nombreUsuario: nombreUsuario)),
                       (Route<dynamic> route) => false,
                 );
               },
@@ -100,6 +102,7 @@ class contactoVida extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   color: Colors.blueGrey,
                 ),
+                textAlign: TextAlign.center, // Centro el título
               ),
             ),
             Expanded(
@@ -108,31 +111,31 @@ class contactoVida extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 children: const [
                   IconWithText(
-                    icon: Icons.diversity_1_rounded,
+                    icon: Icons.circle,
                     title: 'Patricia Moctezuma',
                     subtitle: 'Gerente de Promoción de Vida',
                     color: Colors.blueGrey,
                   ),
                   IconWithText(
-                    icon: Icons.notification_important_rounded,
+                    icon: Icons.circle,
                     title: 'Diana Castro',
                     subtitle: 'Consultor Especializado Vida',
                     color: Colors.blueGrey,
                   ),
                   IconWithText(
-                    icon: Icons.car_crash_rounded,
+                    icon: Icons.circle,
                     title: 'Veronica Sanchez',
                     subtitle: 'Consulor Integral',
                     color: Colors.blueGrey,
                   ),
                   IconWithText(
-                    icon: Icons.medical_information_rounded,
+                    icon: Icons.circle,
                     title: 'Carolina Hernández',
                     subtitle: 'Gerente de Operación',
                     color: Colors.blueGrey,
                   ),
                   IconWithText(
-                    icon: Icons.content_paste_search,
+                    icon: Icons.circle,
                     title: 'Manuel Ramírez',
                     subtitle: 'Director de Soporte, Promoción y Ventas',
                     color: Colors.blueGrey,
@@ -226,6 +229,7 @@ class IconWithText extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 color: color,
               ),
+              textAlign: TextAlign.center,
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),

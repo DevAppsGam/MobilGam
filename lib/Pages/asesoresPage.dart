@@ -44,7 +44,7 @@ class Asesores extends StatelessWidget {
                 // Cerrar sesión y volver a cargar main.dart
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) =>  Asesores(nombreUsuario: '',)),
+                  MaterialPageRoute(builder: (BuildContext context) =>  Asesores(nombreUsuario: nombreUsuario)),
                       (Route<dynamic> route) => false,
                 );
               },
@@ -61,7 +61,7 @@ class Asesores extends StatelessWidget {
                 // Cerrar sesión y volver a cargar main.dart
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) =>  const contactoVida()),
+                  MaterialPageRoute(builder: (BuildContext context) => contactoVida(nombreUsuario: nombreUsuario)),
                       (Route<dynamic> route) => false,
                 );
               },
