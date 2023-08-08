@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       home: const SplashScreen(),
       routes: {
         '/powerPage': (_) => Power(),
-        '/asesoresPage': (_) => const Asesores(),
+        '/asesoresPage': (_) =>  Asesores(nombreUsuario: '',),
         '/LoginPage': (_) => const LoginPage(),
         '/promocionesPage': (_) => Promociones(),
         '/gddsPage': (_) => Gdds(),
@@ -143,12 +143,13 @@ class _LoginPageState extends State<LoginPage> {
           });
         } else {
           final int userType = responseData['tipo'];
+          final String nombreUsuario = responseData['nomusuario'];
 
           switch (userType) {
             case 1: // Tipo de usuario 1
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (_) => const Asesores()),
+                MaterialPageRoute(builder: (_) =>  Asesores(nombreUsuario: nombreUsuario,)),
                     (Route<dynamic> route) => false,
               );
               break;

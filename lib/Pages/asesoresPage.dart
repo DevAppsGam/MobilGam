@@ -9,7 +9,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:appgam/Pages/MenuAsesores/vidaPage.dart';
 
 class Asesores extends StatelessWidget {
-  const Asesores({super.key});
+  final String nombreUsuario;
+  const Asesores({Key? key, required this.nombreUsuario}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +21,9 @@ class Asesores extends StatelessWidget {
             // Abrir el menú de navegación
             Scaffold.of(context).openDrawer();
           },
-          child: const Text(
-            "BIENVENIDO ASESOR",
-            style: TextStyle(
+          child: Text(
+            "BIENVENIDO $nombreUsuario",
+            style: const TextStyle(
               fontFamily: 'Montserrat',
             ),
           ),
@@ -43,7 +44,7 @@ class Asesores extends StatelessWidget {
                 // Cerrar sesión y volver a cargar main.dart
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) => const Asesores()),
+                  MaterialPageRoute(builder: (BuildContext context) =>  Asesores(nombreUsuario: '',)),
                       (Route<dynamic> route) => false,
                 );
               },

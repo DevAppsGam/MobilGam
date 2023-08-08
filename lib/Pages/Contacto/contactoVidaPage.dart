@@ -41,7 +41,7 @@ class contactoVida extends StatelessWidget {
               onTap: () {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) => const Asesores()),
+                  MaterialPageRoute(builder: (BuildContext context) =>  Asesores(nombreUsuario: '',)),
                       (Route<dynamic> route) => false,
                 );
               },
