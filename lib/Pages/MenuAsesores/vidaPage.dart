@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class Vida extends StatefulWidget {
   const Vida({Key? key}) : super(key: key);
@@ -20,6 +21,27 @@ class _VidaState extends State<Vida> {
     },
     // Agregar más datos según sea necesario
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Cambiar la orientación a horizontal
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+  }
+
+  @override
+  void dispose() {
+    // Restaurar la orientación predeterminada
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,8 +84,8 @@ class _VidaState extends State<Vida> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text('Búsqueda'),
-                            content: TextField(
+                            title: const Text('Búsqueda'),
+                            content: const TextField(
                               // Lógica de búsqueda
                             ),
                             actions: [
@@ -72,7 +94,7 @@ class _VidaState extends State<Vida> {
                                   // Realizar búsqueda
                                   Navigator.pop(context);
                                 },
-                                child: Text('Buscar'),
+                                child: const Text('Buscar'),
                               ),
                             ],
                           );
@@ -125,7 +147,7 @@ class _VidaState extends State<Vida> {
       child: Center(
         child: Text(
           text,
-          style: TextStyle(
+          style: const TextStyle(
             fontFamily: 'Montserrat',
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -154,7 +176,7 @@ class _VidaState extends State<Vida> {
       child: Center(
         child: Text(
           text,
-          style: TextStyle(
+          style: const TextStyle(
             fontFamily: 'Montserrat',
             fontSize: 16,
             color: Colors.black,
