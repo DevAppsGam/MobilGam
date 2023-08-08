@@ -1,12 +1,18 @@
 <?php
+header("Access-Control-Allow-Origin: *");
 
-$host = "localhost";
+$servername = "localhost";
 $username = "root";
-$password = "";
-$database = "gamusers";
+$password = "root";
+$database = "gamse627_ventanasis";
 
-$connect = new mysqli($host, $username, $password, $database);
+// Crear la conexión
+$conn = new mysqli($servername, $username, $password, $database);
 
-if ($connect->connect_error) {
-    die("Error de conexión: " . $connect->connect_error);
+// Verificar la conexión
+if ($conn->connect_error) {
+    die("Error de conexión: " . $conn->connect_error);
 }
+
+$conn->close();
+?>
