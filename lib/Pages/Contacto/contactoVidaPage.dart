@@ -1,13 +1,8 @@
 import 'package:appgam/Pages/Contacto/ContactoDetalleVida.dart';
-import 'package:appgam/Pages/MenuAsesores/autosPage.dart';
-import 'package:appgam/Pages/MenuAsesores/gmmPage.dart';
-import 'package:appgam/Pages/MenuAsesores/recursosPage.dart';
-import 'package:appgam/Pages/MenuAsesores/siniestrosPage.dart';
 import 'package:appgam/Pages/asesoresPage.dart';
 import 'package:appgam/main.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:appgam/Pages/MenuAsesores/vidaPage.dart';
 
 class contactoVida extends StatelessWidget {
   final String nombreUsuario;
@@ -112,31 +107,31 @@ class contactoVida extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 children: const [
                   IconWithText(
-                    icon: Icons.circle,
+                    icon: Icons.woman_2_outlined,
                     title: 'Patricia Moctezuma',
                     subtitle: 'Gerente de Promoción de Vida',
                     color: Colors.blueGrey,
                   ),
                   IconWithText(
-                    icon: Icons.circle,
+                    icon: Icons.woman_2_outlined,
                     title: 'Diana Castro',
                     subtitle: 'Consultor Especializado Vida',
                     color: Colors.blueGrey,
                   ),
                   IconWithText(
-                    icon: Icons.circle,
+                    icon: Icons.woman_2_outlined,
                     title: 'Veronica Sanchez',
                     subtitle: 'Consulor Integral',
                     color: Colors.blueGrey,
                   ),
                   IconWithText(
-                    icon: Icons.circle,
+                    icon: Icons.woman_2_outlined,
                     title: 'Carolina Hernández',
                     subtitle: 'Gerente de Operación',
                     color: Colors.blueGrey,
                   ),
                   IconWithText(
-                    icon: Icons.circle,
+                    icon: Icons.man_2_outlined,
                     title: 'Manuel Ramírez',
                     subtitle: 'Director de Soporte, Promoción y Ventas',
                     color: Colors.blueGrey,
@@ -188,25 +183,25 @@ class IconWithText extends StatelessWidget {
             context,
             MaterialPageRoute(builder: (context) => contactoDetalle(nombre: 'nombre', rol: 'rol', informacionContacto: 'informacionContacto')),
           );
-        } else if (title == 'SINIESTROS') {
+        } else if (title == 'Diana Castro') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const Siniestro()),
+            MaterialPageRoute(builder: (context) => contactoDetalle(nombre: 'nombre', rol: 'rol', informacionContacto: 'informacionContacto')),
           );
-        } else if (title == 'AUTOS') {
+        } else if (title == 'Veronica Sanchez') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const Auto()),
+            MaterialPageRoute(builder: (context) => contactoDetalle(nombre: 'nombre', rol: 'rol', informacionContacto: 'informacionContacto')),
           );
-        } else if (title == 'GMM') {
+        } else if (title == 'Carolina Hernández') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const Gmm()),
+            MaterialPageRoute(builder: (context) => contactoDetalle(nombre: 'nombre', rol: 'rol', informacionContacto: 'informacionContacto')),
           );
-        } else if (title == 'RECURSOS') {
+        } else if (title == 'Manuel Ramírez') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const Recurso()),
+            MaterialPageRoute(builder: (context) => contactoDetalle(nombre: 'nombre', rol: 'rol', informacionContacto: 'informacionContacto')),
           );
         }
       },

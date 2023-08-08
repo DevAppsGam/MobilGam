@@ -15,7 +15,7 @@ class contactoDetalle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detalles del Contacto'),
+        title: const Text('Detalles del Contacto'),
       ),
       body: Center(
         child: Column(
@@ -23,20 +23,20 @@ class contactoDetalle extends StatelessWidget {
           children: [
             Text(
               nombre,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
               rol,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 18,
               ),
             ),
             Text(
               informacionContacto,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
               ),
             ),
