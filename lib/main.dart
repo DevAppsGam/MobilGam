@@ -122,51 +122,57 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     final response = await http.post(
-      Uri.parse("http://192.168.100.174:8888/gam/login.php"),
+      Uri.parse("http://192.168.1.122:8888/gam/login.php"),
       body: {
-        "username": username,
+        "nomusuario": username,
         "password": password,
       },
     );
-
+    print('Response: ${response.body}');
 
     setState(() {
       isLoading = false;
     });
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> datauser =
-      jsonDecode(response.body) as Map<String, dynamic>;
+      final dynamic responseData = jsonDecode(response.body);
 
-      if (datauser.isNotEmpty) {
-        final String userType = datauser['tipo'];
-        switch (userType) {
-          case 'admin':
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => Power()),
-            );
-            break;
-          case 'promocion':
-            Navigator.pushReplacementNamed(context, '/promocionesPage');
-            break;
-          case 'gdd':
-            Navigator.pushReplacementNamed(context, '/gddsPage');
-            break;
-          case 'operacion':
-            Navigator.pushReplacementNamed(context, '/operacionesPage');
-            break;
-          case '1':
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => const Asesores()),
-                  (Route<dynamic> route) => false,
-            );
-            break;
-          default:
-            setState(() {
-              errorMessage = 'Usuario desconocido';
-            });
+      if (responseData is Map<String, dynamic>) {
+        if (responseData.containsKey("error")) {
+          setState(() {
+            errorMessage = responseData["error"];
+          });
+        } else {
+          final int userType = responseData['tipo'];
+
+          switch (userType) {
+            case 1: // Tipo de usuario 1
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => const Asesores()),
+                    (Route<dynamic> route) => false,
+              );
+              break;
+            case 2: // Tipo de usuario 2
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => Power()),
+              );
+              break;
+            case 3: // Tipo de usuario 3
+              Navigator.pushReplacementNamed(context, '/promocionesPage');
+              break;
+            case 4: // Tipo de usuario 4
+              Navigator.pushReplacementNamed(context, '/gddsPage');
+              break;
+            case 5: // Tipo de usuario 5
+              Navigator.pushReplacementNamed(context, '/operacionesPage');
+              break;
+            default:
+              setState(() {
+                errorMessage = 'Tipo de usuario desconocido';
+              });
+          }
         }
       } else {
         setState(() {
