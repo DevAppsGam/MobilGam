@@ -2,20 +2,21 @@ import 'package:appgam/Pages/MenuAsesores/autosPage.dart';
 import 'package:appgam/Pages/MenuAsesores/gmmPage.dart';
 import 'package:appgam/Pages/MenuAsesores/recursosPage.dart';
 import 'package:appgam/Pages/MenuAsesores/siniestrosPage.dart';
-import 'package:appgam/Pages/MenuAsesores/vidaPage.dart';
 import 'package:appgam/Pages/asesoresPage.dart';
 import 'package:appgam/main.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:appgam/Pages/MenuAsesores/vidaPage.dart';
 
 class contactoVida extends StatelessWidget {
+  const contactoVida({Key? key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: GestureDetector(
           onTap: () {
-            // Abrir el menú de navegación
             Scaffold.of(context).openDrawer();
           },
           child: const Text(
@@ -38,10 +39,9 @@ class contactoVida extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                // Cerrar sesión y volver a cargar main.dart
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) => Asesores()),
+                  MaterialPageRoute(builder: (BuildContext context) => const Asesores()),
                       (Route<dynamic> route) => false,
                 );
               },
@@ -55,25 +55,22 @@ class contactoVida extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                // Cerrar sesión y volver a cargar main.dart
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) => contactoVida()),
+                  MaterialPageRoute(builder: (BuildContext context) => const contactoVida()),
                       (Route<dynamic> route) => false,
                 );
               },
             ),
-
             ListTile(
               title: const Text(
                 'Cerrar sesión',
                 style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    color: Colors.deepOrange
+                  fontFamily: 'Montserrat',
+                  color: Colors.deepOrange,
                 ),
               ),
               onTap: () {
-                // Cerrar sesión y volver a cargar main.dart
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (BuildContext context) => const LoginPage()),
@@ -81,8 +78,6 @@ class contactoVida extends StatelessWidget {
                 );
               },
             ),
-
-            // Agrega más ListTile para cada opción del menú
           ],
         ),
       ),
@@ -98,7 +93,7 @@ class contactoVida extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
-                'Contacto VIDA',
+                'Contacto de VIDA',
                 style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 24,
@@ -114,27 +109,32 @@ class contactoVida extends StatelessWidget {
                 children: const [
                   IconWithText(
                     icon: Icons.diversity_1_rounded,
-                    title: 'VIDA',
-                    color: Colors.green,
+                    title: 'Patricia Moctezuma',
+                    subtitle: 'Gerente de Promoción de Vida',
+                    color: Colors.blueGrey,
                   ),
                   IconWithText(
                     icon: Icons.notification_important_rounded,
-                    title: 'SINIESTROS',
-                    color: Colors.yellow,
+                    title: 'Diana Castro',
+                    subtitle: 'Consultor Especializado Vida',
+                    color: Colors.blueGrey,
                   ),
                   IconWithText(
                     icon: Icons.car_crash_rounded,
-                    title: 'AUTOS',
-                    color: Colors.orange,
+                    title: 'Veronica Sanchez',
+                    subtitle: 'Consulor Integral',
+                    color: Colors.blueGrey,
                   ),
                   IconWithText(
                     icon: Icons.medical_information_rounded,
-                    title: 'GMM',
-                    color: Colors.blueAccent,
+                    title: 'Carolina Hernández',
+                    subtitle: 'Gerente de Operación',
+                    color: Colors.blueGrey,
                   ),
                   IconWithText(
                     icon: Icons.content_paste_search,
-                    title: 'RECURSOS',
+                    title: 'Manuel Ramírez',
+                    subtitle: 'Director de Soporte, Promoción y Ventas',
                     color: Colors.blueGrey,
                   ),
                 ],
@@ -165,8 +165,15 @@ class IconWithText extends StatelessWidget {
   final IconData icon;
   final String title;
   final Color? color;
+  final String subtitle;
 
-  const IconWithText({required this.icon, required this.title, this.color});
+  const IconWithText({
+    Key? key,
+    required this.icon,
+    required this.title,
+    this.color,
+    required this.subtitle,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -199,28 +206,41 @@ class IconWithText extends StatelessWidget {
           );
         }
       },
-
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          IconTheme(
-            data: IconThemeData(color: color),
-            child: Icon(
-              icon,
-              size: 64,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            IconTheme(
+              data: IconThemeData(color: color),
+              child: Icon(
+                icon,
+                size: 64,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: color,
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Text(
+                subtitle,
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 14,
+                  color: color,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
