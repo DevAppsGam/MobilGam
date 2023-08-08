@@ -1,3 +1,4 @@
+import 'package:appgam/Pages/Contacto/ContactoDetalleVida.dart';
 import 'package:appgam/Pages/MenuAsesores/autosPage.dart';
 import 'package:appgam/Pages/MenuAsesores/gmmPage.dart';
 import 'package:appgam/Pages/MenuAsesores/recursosPage.dart';
@@ -182,10 +183,10 @@ class IconWithText extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (title == 'VIDA') {
+        if (title == 'Patricia Moctezuma') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const Vida()),
+            MaterialPageRoute(builder: (context) => contactoDetalle(nombre: 'nombre', rol: 'rol', informacionContacto: 'informacionContacto')),
           );
         } else if (title == 'SINIESTROS') {
           Navigator.push(
