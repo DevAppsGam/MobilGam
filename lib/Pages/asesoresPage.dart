@@ -178,7 +178,7 @@ class IconWithText extends StatelessWidget {
         if (title == 'VIDA') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const Vida()),
+            MaterialPageRoute(builder: (context) =>   const Vida()),
           );
         } else if (title == 'SINIESTROS') {
           Navigator.push(
