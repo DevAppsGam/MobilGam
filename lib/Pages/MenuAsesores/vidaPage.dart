@@ -111,6 +111,69 @@ class _VidaState extends State<Vida> {
               ),
             ),
             Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            // Lógica para aplicar el primer filtro
+                          },
+                          child: const Text('ALTA DE POLIZA'),
+                        ),
+                        const SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Lógica para aplicar el segundo filtro
+                          },
+                          child: const Text('PAGOS'),
+                        ),
+                        const SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Lógica para aplicar el tercer filtro
+                          },
+                          child: const Text('MOVIMIENTOS'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            // Lógica para aplicar el cuarto filtro
+                          },
+                          child: const Text('A TIEMPO'),
+                        ),
+                        const SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Lógica para aplicar el quinto filtro
+                          },
+                          child: const Text('POR VENCER'),
+                        ),
+                        const SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Lógica para aplicar el sexto filtro
+                          },
+                          child: const Text('VENCIDOS'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Table(
                 border: TableBorder.all(
@@ -122,8 +185,25 @@ class _VidaState extends State<Vida> {
                   for (var dato in datos) _buildTableRow(dato),
                 ],
               ),
+
+            ),
+// Añadir el Align y el IconButton aquí
+            Align(
+              alignment: Alignment.bottomRight,
+              child: IconButton(
+                onPressed: () {
+                  // Lógica para manejar la acción del ícono
+                  // Por ejemplo, puedes abrir un cuadro de diálogo, realizar una acción, etc.
+                },
+                icon: const Icon(
+                  Icons.message_rounded,
+                  size: 42,
+                  color: Colors.blueAccent,
+                ),
+              ),
             ),
           ],
+
         ),
       ),
     );
