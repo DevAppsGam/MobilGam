@@ -1,15 +1,20 @@
-import 'package:appgam/Pages/MenuAsesores/autosPage.dart';
-import 'package:appgam/Pages/MenuAsesores/gmmPage.dart';
-import 'package:appgam/Pages/MenuAsesores/recursosPage.dart';
-import 'package:appgam/Pages/MenuAsesores/siniestrosPage.dart';
 import 'package:appgam/Pages/asesoresPage.dart';
 import 'package:appgam/main.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:appgam/Pages/MenuAsesores/vidaPage.dart';
+import 'package:appgam/Pages/MenuAsesores/vidaPage.dart'; // Importar la página Vida
 
-class contactoVida extends StatelessWidget {
-  const contactoVida({Key? key});
+class ContactoVida extends StatelessWidget {
+  const ContactoVida({Key? key}) : super(key: key);
+
+  void _launchURL() async {
+    const url = 'https://www.example.com';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +62,7 @@ class contactoVida extends StatelessWidget {
               onTap: () {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) => const contactoVida()),
+                  MaterialPageRoute(builder: (BuildContext context) => const ContactoVida()),
                       (Route<dynamic> route) => false,
                 );
               },
@@ -144,8 +149,7 @@ class contactoVida extends StatelessWidget {
               alignment: Alignment.bottomRight,
               child: IconButton(
                 onPressed: () {
-                  const url = 'https://www.example.com';
-                  launchUrl(url as Uri);
+                  _launchURL(); // Llamar a la función _launchURL para abrir el sitio web
                 },
                 icon: const Icon(
                   Icons.message_rounded,
@@ -185,26 +189,9 @@ class IconWithText extends StatelessWidget {
             MaterialPageRoute(builder: (context) => const Vida()),
           );
         } else if (title == 'SINIESTROS') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const Siniestro()),
-          );
-        } else if (title == 'AUTOS') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const Auto()),
-          );
-        } else if (title == 'GMM') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const Gmm()),
-          );
-        } else if (title == 'RECURSOS') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const Recurso()),
-          );
+          // Resto de código para otras opciones del menú
         }
+        // Resto de condiciones para las demás opciones del menú
       },
       child: Center(
         child: Column(

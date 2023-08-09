@@ -1,3 +1,4 @@
+
 import 'package:appgam/Pages/Contacto/contactoVidaPage.dart';
 import 'package:appgam/Pages/MenuAsesores/autosPage.dart';
 import 'package:appgam/Pages/MenuAsesores/gmmPage.dart';
@@ -7,6 +8,7 @@ import 'package:appgam/main.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:appgam/Pages/MenuAsesores/vidaPage.dart';
+
 
 class Asesores extends StatelessWidget {
   const Asesores({super.key});
@@ -60,7 +62,7 @@ class Asesores extends StatelessWidget {
                 // Cerrar sesión y volver a cargar main.dart
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) =>  const contactoVida()),
+                  MaterialPageRoute(builder: (BuildContext context) =>  const ContactoVida()),
                       (Route<dynamic> route) => false,
                 );
               },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
 import 'Pages/asesoresPage.dart';
 import 'Pages/operacionesPage.dart';
 import 'Pages/gddsPage.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
       home: const SplashScreen(),
       routes: {
         '/powerPage': (_) => Power(),
-        '/asesoresPage': (_) => Asesores(),
+        '/asesoresPage': (_) => const Asesores(),
         '/LoginPage': (_) => const LoginPage(),
         '/promocionesPage': (_) => Promociones(),
         '/gddsPage': (_) => Gdds(),
@@ -100,88 +101,82 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController controllerUser = TextEditingController();
   final TextEditingController controllerPass = TextEditingController();
-  String mensaje = '';
+  String errorMessage = '';
   bool obscurePassword = true;
+  bool isLoading = false;
 
   Future<void> login() async {
     final username = controllerUser.text;
     final password = controllerPass.text;
 
     if (username.isEmpty || password.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Campos Vacíos'),
-            content: const Text('Por favor, complete todos los campos.'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Aceptar'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
+      setState(() {
+        errorMessage = 'Por favor, complete todos los campos.';
+      });
       return;
     }
 
+    setState(() {
+      isLoading = true;
+      errorMessage = '';
+    });
+
     final response = await http.post(
-      Uri.parse("http://192.168.1.87/gam/login.php"),
+      Uri.parse("http://192.168.1.94/gam/login.php"),
       body: {
         "username": username,
         "password": password,
       },
     );
 
-    final Map<String, dynamic> datauser =
-    jsonDecode(response.body) as Map<String, dynamic>;
-    if (datauser.isEmpty) {
-      setState(() {
-        mensaje = "USUARIO O CONTRASEÑA INCORRECTA";
-      });
-    } else {
-      final String userType = datauser['tipo'];
-      switch (userType) {
-        case 'admin':
-          if (mounted) {
+
+    setState(() {
+      isLoading = false;
+    });
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> datauser =
+      jsonDecode(response.body) as Map<String, dynamic>;
+
+      if (datauser.isNotEmpty) {
+        final String userType = datauser['tipo'];
+        switch (userType) {
+          case 'admin':
             Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (_) => Power()));
-          }
-          break;
-        case 'promocion':
-          if (mounted) {
+              context,
+              MaterialPageRoute(builder: (_) => Power()),
+            );
+            break;
+          case 'promocion':
             Navigator.pushReplacementNamed(context, '/promocionesPage');
-          }
-          break;
-        case 'gdd':
-          if (mounted) {
+            break;
+          case 'gdd':
             Navigator.pushReplacementNamed(context, '/gddsPage');
-          }
-          break;
-        case 'operacion':
-          if (mounted) {
+            break;
+          case 'operacion':
             Navigator.pushReplacementNamed(context, '/operacionesPage');
-          }
-          break;
-        case 'agente':
-          if (mounted) {
+            break;
+          case '1':
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (_) => Asesores()),
+              MaterialPageRoute(builder: (_) => const Asesores()),
                   (Route<dynamic> route) => false,
             );
-          }
-          break;
-        default:
-          if (mounted) {
+            break;
+          default:
             setState(() {
-              mensaje = "TIPO DE USUARIO DESCONOCIDO";
+              errorMessage = 'Usuario desconocido';
             });
-          }
+        }
+      } else {
+        setState(() {
+          errorMessage = 'Usuario o contraseña incorrecta';
+        });
       }
+    } else {
+      setState(() {
+        errorMessage = 'Error de conexión';
+      });
     }
   }
 
@@ -322,32 +317,10 @@ class _LoginPageState extends State<LoginPage> {
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  onPressed: () {
-                    if (controllerUser.text.isEmpty ||
-                        controllerPass.text.isEmpty) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Campos vacíos'),
-                            content: const Text(
-                              'Por favor ingrese el usuario y la contraseña.',
-                            ),
-                            actions: <Widget>[
-                              TextButton(
-                                child: const Text('Aceptar'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    } else {
-                      login();
-                      Navigator.pop(context);
-                    }
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                    login();
                   },
                   child: const Text(
                     'Ingresar',
@@ -356,14 +329,22 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                const Align(
+                errorMessage.isNotEmpty
+                    ? Text(
+                  errorMessage,
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                )
+                    : const SizedBox(),
+                Align(
                   alignment: Alignment.bottomCenter,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
+                    children: const [
                       SizedBox(height: 50),
                       Text(
-                        '© 2019 Grupo Administrativo Mexicano S.A de C.V | Todos los derechos reeservados',
+                        '© 2019 Grupo Administrativo Mexicano S.A de C.V | Todos los derechos reservados',
                         style: TextStyle(
                           fontSize: 12,
                           color: Color.fromRGBO(167, 168, 160, 1),
