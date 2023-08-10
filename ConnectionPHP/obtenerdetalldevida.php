@@ -16,7 +16,7 @@ if ($conn->connect_error) {
 }
 
 // Realizar la consulta en la tabla "datos_operativos"
-$stmt = $conn->prepare("SELECT nomusuario, telefono, extension, correo FROM datos_operativos ");
+$stmt = $conn->prepare("SELECT nomusuario, telefono, extension, correo FROM datos_operativos");
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -26,7 +26,8 @@ while ($row = $result->fetch_assoc()) {
     $data[] = $row;
 }
 
-echo "DATOS OBTENIDOS" $data;
+// Cerrar el statement
+$stmt->close();
 
 // Cerrar la conexión
 $conn->close();
