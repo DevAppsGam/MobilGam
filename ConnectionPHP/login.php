@@ -46,4 +46,3 @@ $conn->close();
 // Devolver la respuesta en formato JSON al cliente (Flutter)
 header('Content-Type: application/json');
 echo json_encode($response);
-?>

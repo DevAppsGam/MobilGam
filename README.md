@@ -29,3 +29,9 @@ Puedes personalizar la aplicación según tus necesidades modificando los siguie
 - Modificar la imagen de fondo: Reemplaza la imagen actual (`assets/img/back.jpg`) en la carpeta `assets` por la imagen que desees utilizar como fondo.
 
 Recuerda que este proyecto es solo un punto de partida y puedes ampliarlo y personalizarlo según tus necesidades. ¡Diviértete desarrollando tu aplicación de asesores con Flutter!
+# Intra
+# Intra
+# Intra
+# Intra
+# Intra
+# Intra

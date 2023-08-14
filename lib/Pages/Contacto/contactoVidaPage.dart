@@ -1,20 +1,13 @@
+import 'package:appgam/Pages/Contacto/ContactoDetalleVida.dart';
 import 'package:appgam/Pages/asesoresPage.dart';
 import 'package:appgam/main.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:appgam/Pages/MenuAsesores/vidaPage.dart'; // Importar la página Vida
 
-class ContactoVida extends StatelessWidget {
-  const ContactoVida({Key? key}) : super(key: key);
+class contactoVida extends StatelessWidget {
+  final String nombreUsuario;
 
-  void _launchURL() async {
-    const url = 'https://www.example.com';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
+  const contactoVida({Key? key, required this.nombreUsuario});
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +17,9 @@ class ContactoVida extends StatelessWidget {
           onTap: () {
             Scaffold.of(context).openDrawer();
           },
-          child: const Text(
-            "BIENVENIDO ASESOR",
-            style: TextStyle(
+          child: Text(
+            "BIENVENIDO $nombreUsuario",
+            style: const TextStyle(
               fontFamily: 'Montserrat',
             ),
           ),
@@ -46,7 +39,7 @@ class ContactoVida extends StatelessWidget {
               onTap: () {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) => const Asesores()),
+                  MaterialPageRoute(builder: (BuildContext context) => Asesores(nombreUsuario: nombreUsuario)),
                       (Route<dynamic> route) => false,
                 );
               },
@@ -62,7 +55,7 @@ class ContactoVida extends StatelessWidget {
               onTap: () {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) => const ContactoVida()),
+                  MaterialPageRoute(builder: (BuildContext context) => contactoVida(nombreUsuario: nombreUsuario)),
                       (Route<dynamic> route) => false,
                 );
               },
@@ -105,6 +98,7 @@ class ContactoVida extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   color: Colors.blueGrey,
                 ),
+                textAlign: TextAlign.center, // Centro el título
               ),
             ),
             Expanded(
@@ -113,31 +107,31 @@ class ContactoVida extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 children: const [
                   IconWithText(
-                    icon: Icons.diversity_1_rounded,
+                    icon: Icons.woman_2_outlined,
                     title: 'Patricia Moctezuma',
                     subtitle: 'Gerente de Promoción de Vida',
                     color: Colors.blueGrey,
                   ),
                   IconWithText(
-                    icon: Icons.notification_important_rounded,
+                    icon: Icons.woman_2_outlined,
                     title: 'Diana Castro',
                     subtitle: 'Consultor Especializado Vida',
                     color: Colors.blueGrey,
                   ),
                   IconWithText(
-                    icon: Icons.car_crash_rounded,
+                    icon: Icons.woman_2_outlined,
                     title: 'Veronica Sanchez',
                     subtitle: 'Consulor Integral',
                     color: Colors.blueGrey,
                   ),
                   IconWithText(
-                    icon: Icons.medical_information_rounded,
+                    icon: Icons.woman_2_outlined,
                     title: 'Carolina Hernández',
                     subtitle: 'Gerente de Operación',
                     color: Colors.blueGrey,
                   ),
                   IconWithText(
-                    icon: Icons.content_paste_search,
+                    icon: Icons.man_2_outlined,
                     title: 'Manuel Ramírez',
                     subtitle: 'Director de Soporte, Promoción y Ventas',
                     color: Colors.blueGrey,
@@ -149,7 +143,8 @@ class ContactoVida extends StatelessWidget {
               alignment: Alignment.bottomRight,
               child: IconButton(
                 onPressed: () {
-                  _launchURL(); // Llamar a la función _launchURL para abrir el sitio web
+                  const url = 'https://www.example.com';
+                  launchUrl(url as Uri);
                 },
                 icon: const Icon(
                   Icons.message_rounded,
@@ -183,15 +178,32 @@ class IconWithText extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (title == 'VIDA') {
+        if (title == 'Patricia Moctezuma') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const Vida()),
+            MaterialPageRoute(builder: (context) => contactoDetalle(nombre: 'nombre', rol: 'rol', informacionContacto: 'informacionContacto')),
           );
-        } else if (title == 'SINIESTROS') {
-          // Resto de código para otras opciones del menú
+        } else if (title == 'Diana Castro') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => contactoDetalle(nombre: 'nombre', rol: 'rol', informacionContacto: 'informacionContacto')),
+          );
+        } else if (title == 'Veronica Sanchez') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => contactoDetalle(nombre: 'nombre', rol: 'rol', informacionContacto: 'informacionContacto')),
+          );
+        } else if (title == 'Carolina Hernández') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => contactoDetalle(nombre: 'nombre', rol: 'rol', informacionContacto: 'informacionContacto')),
+          );
+        } else if (title == 'Manuel Ramírez') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => contactoDetalle(nombre: 'nombre', rol: 'rol', informacionContacto: 'informacionContacto')),
+          );
         }
-        // Resto de condiciones para las demás opciones del menú
       },
       child: Center(
         child: Column(
@@ -213,6 +225,7 @@ class IconWithText extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 color: color,
               ),
+              textAlign: TextAlign.center,
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),

@@ -11,7 +11,8 @@ import 'package:appgam/Pages/MenuAsesores/vidaPage.dart';
 
 
 class Asesores extends StatelessWidget {
-  const Asesores({super.key});
+  final String nombreUsuario;
+  const Asesores({Key? key, required this.nombreUsuario}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +23,9 @@ class Asesores extends StatelessWidget {
             // Abrir el menú de navegación
             Scaffold.of(context).openDrawer();
           },
-          child: const Text(
-            "BIENVENIDO ASESOR",
-            style: TextStyle(
+          child: Text(
+            "BIENVENIDO $nombreUsuario",
+            style: const TextStyle(
               fontFamily: 'Montserrat',
             ),
           ),
@@ -45,7 +46,7 @@ class Asesores extends StatelessWidget {
                 // Cerrar sesión y volver a cargar main.dart
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) => const Asesores()),
+                  MaterialPageRoute(builder: (BuildContext context) =>  Asesores(nombreUsuario: nombreUsuario)),
                       (Route<dynamic> route) => false,
                 );
               },
@@ -62,7 +63,7 @@ class Asesores extends StatelessWidget {
                 // Cerrar sesión y volver a cargar main.dart
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) =>  const ContactoVida()),
+                  MaterialPageRoute(builder: (BuildContext context) => contactoVida(nombreUsuario: nombreUsuario)),
                       (Route<dynamic> route) => false,
                 );
               },
@@ -179,7 +180,7 @@ class IconWithText extends StatelessWidget {
         if (title == 'VIDA') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const Vida()),
+            MaterialPageRoute(builder: (context) =>   const Vida()),
           );
         } else if (title == 'SINIESTROS') {
           Navigator.push(
