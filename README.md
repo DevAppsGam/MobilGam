@@ -1,4 +1,4 @@
-# Proyecto de Aplicación de Contactos de Asesores de Vida
+# Proyecto de Aplicación IntraGAM
 
 Este proyecto es una aplicación móvil desarrollada en Flutter para asesores y profesionales en el campo de seguros de vida. La aplicación permite acceder y gestionar información de contactos de manera eficiente.
 
