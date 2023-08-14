@@ -1,5 +1,6 @@
 
 import 'package:appgam/Pages/Contacto/contactoVidaPage.dart';
+import 'package:appgam/Pages/Graficas/graficasPage.dart';
 import 'package:appgam/Pages/MenuAsesores/autosPage.dart';
 import 'package:appgam/Pages/MenuAsesores/gmmPage.dart';
 import 'package:appgam/Pages/MenuAsesores/recursosPage.dart';
@@ -142,6 +143,11 @@ class Asesores extends StatelessWidget {
                     title: 'RECURSOS',
                     color: Colors.blueGrey,
                   ),
+                  IconWithText(
+                    icon: Icons.graphic_eq_outlined,
+                    title: 'ESTADISTICAS',
+                    color: Colors.redAccent,
+                  ),
                 ],
               ),
             ),
@@ -201,6 +207,11 @@ class IconWithText extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const Recurso()),
+          );
+        } else if (title == 'ESTADISTICAS') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const graficas()),
           );
         }
       },
