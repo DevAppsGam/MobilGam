@@ -20,8 +20,8 @@ class MyApp extends StatelessWidget {
       title: 'GAM LOGIN',
       home: const SplashScreen(),
       routes: {
-        '/powerPage': (_) => Power(),
-        '/asesoresPage': (_) =>  Asesores(nombreUsuario: '',),
+        '/powerPage': (_) => const Power(),
+        '/asesoresPage': (_) =>  const Asesores(nombreUsuario: '',),
         '/LoginPage': (_) => const LoginPage(),
         '/promocionesPage': (_) => Promociones(),
         '/gddsPage': (_) => Gdds(),
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/Power') {
-          return MaterialPageRoute(builder: (_) => Power());
+          return MaterialPageRoute(builder: (_) => const Power());
         }
         return null;
       },
@@ -121,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     final response = await http.post(
-      Uri.parse("http://192.168.100.174:8888/gam/login.php"),
+      Uri.parse("http://192.168.1.94/gam/login.php"),
       body: {
         "nomusuario": username,
         "password": password,
@@ -156,7 +156,7 @@ class _LoginPageState extends State<LoginPage> {
             case 2: // Tipo de usuario 2
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (_) => Power()),
+                MaterialPageRoute(builder: (_) => const Power()),
               );
               break;
             case 3: // Tipo de usuario 3
@@ -338,16 +338,16 @@ class _LoginPageState extends State<LoginPage> {
                 errorMessage.isNotEmpty
                     ? Text(
                   errorMessage,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.red,
                   ),
                 )
                     : const SizedBox(),
-                Align(
+                const Align(
                   alignment: Alignment.bottomCenter,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: const [
+                    children: [
                       SizedBox(height: 50),
                       Text(
                         '© 2019 Grupo Administrativo Mexicano S.A de C.V | Todos los derechos reservados',

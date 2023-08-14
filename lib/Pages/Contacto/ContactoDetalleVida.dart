@@ -84,19 +84,31 @@ class contactoDetalle extends StatelessWidget {
 
                   ListTile(
                     leading: const Icon(Icons.phone),
-                    title: Text(
-                      TEL,
-                      style: const TextStyle(fontSize: 16),
+                    title: GestureDetector(
+                      onTap: () {
+                        launch("tel:$TEL");
+                      },
+                      child: Text(
+                        TEL,
+                        style: const TextStyle(fontSize: 16, color: Colors.blue),
+                      ),
                     ),
                   ),
+
                   const Divider(),
                   ListTile(
                     leading: const Icon(Icons.email),
-                    title: Text(
-                      mail,
-                      style: const TextStyle(fontSize: 16),
+                    title: GestureDetector(
+                      onTap: () {
+                        launch("mailto:$mail");
+                      },
+                      child: Text(
+                        mail,
+                        style: const TextStyle(fontSize: 16, color: Colors.blue),
+                      ),
                     ),
                   ),
+
                 ],
               ),
             ),
@@ -106,7 +118,7 @@ class contactoDetalle extends StatelessWidget {
             child: IconButton(
               onPressed: () {
                 const url = 'https://www.example.com';
-                launchUrl(url as Uri);
+                launch(url);
               },
               icon: const Icon(
                 Icons.message_rounded,
