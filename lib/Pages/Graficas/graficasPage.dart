@@ -65,53 +65,69 @@ class _graficasState extends State<graficas> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 60),
+                const SizedBox(height: 20),
                 const Text(
-                  'Página de Gráficas',
+                  'TOTAL DE POLIZAS DE VIDA',
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                 ),
-                const SizedBox(height: 60), // Espacio entre título y gráfica
+                const SizedBox(height: 20),
                 AspectRatio(
                   aspectRatio: 1.5, // Ajusta el tamaño de la gráfica
-                  child: FutureBuilder<Map<String, dynamic>>(
-                    future: _dataFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        return const Text('Error al cargar los datos');
-                      } else if (snapshot.hasData) {
-                        final totalTerminado = snapshot.data!['totalTerminado'];
-                        final totalTerminadoConPoliza = snapshot.data!['totalTerminadoConPoliza'];
-                        return PieChart(
-                          PieChartData(
-                            sections: [
-                              PieChartSectionData(
-                                value: totalTerminado.toDouble(),
-                                color: Colors.blue,
-                                title: 'Polizas Emitidas',
-                              ),
-                              PieChartSectionData(
-                                value: totalTerminadoConPoliza.toDouble(),
-                                color: Colors.blueGrey,
-                                title: 'Polizas Pagadas',
-                              ),
-                            ],
-                            // Otras configuraciones de la gráfica
-                          ),
-                        );
-                      } else {
-                        return const Text('No se encontraron datos');
-                      }
-                    },
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: FutureBuilder<Map<String, dynamic>>(
+                          future: _dataFuture,
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const CircularProgressIndicator();
+                            } else if (snapshot.hasError) {
+                              return const Text('Error al cargar los datos');
+                            } else if (snapshot.hasData) {
+                              final totalTerminado = snapshot.data!['totalTerminado'];
+                              final totalTerminadoConPoliza = snapshot.data!['totalTerminadoConPoliza'];
+                              return PieChart(
+                                PieChartData(
+                                  sections: [
+                                    PieChartSectionData(
+                                      value: totalTerminado.toDouble(),
+                                      color: Colors.blue,
+                                      title: 'Polizas Emitidas',
+                                    ),
+                                    PieChartSectionData(
+                                      value: totalTerminadoConPoliza.toDouble(),
+                                      color: Colors.blueGrey,
+                                      title: 'Polizas Pagadas',
+                                    ),
+                                  ],
+                                  // Otras configuraciones de la gráfica
+                                ),
+                              );
+                            } else {
+                              return const Text('No se encontraron datos');
+                            }
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 60),
+                const Text(
+                  'ACTIVIDAD MES A MES',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 20),
                 AspectRatio(
                   aspectRatio: 1.5, // Ajusta el tamaño de la gráfica
                   child: FutureBuilder<List<Map<String, dynamic>>>(
