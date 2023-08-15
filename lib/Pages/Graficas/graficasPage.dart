@@ -12,11 +12,13 @@ class graficas extends StatefulWidget {
 
 class _graficasState extends State<graficas> {
   late Future<Map<String, dynamic>> _dataFuture;
+  late Future<List<Map<String, dynamic>>> _lineChartDataFuture;
 
   @override
   void initState() {
     super.initState();
     _dataFuture = obtenerDatos();
+    _lineChartDataFuture = obtenerDatosLineChart();
   }
 
   Future<Map<String, dynamic>> obtenerDatos() async {
@@ -24,6 +26,17 @@ class _graficasState extends State<graficas> {
 
     if (response.statusCode == 200) {
       return json.decode(response.body);
+    } else {
+      throw Exception('Error al obtener los datos');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> obtenerDatosLineChart() async {
+    final response = await http.get(Uri.parse('http://192.168.1.89/gam/vidapormeses.php'));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return List<Map<String, dynamic>>.from(data);
     } else {
       throw Exception('Error al obtener los datos');
     }
@@ -75,7 +88,6 @@ class _graficasState extends State<graficas> {
                       } else if (snapshot.hasData) {
                         final totalTerminado = snapshot.data!['totalTerminado'];
                         final totalTerminadoConPoliza = snapshot.data!['totalTerminadoConPoliza'];
-
                         return PieChart(
                           PieChartData(
                             sections: [
@@ -100,104 +112,42 @@ class _graficasState extends State<graficas> {
                   ),
                 ),
                 const SizedBox(height: 60),
-                SizedBox(
-                  width: 400, // Cambia este valor al ancho deseado
-                  height: 300, // Cambia este valor a la altura deseada
-                  child: FutureBuilder<Map<String, dynamic>>(
-                    future: _dataFuture,
+                AspectRatio(
+                  aspectRatio: 1.5, // Ajusta el tamaño de la gráfica
+                  child: FutureBuilder<List<Map<String, dynamic>>>(
+                    future: _lineChartDataFuture,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const CircularProgressIndicator();
                       } else if (snapshot.hasError) {
                         return const Text('Error al cargar los datos');
                       } else if (snapshot.hasData) {
-                        final totalTerminado = snapshot.data!['totalTerminado'];
-                        final totalTerminadoConPoliza = snapshot.data!['totalTerminadoConPoliza'];
-
+                        final data = snapshot.data!;
                         return LineChart(
                           LineChartData(
                             lineBarsData: [
                               LineChartBarData(
-                                spots: [
-                                  FlSpot(0, totalTerminado.toDouble()), // Terminado
-                                  FlSpot(1, totalTerminadoConPoliza.toDouble()), // Terminado con Póliza
-                                  // ... Añade otros valores si es necesario
-                                ],
+                                spots: data.map((item) => FlSpot(
+                                    double.parse(item['mes'].toString()),
+                                    item['total'].toDouble()
+                                )).toList(),
                                 isCurved: true,
-                                // Resto del código de LineChart
+                                colors: [Colors.blue],
+                                dotData: FlDotData(show: false),
+                                belowBarData: BarAreaData(show: false),
                               ),
-                            ],
-                            // Resto del código de títulos
-                            titlesData: FlTitlesData(
-                              leftTitles: SideTitles(showTitles: true),
-                              bottomTitles: SideTitles(
-                                showTitles: true,
-                                getTitles: (value) {
-                                  // Aquí puedes personalizar las etiquetas en el eje X
-                                  // según tus necesidades y datos
-                                  return 'Grupo $value';
-                                },
-                              ),
-                            ),
-                          ),
-                        );
-                      } else {
-                        return const Text('No se encontraron datos');
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(height: 60),
-                SizedBox(
-                  width: 300, // Cambia el ancho según tus necesidades
-                  height: 300, // Cambia la altura según tus necesidades
-                  child: FutureBuilder<Map<String, dynamic>>(
-                    future: _dataFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        return const Text('Error al cargar los datos');
-                      } else if (snapshot.hasData) {
-                        final totalTerminado = snapshot.data!['totalTerminado'];
-                        final totalTerminadoConPoliza = snapshot.data!['totalTerminadoConPoliza'];
-
-                        return BarChart(
-                          BarChartData(
-                            barGroups: [
-                              BarChartGroupData(
-                                x: 0,
-                                barRods: [
-                                  BarChartRodData(
-                                    y: totalTerminado.toDouble(),
-                                    //colors: Color.fromRGBO(128, 80, 78, 0.2),
-                                    width: 8,
-                                  ),
-                                ],
-                              ),
-                              BarChartGroupData(
-                                x: 1,
-                                barRods: [
-                                  BarChartRodData(
-                                    y: totalTerminadoConPoliza.toDouble(),
-                                    //color: Colors.green,
-                                    width: 8,
-                                  ),
-                                ],
-                              ),
-                              // Agrega más grupos de barras según tus datos
                             ],
                             titlesData: FlTitlesData(
                               leftTitles: SideTitles(showTitles: true),
                               bottomTitles: SideTitles(
                                 showTitles: true,
                                 getTitles: (value) {
-                                  // Aquí puedes personalizar las etiquetas en el eje X
-                                  // según tus necesidades y datos
-                                  return 'Grupo $value';
+                                  return 'Mes $value';
                                 },
                               ),
                             ),
+                            gridData: FlGridData(show: false),
+                            borderData: FlBorderData(show: true),
                           ),
                         );
                       } else {
