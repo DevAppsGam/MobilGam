@@ -36,6 +36,7 @@ class contactoDetalle extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 60),
                   const Padding(
                     padding: EdgeInsets.all(16.0),
                     child: Text(
@@ -51,6 +52,7 @@ class contactoDetalle extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      const SizedBox(height: 60),
                       const CircleAvatar(
                         radius: 40,
                         backgroundColor: Colors.blue,

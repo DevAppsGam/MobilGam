@@ -101,6 +101,7 @@ class Asesores extends StatelessWidget {
         ),
         child: Column(
           children: <Widget>[
+            const SizedBox(height: 60),
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
