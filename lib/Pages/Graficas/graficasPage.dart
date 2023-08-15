@@ -82,12 +82,12 @@ class _graficasState extends State<graficas> {
                               PieChartSectionData(
                                 value: totalTerminado.toDouble(),
                                 color: Colors.blue,
-                                title: 'Terminado',
+                                title: 'Polizas Emitidas',
                               ),
                               PieChartSectionData(
                                 value: totalTerminadoConPoliza.toDouble(),
-                                color: Colors.green,
-                                title: 'Terminado con Póliza',
+                                color: Colors.blueGrey,
+                                title: 'Polizas Pagadas',
                               ),
                             ],
                             // Otras configuraciones de la gráfica
