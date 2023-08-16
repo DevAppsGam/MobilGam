@@ -13,12 +13,14 @@ class graficas extends StatefulWidget {
 class _graficasState extends State<graficas> {
   late Future<Map<String, dynamic>> _dataFuture;
   late Future<List<Map<String, dynamic>>> _lineChartDataFuture;
+  late Future<List<BarChartGroupData>> _barChartDataFuture;
 
   @override
   void initState() {
     super.initState();
     _dataFuture = obtenerDatos();
     _lineChartDataFuture = obtenerDatosLineChart();
+    _barChartDataFuture = obtenerDatosBarChart();
   }
 
   Future<Map<String, dynamic>> obtenerDatos() async {
@@ -41,6 +43,28 @@ class _graficasState extends State<graficas> {
       throw Exception('Error al obtener los datos');
     }
   }
+
+  Future<List<BarChartGroupData>> obtenerDatosBarChart() async {
+    final response = await http.get(Uri.parse('http://192.168.1.89/gam/obtenertotaltramites.php'));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final barGroups = data.entries.map((entry) {
+        final clave = entry.key;
+        final total = entry.value['total'].toDouble();
+        return BarChartGroupData(x: int.parse(clave), barRods: [
+          BarChartRodData(
+            y: total,
+            colors: [Colors.blue], // Puedes ajustar los colores según tus preferencias
+          ),
+        ]);
+      }).toList();
+      return barGroups;
+    } else {
+      throw Exception('Error al obtener los datos');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +196,52 @@ class _graficasState extends State<graficas> {
                     },
                   ),
                 ),
-                const SizedBox(height: 60),
+                const SizedBox(height: 40),
+                const Text(
+                  'TOTAL DE TRÁMITES',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                AspectRatio(
+                  aspectRatio: 1.5, // Ajusta el tamaño de la gráfica
+                  child: FutureBuilder<List<BarChartGroupData>>(
+                    future: _barChartDataFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return const Text('Error al cargar los datos');
+                      } else if (snapshot.hasData) {
+                        return AspectRatio(
+                          aspectRatio: 1.5,
+                          child: BarChart(
+                            BarChartData(
+                              barGroups: snapshot.data!,
+                              titlesData: FlTitlesData(
+                                leftTitles: SideTitles(showTitles: true),
+                                bottomTitles: SideTitles(
+                                  showTitles: true,
+                                  getTitles: (value) {
+                                    return 'Mes $value';
+                                  },
+                                ),
+                              ),
+                              gridData: FlGridData(show: false),
+                              borderData: FlBorderData(show: true),
+                            ),
+                          ),
+                        );
+                      } else {
+                        return const Text('No se encontraron datos');
+                      }
+                    },
+                  ),
+
+                ),
               ],
             ),
           ),
