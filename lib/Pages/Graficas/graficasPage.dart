@@ -51,7 +51,8 @@ class _graficasState extends State<graficas> {
       final data = json.decode(response.body);
       final barGroups = data.entries.map((entry) {
         final clave = entry.key;
-        final total = entry.value['total'].toDouble();
+        //final total = entry.value['total'].toDouble();
+        final total = entry.value.toDouble();
         return BarChartGroupData(x: int.parse(clave), barRods: [
           BarChartRodData(
             y: total,
@@ -171,16 +172,27 @@ class _graficasState extends State<graficas> {
                                     double.parse(item['mes'].toString()),
                                     item['total'].toDouble()
                                 )).toList(),
-                                isCurved: true,
-                                colors: [Colors.blue],
-                                dotData: FlDotData(show: false),
-                                belowBarData: BarAreaData(show: false),
+                                isCurved: false,
+                                colors: [Colors.lightBlueAccent],
+                                dotData: FlDotData(
+                                    show: true,
+                                ),
+                                belowBarData: BarAreaData(
+                                    show: true,
+                                    colors: [Colors.blue.withOpacity(0.3)],
+                                ),
                               ),
                             ],
                             titlesData: FlTitlesData(
-                              leftTitles: SideTitles(showTitles: true),
+                              leftTitles: SideTitles(
+                                  showTitles: true,
+                                  reservedSize: 40,
+                                  margin: 10,
+                              ),
                               bottomTitles: SideTitles(
                                 showTitles: true,
+                                reservedSize: 40,
+                                margin: 10,
                                 getTitles: (value) {
                                   return 'Mes $value';
                                 },
@@ -240,7 +252,6 @@ class _graficasState extends State<graficas> {
                       }
                     },
                   ),
-
                 ),
               ],
             ),
