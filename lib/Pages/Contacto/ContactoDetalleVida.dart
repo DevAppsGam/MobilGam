@@ -6,12 +6,14 @@ class contactoDetalle extends StatelessWidget {
   final String rol;
   final String TEL;
   final String mail;
+  final String ext;
 
   contactoDetalle({
     required this.nombre,
     required this.rol,
     required this.TEL,
     required this.mail,
+    required this.ext,
   });
 
   @override
@@ -83,12 +85,12 @@ class contactoDetalle extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   const Divider(),
-
                   ListTile(
                     leading: const Icon(Icons.phone),
                     title: GestureDetector(
                       onTap: () {
-                        launch("tel:$TEL");
+                        String phoneNumberWithExtension = '$TEL,${ext.isEmpty ? '' : 'ext=$ext'}';
+                        launch("tel:$phoneNumberWithExtension");
                       },
                       child: Text(
                         TEL,
@@ -96,7 +98,6 @@ class contactoDetalle extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   const Divider(),
                   ListTile(
                     leading: const Icon(Icons.email),

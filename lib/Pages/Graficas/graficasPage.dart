@@ -102,7 +102,7 @@ class _graficasState extends State<graficas> {
                 ),
                 const SizedBox(height: 20),
                 AspectRatio(
-                  aspectRatio: 1.5, // Ajusta el tamaño de la gráfica
+                  aspectRatio: 3, // Ajusta el tamaño de la gráfica
                   child: Stack(
                     children: [
                       Positioned.fill(
@@ -154,7 +154,7 @@ class _graficasState extends State<graficas> {
                 ),
                 const SizedBox(height: 20),
                 AspectRatio(
-                  aspectRatio: 1.5, // Ajusta el tamaño de la gráfica
+                  aspectRatio: 3, // Ajusta el tamaño de la gráfica
                   child: FutureBuilder<List<Map<String, dynamic>>>(
                     future: _lineChartDataFuture,
                     builder: (context, snapshot) {
