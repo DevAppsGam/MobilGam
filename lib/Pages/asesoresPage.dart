@@ -1,15 +1,13 @@
-
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:appgam/Pages/Contacto/contactoVidaPage.dart';
 import 'package:appgam/Pages/Graficas/graficasPage.dart';
 import 'package:appgam/Pages/MenuAsesores/autosPage.dart';
 import 'package:appgam/Pages/MenuAsesores/gmmPage.dart';
 import 'package:appgam/Pages/MenuAsesores/recursosPage.dart';
 import 'package:appgam/Pages/MenuAsesores/siniestrosPage.dart';
-import 'package:appgam/main.dart';
-import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:appgam/Pages/MenuAsesores/vidaPage.dart';
-
+import 'package:appgam/main.dart';
 
 class Asesores extends StatelessWidget {
   final String nombreUsuario;
@@ -41,16 +39,21 @@ class Asesores extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Montserrat',
                   color: Colors.blueAccent,
+                  fontSize: 18,
                 ),
               ),
               onTap: () {
-                // Cerrar sesión y volver a cargar main.dart
+                // Cerrar sesión y volver a cargar AsesoresPage
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) =>  Asesores(nombreUsuario: nombreUsuario)),
+                  MaterialPageRoute(builder: (BuildContext context) => Asesores(nombreUsuario: nombreUsuario)),
                       (Route<dynamic> route) => false,
                 );
               },
+              leading: const IconWithText(
+                icon: Icons.house_rounded,
+                title: ' ',
+              ),
             ),
             ListTile(
               title: const Text(
@@ -61,25 +64,23 @@ class Asesores extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                // Cerrar sesión y volver a cargar main.dart
-                Navigator.pushAndRemoveUntil(
+                // Cargar la página de contactoVida
+                Navigator.push(
                   context,
                   MaterialPageRoute(builder: (BuildContext context) => contactoVida(nombreUsuario: nombreUsuario)),
-                      (Route<dynamic> route) => false,
                 );
               },
             ),
-
             ListTile(
               title: const Text(
                 'Cerrar sesión',
                 style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    color: Colors.deepOrange
+                  fontFamily: 'Montserrat',
+                  color: Colors.deepOrange,
                 ),
               ),
               onTap: () {
-                // Cerrar sesión y volver a cargar main.dart
+                // Cerrar sesión y volver a cargar LoginPage
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (BuildContext context) => const LoginPage()),
@@ -87,7 +88,6 @@ class Asesores extends StatelessWidget {
                 );
               },
             ),
-
             // Agrega más ListTile para cada opción del menú
           ],
         ),
@@ -178,45 +178,51 @@ class IconWithText extends StatelessWidget {
   final String title;
   final Color? color;
 
-  const IconWithText({super.key, required this.icon, required this.title, this.color});
+  const IconWithText({Key? key, required this.icon, required this.title, this.color}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (title == 'VIDA') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) =>   const Vida()),
-          );
-        } else if (title == 'SINIESTROS') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const Siniestro()),
-          );
-        } else if (title == 'AUTOS') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const Auto()),
-          );
-        } else if (title == 'GMM') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const Gmm()),
-          );
-        } else if (title == 'RECURSOS') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const Recurso()),
-          );
-        } else if (title == 'ESTADISTICAS') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const graficas()),
-          );
+        switch (title) {
+          case 'VIDA':
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Vida()),
+            );
+            break;
+          case 'SINIESTROS':
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Siniestro()),
+            );
+            break;
+          case 'AUTOS':
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Auto()),
+            );
+            break;
+          case 'GMM':
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Gmm()),
+            );
+            break;
+          case 'RECURSOS':
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Recurso()),
+            );
+            break;
+          case 'ESTADISTICAS':
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const graficas()),
+            );
+            break;
         }
       },
-
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
