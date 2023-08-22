@@ -50,10 +50,6 @@ class Asesores extends StatelessWidget {
                       (Route<dynamic> route) => false,
                 );
               },
-              leading: const IconWithText(
-                icon: Icons.house_rounded,
-                title: ' ',
-              ),
             ),
             ListTile(
               title: const Text(
