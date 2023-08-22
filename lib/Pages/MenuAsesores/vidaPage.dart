@@ -112,66 +112,57 @@ class _VidaState extends State<Vida> {
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            // Lógica para aplicar el primer filtro
-                          },
-                          child: const Text('ALTA DE POLIZA'),
-                        ),
-                        const SizedBox(width: 10),
-                        ElevatedButton(
-                          onPressed: () {
-                            // Lógica para aplicar el segundo filtro
-                          },
-                          child: const Text('PAGOS'),
-                        ),
-                        const SizedBox(width: 10),
-                        ElevatedButton(
-                          onPressed: () {
-                            // Lógica para aplicar el tercer filtro
-                          },
-                          child: const Text('MOVIMIENTOS'),
-                        ),
-                      ],
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        // Lógica para aplicar el primer filtro
+                      },
+                      child: const Text('ALTA DE POLIZA'),
                     ),
-                  ),
-                  Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            // Lógica para aplicar el cuarto filtro
-                          },
-                          child: const Text('A TIEMPO'),
-                        ),
-                        const SizedBox(width: 10),
-                        ElevatedButton(
-                          onPressed: () {
-                            // Lógica para aplicar el quinto filtro
-                          },
-                          child: const Text('POR VENCER'),
-                        ),
-                        const SizedBox(width: 10),
-                        ElevatedButton(
-                          onPressed: () {
-                            // Lógica para aplicar el sexto filtro
-                          },
-                          child: const Text('VENCIDOS'),
-                        ),
-                      ],
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Lógica para aplicar el segundo filtro
+                      },
+                      child: const Text('PAGOS'),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Lógica para aplicar el tercer filtro
+                      },
+                      child: const Text('MOVIMIENTOS'),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Lógica para aplicar el cuarto filtro
+                      },
+                      child: const Text('A TIEMPO'),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Lógica para aplicar el quinto filtro
+                      },
+                      child: const Text('POR VENCER'),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Lógica para aplicar el sexto filtro
+                      },
+                      child: const Text('VENCIDOS'),
+                    ),
+                  ],
+                ),
               ),
             ),
+
 
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
