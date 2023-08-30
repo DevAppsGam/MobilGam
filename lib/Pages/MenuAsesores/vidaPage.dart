@@ -26,7 +26,8 @@ class _VidaState extends State<Vida> {
   }
 
   Future<void> fetchData() async {
-    final response = await http.get(Uri.parse('http://192.168.1.89/gam/tablafoliosvida.php'));
+    final response =
+    await http.get(Uri.parse('http://192.168.1.89/gam/tablafoliosvida.php'));
 
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
@@ -108,7 +109,7 @@ class _VidaState extends State<Vida> {
         _buildTableCell(datos['poliza'] ?? ''),
         _buildTableCell(datos['polizap'] ?? ''),
         _buildTableCell(datos['fecha'] ?? ''),
-        _buildTableCell(datos['estado'] ?? ''),  // Asegúrate de agregar 'estado'
+        _buildTableCell(datos['estado'] ?? ''),
       ],
     );
   }
@@ -159,7 +160,7 @@ class _VidaState extends State<Vida> {
             fit: BoxFit.cover,
           ),
         ),
-        child: SingleChildScrollView( // Agrega el SingleChildScrollView aquí
+        child: SingleChildScrollView(
           child: Column(
             children: [
               Padding(
@@ -286,6 +287,7 @@ class _VidaState extends State<Vida> {
                     },
                     child: const Text('Anterior'),
                   ),
+                  const SizedBox(width: 30,),
                   ElevatedButton(
                     onPressed: () {
                       setState(() {
@@ -317,4 +319,10 @@ class _VidaState extends State<Vida> {
       ),
     );
   }
+}
+
+void main() {
+  runApp(const MaterialApp(
+    home: Vida(),
+  ));
 }
