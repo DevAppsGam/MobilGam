@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 
 class Vida extends StatefulWidget {
   const Vida({Key? key}) : super(key: key);
@@ -9,38 +11,121 @@ class Vida extends StatefulWidget {
 }
 
 class _VidaState extends State<Vida> {
-  // Ejemplo de datos de la base de datos
-  List<Map<String, String>> datos = [
-    {
-      'folioGAM': '12345',
-      'nombreContratante': 'Juan Pérez',
-      'nPoliza': '98765',
-      'folioGNP': '54321',
-      'fechaPromesa': '2023-08-15',
-      'estatusTramite': 'En proceso',
-    },
-    // Agregar más datos según sea necesario
-  ];
+  List<Map<String, String>> datos = [];
 
   @override
   void initState() {
     super.initState();
-    // Cambiar la orientación a horizontal
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+    fetchData();
   }
+
+  Future<void> fetchData() async {
+    final response = await http.get(Uri.parse('http://192.168.1.89/gam/tablafoliosvida.php'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> jsonResponse = json.decode(response.body);
+      setState(() {
+        datos = jsonResponse.map((dynamic item) {
+          Map<String, String> mappedItem = {};
+          for (var entry in item.entries) {
+            mappedItem[entry.key] = entry.value ?? ''; // Manejar campos nulos
+          }
+          return mappedItem;
+        }).toList();
+      });
+    } else {
+      // Manejar el error en caso de que la solicitud falle
+      print('Error en la solicitud: ${response.statusCode}');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content: const Text('Hubo un problema al obtener los datos.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
 
   @override
   void dispose() {
-    // Restaurar la orientación predeterminada
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-
     super.dispose();
+  }
+
+  TableRow _buildTableHeaderRow() {
+    return TableRow(
+      children: [
+        _buildTableHeaderCell('Folio GAM'),
+        _buildTableHeaderCell('Nombre del Contratante'),
+        _buildTableHeaderCell('N Poliza'),
+        _buildTableHeaderCell('Folio GNP'),
+        _buildTableHeaderCell('Fecha Promesa'),
+        _buildTableHeaderCell('Estatus Trámite'),
+      ],
+    );
+  }
+
+  TableCell _buildTableHeaderCell(String text) {
+    return TableCell(
+      child: Center(
+        child: Text(
+          text,
+          style: const TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.blueAccent,
+          ),
+        ),
+      ),
+    );
+  }
+
+  TableRow _buildTableRow(Map<String, String> datos) {
+    return TableRow(
+      children: [
+        _buildTableCell(datos['fgnp'] ?? ''),
+        _buildTableCell(datos['contratante'] ?? ''),
+        _buildTableCell(datos['poliza'] ?? ''),
+        _buildTableCell(datos['polizap'] ?? ''),
+        _buildTableCell(datos['fecha'] ?? ''),
+        _buildTableCell(datos['estado'] ?? ''),  // Asegúrate de agregar 'estado'
+      ],
+    );
+  }
+
+
+  TableCell _buildTableCell(String text) {
+    return TableCell(
+      child: Center(
+        child: Text(
+          text,
+          style: const TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 16,
+            color: Colors.black,
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -79,7 +164,6 @@ class _VidaState extends State<Vida> {
                   ),
                   IconButton(
                     onPressed: () {
-                      // Mostrar cuadro de diálogo de búsqueda
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -162,8 +246,6 @@ class _VidaState extends State<Vida> {
                 ),
               ),
             ),
-
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Table(
@@ -176,15 +258,12 @@ class _VidaState extends State<Vida> {
                   for (var dato in datos) _buildTableRow(dato),
                 ],
               ),
-
             ),
-// Añadir el Align y el IconButton aquí
             Align(
               alignment: Alignment.bottomRight,
               child: IconButton(
                 onPressed: () {
                   // Lógica para manejar la acción del ícono
-                  // Por ejemplo, puedes abrir un cuadro de diálogo, realizar una acción, etc.
                 },
                 icon: const Icon(
                   Icons.message_rounded,
@@ -194,64 +273,6 @@ class _VidaState extends State<Vida> {
               ),
             ),
           ],
-
-        ),
-      ),
-    );
-  }
-
-  TableRow _buildTableHeaderRow() {
-    return TableRow(
-      children: [
-        _buildTableHeaderCell('Folio GAM'),
-        _buildTableHeaderCell('Nombre del Contratante'),
-        _buildTableHeaderCell('N Poliza'),
-        _buildTableHeaderCell('Folio GNP'),
-        _buildTableHeaderCell('Fecha Promesa'),
-        _buildTableHeaderCell('Estatus Trámite'),
-      ],
-    );
-  }
-
-  TableCell _buildTableHeaderCell(String text) {
-    return TableCell(
-      child: Center(
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.blueAccent,
-          ),
-        ),
-      ),
-    );
-  }
-
-  TableRow _buildTableRow(Map<String, String> dato) {
-    return TableRow(
-      children: [
-        _buildTableCell(dato['folioGAM']!),
-        _buildTableCell(dato['nombreContratante']!),
-        _buildTableCell(dato['nPoliza']!),
-        _buildTableCell(dato['folioGNP']!),
-        _buildTableCell(dato['fechaPromesa']!),
-        _buildTableCell(dato['estatusTramite']!),
-      ],
-    );
-  }
-
-  TableCell _buildTableCell(String text) {
-    return TableCell(
-      child: Center(
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 16,
-            color: Colors.black,
-          ),
         ),
       ),
     );

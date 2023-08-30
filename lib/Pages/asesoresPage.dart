@@ -39,7 +39,7 @@ class Asesores extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Montserrat',
                   color: Colors.blueAccent,
-                  fontSize: 18,
+                  fontSize: 22,
                 ),
               ),
               onTap: () {
@@ -57,6 +57,7 @@ class Asesores extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Montserrat',
                   color: Colors.blueGrey,
+                  fontSize: 22,
                 ),
               ),
               onTap: () {
@@ -73,6 +74,7 @@ class Asesores extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Montserrat',
                   color: Colors.deepOrange,
+                  fontSize: 22,
                 ),
               ),
               onTap: () {
