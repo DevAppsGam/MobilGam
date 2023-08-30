@@ -12,7 +12,7 @@ if ($conn->connect_error) {
 
 // Consulta SQL para obtener los campos requeridos
 //id=FOLIO GAM
-$sql = "SELECT id, polizap, contratante, poliza, fgnp, fecha, estado FROM folios WHERE id>20000";
+$sql = "SELECT * FROM folios WHERE id>20000";
 $result = $conn->query($sql);
 
 $response = array();
