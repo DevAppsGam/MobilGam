@@ -12,6 +12,8 @@ class Vida extends StatefulWidget {
 
 class _VidaState extends State<Vida> {
   List<Map<String, String>> datos = [];
+  int _perPage = 10; // Número de elementos por página
+  int _currentPage = 0; // Página actual
 
   @override
   void initState() {
@@ -60,7 +62,6 @@ class _VidaState extends State<Vida> {
     }
   }
 
-
   @override
   void dispose() {
     SystemChrome.setPreferredOrientations([
@@ -102,7 +103,7 @@ class _VidaState extends State<Vida> {
   TableRow _buildTableRow(Map<String, String> datos) {
     return TableRow(
       children: [
-        _buildTableCell(datos['fgnp'] ?? ''),
+        _buildTableCell(datos['id'] ?? ''),
         _buildTableCell(datos['contratante'] ?? ''),
         _buildTableCell(datos['poliza'] ?? ''),
         _buildTableCell(datos['polizap'] ?? ''),
@@ -111,7 +112,6 @@ class _VidaState extends State<Vida> {
       ],
     );
   }
-
 
   TableCell _buildTableCell(String text) {
     return TableCell(
@@ -130,6 +130,19 @@ class _VidaState extends State<Vida> {
 
   @override
   Widget build(BuildContext context) {
+    int totalElementos = datos.length;
+    int totalPaginas = (totalElementos + _perPage - 1) ~/ _perPage;
+
+    _currentPage = _currentPage.clamp(0, totalPaginas - 1);
+
+    int inicio = _currentPage * _perPage;
+    int fin = inicio + _perPage;
+    if (fin > totalElementos) {
+      fin = totalElementos;
+    }
+
+    List<Map<String, String>> currentPageData = datos.sublist(inicio, fin);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -146,133 +159,160 @@ class _VidaState extends State<Vida> {
             fit: BoxFit.cover,
           ),
         ),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Mis Trámites de Vida',
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blueGrey,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Búsqueda'),
-                            content: const TextField(
-                              // Lógica de búsqueda
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  // Realizar búsqueda
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('Buscar'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    icon: const Icon(
-                      Icons.search,
-                      color: Colors.blueAccent,
-                      size: 28,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
+        child: SingleChildScrollView( // Agrega el SingleChildScrollView aquí
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        // Lógica para aplicar el primer filtro
-                      },
-                      child: const Text('ALTA DE POLIZA'),
+                    const Text(
+                      'Mis Trámites de Vida',
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blueGrey,
+                      ),
                     ),
-                    const SizedBox(width: 10),
-                    ElevatedButton(
+                    IconButton(
                       onPressed: () {
-                        // Lógica para aplicar el segundo filtro
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Búsqueda'),
+                              content: const TextField(
+                                // Lógica de búsqueda
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    // Realizar búsqueda
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Buscar'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       },
-                      child: const Text('PAGOS'),
-                    ),
-                    const SizedBox(width: 10),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Lógica para aplicar el tercer filtro
-                      },
-                      child: const Text('MOVIMIENTOS'),
-                    ),
-                    const SizedBox(width: 10),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Lógica para aplicar el cuarto filtro
-                      },
-                      child: const Text('A TIEMPO'),
-                    ),
-                    const SizedBox(width: 10),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Lógica para aplicar el quinto filtro
-                      },
-                      child: const Text('POR VENCER'),
-                    ),
-                    const SizedBox(width: 10),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Lógica para aplicar el sexto filtro
-                      },
-                      child: const Text('VENCIDOS'),
+                      icon: const Icon(
+                        Icons.search,
+                        color: Colors.blueAccent,
+                        size: 28,
+                      ),
                     ),
                   ],
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Table(
-                border: TableBorder.all(
-                  color: Colors.blueAccent,
-                  width: 2.0,
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          // Lógica para aplicar el primer filtro
+                        },
+                        child: const Text('ALTA DE POLIZA'),
+                      ),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Lógica para aplicar el segundo filtro
+                        },
+                        child: const Text('PAGOS'),
+                      ),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Lógica para aplicar el tercer filtro
+                        },
+                        child: const Text('MOVIMIENTOS'),
+                      ),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Lógica para aplicar el cuarto filtro
+                        },
+                        child: const Text('A TIEMPO'),
+                      ),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Lógica para aplicar el quinto filtro
+                        },
+                        child: const Text('POR VENCER'),
+                      ),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Lógica para aplicar el sexto filtro
+                        },
+                        child: const Text('VENCIDOS'),
+                      ),
+                    ],
+                  ),
                 ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Table(
+                  border: TableBorder.all(
+                    color: Colors.blueAccent,
+                    width: 2.0,
+                  ),
+                  children: [
+                    _buildTableHeaderRow(),
+                    for (var dato in currentPageData) _buildTableRow(dato),
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildTableHeaderRow(),
-                  for (var dato in datos) _buildTableRow(dato),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        if (_currentPage > 0) {
+                          _currentPage--;
+                        }
+                      });
+                    },
+                    child: const Text('Anterior'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        if ((_currentPage + 1) * _perPage < datos.length) {
+                          _currentPage++;
+                        }
+                      });
+                    },
+                    child: const Text('Siguiente'),
+                  ),
                 ],
               ),
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: IconButton(
-                onPressed: () {
-                  // Lógica para manejar la acción del ícono
-                },
-                icon: const Icon(
-                  Icons.message_rounded,
-                  size: 42,
-                  color: Colors.blueAccent,
+              Align(
+                alignment: Alignment.bottomRight,
+                child: IconButton(
+                  onPressed: () {
+                    // Lógica para manejar la acción del ícono
+                  },
+                  icon: const Icon(
+                    Icons.message_rounded,
+                    size: 42,
+                    color: Colors.blueAccent,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
