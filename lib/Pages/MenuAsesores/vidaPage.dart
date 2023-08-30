@@ -12,7 +12,7 @@ class Vida extends StatefulWidget {
 
 class _VidaState extends State<Vida> {
   List<Map<String, String>> datos = [];
-  int _perPage = 10; // Número de elementos por página
+  int _perPage = 4; // Número de elementos por página
   int _currentPage = 0; // Página actual
 
   @override
