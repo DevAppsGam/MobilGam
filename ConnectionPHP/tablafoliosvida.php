@@ -11,7 +11,7 @@ if ($conn->connect_error) {
 }
 
 // Obtén el parámetro de filtro de la URL
-$filter = $_GET['filter'];
+$filter = isset($_GET['filter']) ? $_GET['filter'] : '';
 
 // Define una consulta SQL base
 $sql = "SELECT * FROM folios WHERE id > 20000";

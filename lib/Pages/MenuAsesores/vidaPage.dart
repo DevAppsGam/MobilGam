@@ -14,13 +14,21 @@ class _VidaState extends State<Vida> {
   List<Map<String, String>> datos = [];
   final int _perPage = 4;
   int _currentPage = 0;
+  String filtroAplicado = '';
+
   bool altaDePolizaFilter = false;
   bool pagosFilter = false;
   bool movimientosFilter = false;
   bool aTiempoFilter = false;
   bool porVencerFilter = false;
   bool vencidosFilter = false;
-  String filtroAplicado = ''; // Variable para almacenar el filtro aplicado
+
+  String altaDePolizaButtonText = 'ALTA DE POLIZA';
+  String pagosButtonText = 'PAGOS';
+  String movimientosButtonText = 'MOVIMIENTOS';
+  String aTiempoButtonText = 'A TIEMPO';
+  String porVencerButtonText = 'POR VENCER';
+  String vencidosButtonText = 'VENCIDOS';
 
   @override
   void initState() {
@@ -48,7 +56,6 @@ class _VidaState extends State<Vida> {
         }).toList();
       });
     } else {
-      print('Error en la solicitud: ${response.statusCode}');
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -84,10 +91,9 @@ class _VidaState extends State<Vida> {
           }
           return mappedItem;
         }).toList();
-        filtroAplicado = filterName; // Actualizar el filtro aplicado
+        filtroAplicado = filterName;
       });
     } else {
-      print('Error en la solicitud: ${response.statusCode}');
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -105,6 +111,45 @@ class _VidaState extends State<Vida> {
           );
         },
       );
+    }
+  }
+
+  void toggleFiltro(String filterName, String buttonText) {
+    setState(() {
+      switch (filterName) {
+        case 'alta_de_poliza':
+          altaDePolizaFilter = !altaDePolizaFilter;
+          altaDePolizaButtonText = altaDePolizaFilter ? 'QUITAR FILTRO' : 'ALTA DE POLIZA';
+          break;
+        case 'pagos':
+          pagosFilter = !pagosFilter;
+          pagosButtonText = pagosFilter ? 'QUITAR FILTRO' : 'PAGOS';
+          break;
+        case 'movimientos':
+          movimientosFilter = !movimientosFilter;
+          movimientosButtonText = movimientosFilter ? 'QUITAR FILTRO' : 'MOVIMIENTOS';
+          break;
+        case 'a_tiempo':
+          aTiempoFilter = !aTiempoFilter;
+          aTiempoButtonText = aTiempoFilter ? 'QUITAR FILTRO' : 'A TIEMPO';
+          break;
+        case 'por_vencer':
+          porVencerFilter = !porVencerFilter;
+          porVencerButtonText = porVencerFilter ? 'QUITAR FILTRO' : 'POR VENCER';
+          break;
+        case 'vencidos':
+          vencidosFilter = !vencidosFilter;
+          vencidosButtonText = vencidosFilter ? 'QUITAR FILTRO' : 'VENCIDOS';
+          break;
+      }
+      filtroAplicado = altaDePolizaFilter || pagosFilter || movimientosFilter || aTiempoFilter || porVencerFilter || vencidosFilter
+          ? 'Filtro Aplicado'
+          : ''; // Actualiza el texto de filtro aplicado
+    });
+    if (filtroAplicado.isNotEmpty) {
+      fetchDataWithFilter(filterName);
+    } else {
+      fetchData();
     }
   }
 
@@ -262,153 +307,51 @@ class _VidaState extends State<Vida> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            altaDePolizaFilter = true;
-                            pagosFilter = false;
-                            movimientosFilter = false;
-                            aTiempoFilter = false;
-                            porVencerFilter = false;
-                            vencidosFilter = false;
-                            fetchDataWithFilter('alta_de_poliza');
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                                (Set<MaterialState> states) {
-                              if (altaDePolizaFilter) {
-                                return Colors.grey;
-                              }
-                              return Colors.blue;
-                            },
-                          ),
+                        onPressed: () => toggleFiltro('alta_de_poliza', altaDePolizaButtonText),
+                        style: ElevatedButton.styleFrom(
+                          primary: altaDePolizaFilter ? Colors.grey : Colors.blue,
                         ),
-                        child: const Text('ALTA DE POLIZA'),
+                        child: Text(altaDePolizaButtonText),
                       ),
                       const SizedBox(width: 10),
                       ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            altaDePolizaFilter = false;
-                            pagosFilter = true;
-                            movimientosFilter = false;
-                            aTiempoFilter = false;
-                            porVencerFilter = false;
-                            vencidosFilter = false;
-                            fetchDataWithFilter('pagos');
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                                (Set<MaterialState> states) {
-                              if (pagosFilter) {
-                                return Colors.grey;
-                              }
-                              return Colors.blue;
-                            },
-                          ),
+                        onPressed: () => toggleFiltro('pagos', pagosButtonText),
+                        style: ElevatedButton.styleFrom(
+                          primary: pagosFilter ? Colors.grey : Colors.blue,
                         ),
-                        child: const Text('PAGOS'),
+                        child: Text(pagosButtonText),
                       ),
                       const SizedBox(width: 10),
                       ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            altaDePolizaFilter = false;
-                            pagosFilter = false;
-                            movimientosFilter = true;
-                            aTiempoFilter = false;
-                            porVencerFilter = false;
-                            vencidosFilter = false;
-                            fetchDataWithFilter('movimientos');
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                                (Set<MaterialState> states) {
-                              if (movimientosFilter) {
-                                return Colors.grey;
-                              }
-                              return Colors.blue;
-                            },
-                          ),
+                        onPressed: () => toggleFiltro('movimientos', movimientosButtonText),
+                        style: ElevatedButton.styleFrom(
+                          primary: movimientosFilter ? Colors.grey : Colors.blue,
                         ),
-                        child: const Text('MOVIMIENTOS'),
+                        child: Text(movimientosButtonText),
                       ),
                       const SizedBox(width: 10),
                       ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            altaDePolizaFilter = false;
-                            pagosFilter = false;
-                            movimientosFilter = false;
-                            aTiempoFilter = true;
-                            porVencerFilter = false;
-                            vencidosFilter = false;
-                            fetchDataWithFilter('a_tiempo');
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                                (Set<MaterialState> states) {
-                              if (aTiempoFilter) {
-                                return Colors.grey;
-                              }
-                              return Colors.blue;
-                            },
-                          ),
+                        onPressed: () => toggleFiltro('a_tiempo', aTiempoButtonText),
+                        style: ElevatedButton.styleFrom(
+                          primary: aTiempoFilter ? Colors.grey : Colors.blue,
                         ),
-                        child: const Text('A TIEMPO'),
+                        child: Text(aTiempoButtonText),
                       ),
                       const SizedBox(width: 10),
                       ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            altaDePolizaFilter = false;
-                            pagosFilter = false;
-                            movimientosFilter = false;
-                            aTiempoFilter = false;
-                            porVencerFilter = true;
-                            vencidosFilter = false;
-                            fetchDataWithFilter('por_vencer');
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                                (Set<MaterialState> states) {
-                              if (porVencerFilter) {
-                                return Colors.grey;
-                              }
-                              return Colors.blue;
-                            },
-                          ),
+                        onPressed: () => toggleFiltro('por_vencer', porVencerButtonText),
+                        style: ElevatedButton.styleFrom(
+                          primary: porVencerFilter ? Colors.grey : Colors.blue,
                         ),
-                        child: const Text('POR VENCER'),
+                        child: Text(porVencerButtonText),
                       ),
                       const SizedBox(width: 10),
                       ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            altaDePolizaFilter = false;
-                            pagosFilter = false;
-                            movimientosFilter = false;
-                            aTiempoFilter = false;
-                            porVencerFilter = false;
-                            vencidosFilter = true;
-                            fetchDataWithFilter('vencidos');
-                          });
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                                (Set<MaterialState> states) {
-                              if (vencidosFilter) {
-                                return Colors.grey;
-                              }
-                              return Colors.blue;
-                            },
-                          ),
+                        onPressed: () => toggleFiltro('vencidos', vencidosButtonText),
+                        style: ElevatedButton.styleFrom(
+                          primary: vencidosFilter ? Colors.grey : Colors.blue,
                         ),
-                        child: const Text('VENCIDOS'),
+                        child: Text(vencidosButtonText),
                       ),
                     ],
                   ),
@@ -417,7 +360,7 @@ class _VidaState extends State<Vida> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
-                  'Filtro Aplicado: $filtroAplicado',
+                  filtroAplicado.isNotEmpty ? 'Filtro Aplicado: $filtroAplicado' : '',
                   style: const TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 18,
@@ -439,7 +382,6 @@ class _VidaState extends State<Vida> {
                   ],
                 ),
               ),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
