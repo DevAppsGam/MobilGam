@@ -12,7 +12,7 @@ class Vida extends StatefulWidget {
 
 class _VidaState extends State<Vida> {
   List<Map<String, String>> datos = [];
-  final int _perPage = 4;
+  final int _perPage = 3;
   int _currentPage = 0;
   String filtroAplicado = '';
   Map<String, String> filterButtonText = {
@@ -189,6 +189,10 @@ class _VidaState extends State<Vida> {
     );
   }
 
+  String getPageInfo(int currentPage, int totalPages) {
+    return 'Página $currentPage / $totalPages';
+  }
+
   @override
   Widget build(BuildContext context) {
     int totalElementos = datos.length;
@@ -282,13 +286,16 @@ class _VidaState extends State<Vida> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       for (var filterName in filterButtonText.keys)
-                        ElevatedButton(
-                          onPressed: () =>
-                              toggleFiltro(filterName, filterButtonText[filterName]!),
-                          style: ElevatedButton.styleFrom(
-                            primary: isFilterActive(filterName) ? Colors.grey : Colors.blue,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0), // Margen horizontal
+                          child: ElevatedButton(
+                            onPressed: () =>
+                                toggleFiltro(filterName, filterButtonText[filterName]!),
+                            style: ElevatedButton.styleFrom(
+                              primary: isFilterActive(filterName) ? Colors.grey : Colors.blue,
+                            ),
+                            child: Text(filterButtonText[filterName]!),
                           ),
-                          child: Text(filterButtonText[filterName]!),
                         ),
                     ],
                   ),
@@ -317,6 +324,18 @@ class _VidaState extends State<Vida> {
                     _buildTableHeaderRow(),
                     for (var dato in currentPageData) _buildTableRow(dato),
                   ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  getPageInfo(_currentPage + 1, totalPaginas),
+                  style: const TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blueAccent,
+                  ),
                 ),
               ),
               Row(
