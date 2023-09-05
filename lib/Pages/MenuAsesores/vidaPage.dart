@@ -15,20 +15,20 @@ class _VidaState extends State<Vida> {
   final int _perPage = 4;
   int _currentPage = 0;
   String filtroAplicado = '';
+  Map<String, String> filterButtonText = {
+    'ALTA DE POLIZA': 'ALTA DE POLIZA',
+    'PAGOS': 'PAGOS',
+    'MOVIMIENTOS': 'MOVIMIENTOS',
+    'a_tiempo': 'A TIEMPO',
+    'por_vencer': 'POR VENCER',
+    'vencidos': 'VENCIDOS',
+  };
 
-  bool altaDePolizaFilter = false;
-  bool pagosFilter = false;
-  bool movimientosFilter = false;
-  bool aTiempoFilter = false;
-  bool porVencerFilter = false;
-  bool vencidosFilter = false;
+  Set<String> activeFilters = Set<String>();
 
-  String altaDePolizaButtonText = 'ALTA DE POLIZA';
-  String pagosButtonText = 'PAGOS';
-  String movimientosButtonText = 'MOVIMIENTOS';
-  String aTiempoButtonText = 'A TIEMPO';
-  String porVencerButtonText = 'POR VENCER';
-  String vencidosButtonText = 'VENCIDOS';
+  bool isFilterActive(String filterName) {
+    return activeFilters.contains(filterName);
+  }
 
   @override
   void initState() {
@@ -56,30 +56,13 @@ class _VidaState extends State<Vida> {
         }).toList();
       });
     } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Error'),
-            content: const Text('Hubo un problema al obtener los datos.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
+      _showErrorDialog('Hubo un problema al obtener los datos.');
     }
   }
 
-  Future<void> fetchDataWithFilter(String filterName) async {
-    final response = await http.get(
-      Uri.parse('http://192.168.1.89/gam/tablafoliosvida.php?filter=$filterName'),
-    );
+  Future<void> fetchDataWithFilter(String filterNames) async {
+    final response = await http
+        .get(Uri.parse('http://192.168.1.89/gam/tablafoliosvida.php?filter=$filterNames'));
 
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
@@ -91,63 +74,50 @@ class _VidaState extends State<Vida> {
           }
           return mappedItem;
         }).toList();
-        filtroAplicado = filterName;
+        filtroAplicado = filterNames;
       });
     } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Error'),
-            content: const Text('Hubo un problema al obtener los datos.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
+      _showErrorDialog('Hubo un problema al obtener los datos.');
     }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void toggleFiltro(String filterName, String buttonText) {
     setState(() {
-      switch (filterName) {
-        case 'alta_de_poliza':
-          altaDePolizaFilter = !altaDePolizaFilter;
-          altaDePolizaButtonText = altaDePolizaFilter ? 'QUITAR FILTRO' : 'ALTA DE POLIZA';
-          break;
-        case 'pagos':
-          pagosFilter = !pagosFilter;
-          pagosButtonText = pagosFilter ? 'QUITAR FILTRO' : 'PAGOS';
-          break;
-        case 'movimientos':
-          movimientosFilter = !movimientosFilter;
-          movimientosButtonText = movimientosFilter ? 'QUITAR FILTRO' : 'MOVIMIENTOS';
-          break;
-        case 'a_tiempo':
-          aTiempoFilter = !aTiempoFilter;
-          aTiempoButtonText = aTiempoFilter ? 'QUITAR FILTRO' : 'A TIEMPO';
-          break;
-        case 'por_vencer':
-          porVencerFilter = !porVencerFilter;
-          porVencerButtonText = porVencerFilter ? 'QUITAR FILTRO' : 'POR VENCER';
-          break;
-        case 'vencidos':
-          vencidosFilter = !vencidosFilter;
-          vencidosButtonText = vencidosFilter ? 'QUITAR FILTRO' : 'VENCIDOS';
-          break;
+      if (isFilterActive(filterName)) {
+        activeFilters.remove(filterName);
+        filterButtonText[filterName] = buttonText;
+      } else {
+        activeFilters.add(filterName);
+        filterButtonText[filterName] = isFilterActive(filterName) ? buttonText : 'Quitar';
       }
-      filtroAplicado = altaDePolizaFilter || pagosFilter || movimientosFilter || aTiempoFilter || porVencerFilter || vencidosFilter
-          ? 'Filtro Aplicado'
-          : ''; // Actualiza el texto de filtro aplicado
+
+      // Actualiza el texto del filtro aplicado
+      filtroAplicado = activeFilters.isNotEmpty ? 'Filtro Aplicado' : '';
     });
-    if (filtroAplicado.isNotEmpty) {
-      fetchDataWithFilter(filterName);
+
+    if (activeFilters.isNotEmpty) {
+      String filters = activeFilters.join(',');
+      fetchDataWithFilter(filters);
     } else {
       fetchData();
     }
@@ -224,10 +194,15 @@ class _VidaState extends State<Vida> {
     int totalElementos = datos.length;
     int totalPaginas = (totalElementos + _perPage - 1) ~/ _perPage;
 
-    _currentPage = _currentPage.clamp(0, totalPaginas - 1);
+    if (totalPaginas > 0) {
+      _currentPage = _currentPage.clamp(0, totalPaginas - 1);
+    } else {
+      _currentPage = 0;
+    }
 
     int inicio = _currentPage * _perPage;
-    int fin = inicio + _perPage;
+    int fin = (inicio + _perPage).clamp(0, totalElementos);
+
     if (fin > totalElementos) {
       fin = totalElementos;
     }
@@ -306,53 +281,15 @@ class _VidaState extends State<Vida> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ElevatedButton(
-                        onPressed: () => toggleFiltro('alta_de_poliza', altaDePolizaButtonText),
-                        style: ElevatedButton.styleFrom(
-                          primary: altaDePolizaFilter ? Colors.grey : Colors.blue,
+                      for (var filterName in filterButtonText.keys)
+                        ElevatedButton(
+                          onPressed: () =>
+                              toggleFiltro(filterName, filterButtonText[filterName]!),
+                          style: ElevatedButton.styleFrom(
+                            primary: isFilterActive(filterName) ? Colors.grey : Colors.blue,
+                          ),
+                          child: Text(filterButtonText[filterName]!),
                         ),
-                        child: Text(altaDePolizaButtonText),
-                      ),
-                      const SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: () => toggleFiltro('pagos', pagosButtonText),
-                        style: ElevatedButton.styleFrom(
-                          primary: pagosFilter ? Colors.grey : Colors.blue,
-                        ),
-                        child: Text(pagosButtonText),
-                      ),
-                      const SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: () => toggleFiltro('movimientos', movimientosButtonText),
-                        style: ElevatedButton.styleFrom(
-                          primary: movimientosFilter ? Colors.grey : Colors.blue,
-                        ),
-                        child: Text(movimientosButtonText),
-                      ),
-                      const SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: () => toggleFiltro('a_tiempo', aTiempoButtonText),
-                        style: ElevatedButton.styleFrom(
-                          primary: aTiempoFilter ? Colors.grey : Colors.blue,
-                        ),
-                        child: Text(aTiempoButtonText),
-                      ),
-                      const SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: () => toggleFiltro('por_vencer', porVencerButtonText),
-                        style: ElevatedButton.styleFrom(
-                          primary: porVencerFilter ? Colors.grey : Colors.blue,
-                        ),
-                        child: Text(porVencerButtonText),
-                      ),
-                      const SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: () => toggleFiltro('vencidos', vencidosButtonText),
-                        style: ElevatedButton.styleFrom(
-                          primary: vencidosFilter ? Colors.grey : Colors.blue,
-                        ),
-                        child: Text(vencidosButtonText),
-                      ),
                     ],
                   ),
                 ),

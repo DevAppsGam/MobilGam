@@ -16,19 +16,19 @@ $filter = isset($_GET['filter']) ? $_GET['filter'] : '';
 // Define una consulta SQL base
 $sql = "SELECT * FROM folios WHERE id > 20000";
 
-// Agrega condiciones según el filtro proporcionado
-if ($filter == 'alta_de_poliza') {
-    $sql .= " AND t_solicitud = 'ALTA DE POLIZA'";
-} elseif ($filter == 'pagos') {
-    $sql .= " AND t_solicitud = 'PAGOS'";
-} elseif ($filter == 'movimientos') {
-    $sql .= " AND t_solicitud = 'MOVIMIENTOS'";
-} elseif ($filter == 'a_tiempo') {
-    $sql .= " AND t_solicitud = 'A TIEMPO'";
-} elseif ($filter == 'por_vencer') {
-    $sql .= " AND t_solicitud = 'POR VENCER'";
-} elseif ($filter == 'vencidos') {
-    $sql .= " AND t_solicitud = 'VENCIDOS'";
+// Define un array de filtros válidos
+$validFilters = array(
+    'ALTA DE POLIZA',
+    'PAGOS',
+    'MOVIMIENTOS',
+    'a_tiempo',
+    'por_vencer',
+    'vencidos'
+);
+
+// Verifica si el filtro proporcionado es válido
+if (!empty($filter) && in_array($filter, $validFilters)) {
+    $sql .= " AND t_solicitud = '$filter'";
 }
 
 // Ejecuta la consulta SQL modificada
