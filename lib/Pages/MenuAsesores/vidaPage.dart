@@ -24,11 +24,12 @@ class _VidaState extends State<Vida> {
     'vencidos': 'VENCIDOS',
   };
 
-  Set<String> activeFilters = Set<String>();
-
   bool isFilterActive(String filterName) {
     return activeFilters.contains(filterName);
   }
+
+  Set<String> activeFilters = Set<String>();
+  TextEditingController searchTextController = TextEditingController(); // Controlador de texto para búsqueda
 
   @override
   void initState() {
@@ -123,15 +124,6 @@ class _VidaState extends State<Vida> {
     }
   }
 
-  @override
-  void dispose() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-    super.dispose();
-  }
-
   TableRow _buildTableHeaderRow() {
     return TableRow(
       children: [
@@ -193,6 +185,45 @@ class _VidaState extends State<Vida> {
     return 'Página $currentPage / $totalPages';
   }
 
+  void filterDataBySearchTerm(String searchTerm) {
+    List<Map<String, String>> filteredData = datos.where((item) {
+      for (var entry in item.entries) {
+        final value = entry.value;
+        if (value != null) {
+          final lowerCaseValue = value.toLowerCase();
+          if (lowerCaseValue.contains(searchTerm.toLowerCase())) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }).toList();
+
+    setState(() {
+      datos = filteredData;
+    });
+  }
+
+  void clearSearch() {
+    searchTextController.clear();
+    filterDataBySearchTerm('');
+    fetchData();
+    // Establecer _currentPage a 0 para volver a la primera página
+    setState(() {
+      _currentPage = 0;
+    });
+  }
+
+
+  @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     int totalElementos = datos.length;
@@ -252,19 +283,37 @@ class _VidaState extends State<Vida> {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: const Text('Búsqueda'),
-                              content: const TextField(
-                                // Lógica de búsqueda
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    // Realizar búsqueda
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('Buscar'),
+                              title: const Text('Buscar'),
+                              content: SingleChildScrollView(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    TextField(
+                                      controller: searchTextController,
+                                      decoration: const InputDecoration(
+                                        hintText: 'Escribe tu término de búsqueda',
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        String searchTerm = searchTextController.text;
+                                        filterDataBySearchTerm(searchTerm);
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Buscar'),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        // Limpiar la búsqueda y restablecer los datos originales
+                                        clearSearch();
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Limpiar'),
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             );
                           },
                         );
@@ -287,7 +336,7 @@ class _VidaState extends State<Vida> {
                     children: [
                       for (var filterName in filterButtonText.keys)
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0), // Margen horizontal
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: ElevatedButton(
                             onPressed: () =>
                                 toggleFiltro(filterName, filterButtonText[filterName]!),
