@@ -13,8 +13,11 @@ if ($conn->connect_error) {
 // Obtén el parámetro de filtro de la URL
 $filter = isset($_GET['filter']) ? $_GET['filter'] : '';
 
+// Divide el parámetro de filtro en un array utilizando la coma como separador
+$filtersArray = explode(',', $filter);
+
 // Define una consulta SQL base
-$sql = "SELECT * FROM folios WHERE id > 20000";
+$sql = "SELECT * FROM folios WHERE id>20000 AND 1"; // Usamos "WHERE 1" para que siempre sea verdadero y podamos usar "OR" en la siguiente línea
 
 // Define un array de filtros válidos
 $validFilters = array(
@@ -26,9 +29,20 @@ $validFilters = array(
     'vencidos'
 );
 
-// Verifica si el filtro proporcionado es válido
-if (!empty($filter) && in_array($filter, $validFilters)) {
-    $sql .= " AND t_solicitud = '$filter'";
+// Verifica si se enviaron múltiples filtros
+if (!empty($filtersArray)) {
+    $filterConditions = array();
+    foreach ($filtersArray as $filterItem) {
+        // Verifica si cada filtro es válido y construye las condiciones
+        if (in_array($filterItem, $validFilters)) {
+            $filterConditions[] = "t_solicitud = '$filterItem'";
+        }
+    }
+
+    // Combina las condiciones con "OR" y agrega al SQL si hay al menos una condición válida
+    if (!empty($filterConditions)) {
+        $sql .= " AND (" . implode(" OR ", $filterConditions) . ")";
+    }
 }
 
 // Ejecuta la consulta SQL modificada
