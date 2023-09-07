@@ -7,8 +7,8 @@ class Operaciones extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Operaciones Home"),
       ),
-      body: const Column(
-        children: <Widget>[
+      body:  Column(
+        children: const <Widget>[
           Text('Bienvenido Operaciones')
         ],
       ),

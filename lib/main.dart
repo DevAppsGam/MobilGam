@@ -7,6 +7,9 @@ import 'Pages/gddsPage.dart';
 import 'Pages/powerPage.dart';
 import 'Pages/promocionesPage.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+
 
 void main() => runApp(const MyApp());
 
@@ -129,7 +132,7 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     final response = await http.post(
-      Uri.parse("http://192.168.1.87/gam/login.php"),
+      Uri.parse("http://192.168.100.73/gam/login.php"),
       body: {
         "username": username,
         "password": password,
@@ -303,7 +306,7 @@ class _LoginPageState extends State<LoginPage> {
                   onTap: () {
                     const url =
                         'https://asesoresgam.com.mx/aviso-de-privacidad.php';
-                    launchUrl(url as Uri);
+                    launch(url as String);
                   },
                   child: const Text(
                     'Aviso de privacidad',
@@ -356,11 +359,11 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                const Align(
+                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
+                    children: const [
                       SizedBox(height: 50),
                       Text(
                         '© 2019 Grupo Administrativo Mexicano S.A de C.V | Todos los derechos reeservados',
