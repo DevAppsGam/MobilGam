@@ -12,7 +12,7 @@ class Vida extends StatefulWidget {
 
 class _VidaState extends State<Vida> {
   List<Map<String, String>> datos = [];
-  final int _perPage = 3;
+  final int _perPage = 4;
   int _currentPage = 0;
   String filtroAplicado = '';
   Map<String, String> filterButtonText = {
@@ -24,12 +24,11 @@ class _VidaState extends State<Vida> {
     'vencidos': 'VENCIDOS',
   };
 
+  Set<String> activeFilters = Set<String>();
+
   bool isFilterActive(String filterName) {
     return activeFilters.contains(filterName);
   }
-
-  Set<String> activeFilters = Set<String>();
-  TextEditingController searchTextController = TextEditingController(); // Controlador de texto para búsqueda
 
   @override
   void initState() {
@@ -44,7 +43,7 @@ class _VidaState extends State<Vida> {
   Future<void> fetchData() async {
     final response =
     await http.get(Uri.parse('http://192.168.1.89/gam/tablafoliosvida.php'));
-
+    print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
       setState(() {
@@ -124,6 +123,15 @@ class _VidaState extends State<Vida> {
     }
   }
 
+  @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    super.dispose();
+  }
+
   TableRow _buildTableHeaderRow() {
     return TableRow(
       children: [
@@ -179,49 +187,6 @@ class _VidaState extends State<Vida> {
         ),
       ),
     );
-  }
-
-  String getPageInfo(int currentPage, int totalPages) {
-    return 'Página $currentPage / $totalPages';
-  }
-
-  void filterDataBySearchTerm(String searchTerm) {
-    List<Map<String, String>> filteredData = datos.where((item) {
-      for (var entry in item.entries) {
-        final value = entry.value;
-        if (value != null) {
-          final lowerCaseValue = value.toLowerCase();
-          if (lowerCaseValue.contains(searchTerm.toLowerCase())) {
-            return true;
-          }
-        }
-      }
-      return false;
-    }).toList();
-
-    setState(() {
-      datos = filteredData;
-    });
-  }
-
-  void clearSearch() {
-    searchTextController.clear();
-    filterDataBySearchTerm('');
-    fetchData();
-    // Establecer _currentPage a 0 para volver a la primera página
-    setState(() {
-      _currentPage = 0;
-    });
-  }
-
-
-  @override
-  void dispose() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-    super.dispose();
   }
 
   @override
@@ -283,37 +248,19 @@ class _VidaState extends State<Vida> {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: const Text('Buscar'),
-                              content: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    TextField(
-                                      controller: searchTextController,
-                                      decoration: const InputDecoration(
-                                        hintText: 'Escribe tu término de búsqueda',
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        String searchTerm = searchTextController.text;
-                                        filterDataBySearchTerm(searchTerm);
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text('Buscar'),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        // Limpiar la búsqueda y restablecer los datos originales
-                                        clearSearch();
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text('Limpiar'),
-                                    ),
-                                  ],
-                                ),
+                              title: const Text('Búsqueda'),
+                              content: const TextField(
+                                // Lógica de búsqueda
                               ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    // Realizar búsqueda
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('Buscar'),
+                                ),
+                              ],
                             );
                           },
                         );
@@ -335,16 +282,13 @@ class _VidaState extends State<Vida> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       for (var filterName in filterButtonText.keys)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: ElevatedButton(
-                            onPressed: () =>
-                                toggleFiltro(filterName, filterButtonText[filterName]!),
-                            style: ElevatedButton.styleFrom(
-                              primary: isFilterActive(filterName) ? Colors.grey : Colors.blue,
-                            ),
-                            child: Text(filterButtonText[filterName]!),
+                        ElevatedButton(
+                          onPressed: () =>
+                              toggleFiltro(filterName, filterButtonText[filterName]!),
+                          style: ElevatedButton.styleFrom(
+                            primary: isFilterActive(filterName) ? Colors.grey : Colors.blue,
                           ),
+                          child: Text(filterButtonText[filterName]!),
                         ),
                     ],
                   ),
@@ -373,18 +317,6 @@ class _VidaState extends State<Vida> {
                     _buildTableHeaderRow(),
                     for (var dato in currentPageData) _buildTableRow(dato),
                   ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  getPageInfo(_currentPage + 1, totalPaginas),
-                  style: const TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blueAccent,
-                  ),
                 ),
               ),
               Row(

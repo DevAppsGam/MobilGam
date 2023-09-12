@@ -121,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     final response = await http.post(
-      Uri.parse("http://192.168.1.104/gam/login.php"),
+      Uri.parse("http://192.168.1.89/gam/login.php"),
       body: {
         "nomusuario": username,
         "password": password,
@@ -134,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     if (response.statusCode == 200) {
-      final dynamic responseData = jsonDecode(response.body);
+      final dynamic responseData =  jsonDecode(response.body);
 
       if (responseData is Map<String, dynamic>) {
         if (responseData.containsKey("error")) {
@@ -144,7 +144,7 @@ class _LoginPageState extends State<LoginPage> {
         } else {
           final int userType = responseData['tipo'];
           final String nombreUsuario = responseData['nomusuario'];
-          final String userId = responseData['id'];
+          //final String userId = responseData['id'];
 
           switch (userType) {
             case 1: // Tipo de usuario 1
