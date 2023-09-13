@@ -17,12 +17,12 @@ $filter = isset($_GET['filter']) ? $_GET['filter'] : '';
 $filtersArray = explode(',', $filter);
 
 // Obtén el ID del usuario autenticado desde la respuesta JSON de login.php
-$idUsuario = isset($response["id"]) ? $response["id"] : null;
+//$idUsuario = isset($response["id"]) ? $response["id"] : null;
 
 // Verificar si se obtuvo el ID del usuario
-if ($idUsuario !== null) {
+//if ($idUsuario !== null) {
     // Personaliza la consulta SQL para incluir la condición del ID de usuario
-    $sql = "SELECT * FROM folios WHERE id > 20000 AND id_usuario = $idUsuario AND 1";
+    $sql = "SELECT * FROM folios WHERE id > 20000 AND id_agente = 16 AND 1";
 
     // Define un array de filtros válidos
     $validFilters = array(
@@ -61,7 +61,7 @@ if ($idUsuario !== null) {
             $response[] = $row;
         }
     }
-}
+//}
 
 // Cerrar la conexión a la base de datos
 $conn->close();
