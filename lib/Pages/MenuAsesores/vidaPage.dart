@@ -4,7 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 class Vida extends StatefulWidget {
-  const Vida({Key? key}) : super(key: key);
+  final String nombreUsuario;
+  const Vida({Key? key, required this.nombreUsuario}) : super(key: key);
 
   @override
   _VidaState createState() => _VidaState();
@@ -42,7 +43,7 @@ class _VidaState extends State<Vida> {
 
   Future<void> fetchData() async {
     final response =
-    await http.get(Uri.parse('http://192.168.1.89/gam/tablafoliosvida.php'));
+    await http.get(Uri.parse('http://192.168.1.89/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
     print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
@@ -62,7 +63,7 @@ class _VidaState extends State<Vida> {
 
   Future<void> fetchDataWithFilter(String filterNames) async {
     final response = await http
-        .get(Uri.parse('http://192.168.1.89/gam/tablafoliosvida.php?filter=$filterNames'));
+        .get(Uri.parse('http://192.168.1.89/gam/tablafoliosvida.php?filter=$filterNames&username=${widget.nombreUsuario}'));
 
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
@@ -211,9 +212,9 @@ class _VidaState extends State<Vida> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'BIENVENIDO ASESOR',
-          style: TextStyle(
+        title: Text(
+          'BIENVENIDO ${widget.nombreUsuario}',
+          style: const TextStyle(
             fontFamily: 'Montserrat',
           ),
         ),
@@ -370,6 +371,6 @@ class _VidaState extends State<Vida> {
 
 void main() {
   runApp(const MaterialApp(
-    home: Vida(),
+    home: Vida(nombreUsuario: ''),
   ));
 }

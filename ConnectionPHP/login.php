@@ -6,6 +6,7 @@ $username = "root"; // Cambiar por el nombre de usuario de tu base de datos
 $password = ""; // Cambiar por la contraseña de tu base de datos
 $dbname = "gamse627_ventanasis"; // Cambiar por el nombre de tu base de datos
 
+
 // Función para verificar las credenciales del usuario
 function verificarCredenciales($conn, $username, $password) {
     $stmt = $conn->prepare("SELECT nomusuario, password, id_tipo_usuario, id FROM datos_agente WHERE nomusuario = ?");

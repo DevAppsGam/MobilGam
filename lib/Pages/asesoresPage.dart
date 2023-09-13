@@ -116,40 +116,42 @@ class Asesores extends StatelessWidget {
               child: GridView.count(
                 crossAxisCount: 2,
                 padding: const EdgeInsets.all(16),
-                children: const [
+                children: [
                   IconWithText(
                     icon: Icons.diversity_1_rounded,
                     title: 'VIDA',
                     color: Colors.green,
+                    nombreUsuario: nombreUsuario,
                   ),
                   IconWithText(
                     icon: Icons.notification_important_rounded,
                     title: 'SINIESTROS',
-                    color: Colors.yellow,
+                    color: Colors.yellow, nombreUsuario: nombreUsuario,
                   ),
                   IconWithText(
                     icon: Icons.car_crash_rounded,
                     title: 'AUTOS',
-                    color: Colors.orange,
+                    color: Colors.orange, nombreUsuario: nombreUsuario,
                   ),
-                  IconWithText(
+                   IconWithText(
                     icon: Icons.medical_information_rounded,
                     title: 'GMM',
-                    color: Colors.blueAccent,
+                    color: Colors.blueAccent, nombreUsuario: nombreUsuario,
                   ),
-                  IconWithText(
+                   IconWithText(
                     icon: Icons.content_paste_search,
                     title: 'RECURSOS',
-                    color: Colors.blueGrey,
+                    color: Colors.blueGrey, nombreUsuario: nombreUsuario,
                   ),
-                  IconWithText(
+                   IconWithText(
                     icon: Icons.graphic_eq_outlined,
                     title: 'ESTADISTICAS',
-                    color: Colors.redAccent,
+                    color: Colors.redAccent, nombreUsuario: nombreUsuario,
                   ),
                 ],
               ),
             ),
+
             Align(
               alignment: Alignment.bottomRight,
               child: IconButton(
@@ -175,8 +177,9 @@ class IconWithText extends StatelessWidget {
   final IconData icon;
   final String title;
   final Color? color;
+  final String nombreUsuario;
 
-  const IconWithText({Key? key, required this.icon, required this.title, this.color}) : super(key: key);
+  const IconWithText({Key? key, required this.icon, required this.title, this.color, required this.nombreUsuario}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -186,7 +189,7 @@ class IconWithText extends StatelessWidget {
           case 'VIDA':
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const Vida()),
+              MaterialPageRoute(builder: (context) => Vida(nombreUsuario: nombreUsuario,)),
             );
             break;
           case 'SINIESTROS':
