@@ -26,6 +26,7 @@ class _VidaState extends State<Vida> {
   };
 
   Set<String> activeFilters = Set<String>();
+  String searchTerm = ''; // Nuevo campo para el término de búsqueda
 
   bool isFilterActive(String filterName) {
     return activeFilters.contains(filterName);
@@ -43,7 +44,7 @@ class _VidaState extends State<Vida> {
 
   Future<void> fetchData() async {
     final response =
-    await http.get(Uri.parse('http://192.168.1.89/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
+    await http.get(Uri.parse('http://192.168.1.95/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
     print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
@@ -62,8 +63,8 @@ class _VidaState extends State<Vida> {
   }
 
   Future<void> fetchDataWithFilter(String filterNames) async {
-    final response = await http
-        .get(Uri.parse('http://192.168.1.89/gam/tablafoliosvida.php?filter=$filterNames&username=${widget.nombreUsuario}'));
+    final response = await http.get(Uri.parse(
+        'http://192.168.1.95/gam/tablafoliosvida.php?filter=$filterNames&username=${widget.nombreUsuario}'));
 
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
@@ -123,6 +124,70 @@ class _VidaState extends State<Vida> {
       fetchData();
     }
   }
+
+  // Función para realizar la búsqueda
+  void performSearch() {
+    if (searchTerm.isNotEmpty) {
+      setState(() {
+        final filteredData = datos.where((item) {
+          final searchString = searchTerm.toLowerCase();
+
+          // Realizar la búsqueda en todos los campos de la fila
+          for (var value in item.values) {
+            final lowerValue = value.toLowerCase();
+            if (lowerValue.contains(searchString)) {
+              return true;
+            }
+          }
+
+          // También verifica si el término de búsqueda es un número y si coincide con algún valor numérico en la fila
+          if (double.tryParse(searchTerm) != null) {
+            for (var value in item.values) {
+              if (double.tryParse(value) == double.tryParse(searchTerm)) {
+                return true;
+              }
+            }
+          }
+
+          return false;
+        }).toList();
+
+        if (filteredData.isEmpty) {
+          // Mostrar alerta si no se encontraron resultados
+          _showNoResultsAlert();
+        } else {
+          datos = filteredData;
+        }
+      });
+    } else {
+      // Si el término de búsqueda está vacío, muestra todos los datos nuevamente.
+      fetchData();
+    }
+  }
+
+  void _showNoResultsAlert() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Sin Resultados'),
+          content: const Text('No se encontraron resultados.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                // Recargar la tabla original
+                fetchData();
+              },
+              child: const Text('Cerrar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
 
   @override
   void dispose() {
@@ -250,14 +315,18 @@ class _VidaState extends State<Vida> {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               title: const Text('Búsqueda'),
-                              content: const TextField(
-                                // Lógica de búsqueda
+                              content: TextField(
+                                onChanged: (value) {
+                                  setState(() {
+                                    searchTerm = value;
+                                  });
+                                },
                               ),
                               actions: [
                                 TextButton(
                                   onPressed: () {
-                                    // Realizar búsqueda
                                     Navigator.pop(context);
+                                    performSearch();
                                   },
                                   child: const Text('Buscar'),
                                 ),
@@ -284,8 +353,7 @@ class _VidaState extends State<Vida> {
                     children: [
                       for (var filterName in filterButtonText.keys)
                         ElevatedButton(
-                          onPressed: () =>
-                              toggleFiltro(filterName, filterButtonText[filterName]!),
+                          onPressed: () => toggleFiltro(filterName, filterButtonText[filterName]!),
                           style: ElevatedButton.styleFrom(
                             primary: isFilterActive(filterName) ? Colors.grey : Colors.blue,
                           ),
