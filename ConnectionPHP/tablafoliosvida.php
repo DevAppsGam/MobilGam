@@ -24,7 +24,7 @@ if ($resultu->num_rows > 0) {
     $idAgente = $row['id']; // Almacena el id del agente en una variable
 } else {
     // El nombre de usuario no se encontró en la tabla datos_agente
-    echo "El nombre de usuario '$nombreUsuario' no existe.";
+   // echo "El nombre de usuario: '$nombreUsuario' no existe.";
     exit; // Sale del script PHP
 }
 
@@ -34,7 +34,7 @@ $filter = isset($_GET['filter']) ? $_GET['filter'] : '';
 // Divide el parámetro de filtro en un array utilizando la coma como separador
 $filtersArray = explode(',', $filter);
 
-$sql = "SELECT * FROM folios WHERE id >= 20000 AND id_agente = $idAgente";
+$sql = "SELECT * FROM folios WHERE id >= 20000 AND id_agente = 16 AND t_solicitud IN ('ALTA DE POLIZA', 'MOVIMIENTOS', 'PAGOS') ORDER BY fecha DESC";
 
 // Define un array de filtros válidos
 $validFilters = array(
