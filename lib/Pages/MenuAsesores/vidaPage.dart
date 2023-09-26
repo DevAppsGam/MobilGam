@@ -20,9 +20,6 @@ class _VidaState extends State<Vida> {
     'ALTA DE POLIZA': 'ALTA DE POLIZA',
     'PAGOS': 'PAGOS',
     'MOVIMIENTOS': 'MOVIMIENTOS',
-    'a_tiempo': 'A TIEMPO',
-    'por_vencer': 'POR VENCER',
-    'vencidos': 'VENCIDOS',
   };
 
   Set<String> activeFilters = Set<String>();
@@ -44,7 +41,7 @@ class _VidaState extends State<Vida> {
 
   Future<void> fetchData() async {
     final response =
-    await http.get(Uri.parse('http://192.168.1.95/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
+    await http.get(Uri.parse('http://192.168.1.72/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
     print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
@@ -64,7 +61,7 @@ class _VidaState extends State<Vida> {
 
   Future<void> fetchDataWithFilter(String filterNames) async {
     final response = await http.get(Uri.parse(
-        'http://192.168.1.95/gam/tablafoliosvida.php?filter=$filterNames&username=${widget.nombreUsuario}'));
+        'http://192.168.1.72/gam/tablafoliosvida.php?filter=$filterNames&username=${widget.nombreUsuario}'));
 
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
@@ -351,6 +348,7 @@ class _VidaState extends State<Vida> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      const SizedBox(width: 16),
                       for (var filterName in filterButtonText.keys)
                         ElevatedButton(
                           onPressed: () => toggleFiltro(filterName, filterButtonText[filterName]!),
@@ -359,6 +357,27 @@ class _VidaState extends State<Vida> {
                           ),
                           child: Text(filterButtonText[filterName]!),
                         ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                          onPressed: (){
+
+                          },
+                          child: const Text('A TIEMPO'),
+                      ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: (){
+
+                        },
+                        child: const Text('POR VENCER'),
+                      ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: (){
+
+                        },
+                        child: const Text('VENCIDOS'),
+                      ),
                     ],
                   ),
                 ),
