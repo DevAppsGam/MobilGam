@@ -7,8 +7,8 @@ class Gdds extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Gdds Home"),
       ),
-      body: Column(
-        children: const <Widget>[
+      body:  const Column(
+        children: <Widget>[
           Text('Bienvenido Gdds')
         ],
       ),

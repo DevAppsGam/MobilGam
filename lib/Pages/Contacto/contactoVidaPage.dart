@@ -1,15 +1,13 @@
-import 'package:appgam/Pages/MenuAsesores/autosPage.dart';
-import 'package:appgam/Pages/MenuAsesores/gmmPage.dart';
-import 'package:appgam/Pages/MenuAsesores/recursosPage.dart';
-import 'package:appgam/Pages/MenuAsesores/siniestrosPage.dart';
+import 'package:appgam/Pages/Contacto/ContactoDetalleVida.dart';
 import 'package:appgam/Pages/asesoresPage.dart';
 import 'package:appgam/main.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:appgam/Pages/MenuAsesores/vidaPage.dart';
 
 class contactoVida extends StatelessWidget {
-  const contactoVida({Key? key});
+  final String nombreUsuario;
+
+  const contactoVida({Key? key, required this.nombreUsuario});
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +17,9 @@ class contactoVida extends StatelessWidget {
           onTap: () {
             Scaffold.of(context).openDrawer();
           },
-          child: const Text(
-            "BIENVENIDO ASESOR",
-            style: TextStyle(
+          child: Text(
+            "BIENVENIDO $nombreUsuario",
+            style: const TextStyle(
               fontFamily: 'Montserrat',
             ),
           ),
@@ -41,7 +39,7 @@ class contactoVida extends StatelessWidget {
               onTap: () {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) => const Asesores()),
+                  MaterialPageRoute(builder: (BuildContext context) => Asesores(nombreUsuario: nombreUsuario)),
                       (Route<dynamic> route) => false,
                 );
               },
@@ -57,7 +55,7 @@ class contactoVida extends StatelessWidget {
               onTap: () {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) => const contactoVida()),
+                  MaterialPageRoute(builder: (BuildContext context) => contactoVida(nombreUsuario: nombreUsuario)),
                       (Route<dynamic> route) => false,
                 );
               },
@@ -90,6 +88,7 @@ class contactoVida extends StatelessWidget {
         ),
         child: Column(
           children: <Widget>[
+            const SizedBox(height: 60),
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
@@ -100,6 +99,7 @@ class contactoVida extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   color: Colors.blueGrey,
                 ),
+                textAlign: TextAlign.center, // Centro el título
               ),
             ),
             Expanded(
@@ -108,31 +108,31 @@ class contactoVida extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 children: const [
                   IconWithText(
-                    icon: Icons.diversity_1_rounded,
+                    icon: Icons.woman_2_outlined,
                     title: 'Patricia Moctezuma',
                     subtitle: 'Gerente de Promoción de Vida',
                     color: Colors.blueGrey,
                   ),
                   IconWithText(
-                    icon: Icons.notification_important_rounded,
+                    icon: Icons.woman_2_outlined,
                     title: 'Diana Castro',
                     subtitle: 'Consultor Especializado Vida',
                     color: Colors.blueGrey,
                   ),
                   IconWithText(
-                    icon: Icons.car_crash_rounded,
+                    icon: Icons.woman_2_outlined,
                     title: 'Veronica Sanchez',
                     subtitle: 'Consulor Integral',
                     color: Colors.blueGrey,
                   ),
                   IconWithText(
-                    icon: Icons.medical_information_rounded,
+                    icon: Icons.woman_2_outlined,
                     title: 'Carolina Hernández',
                     subtitle: 'Gerente de Operación',
                     color: Colors.blueGrey,
                   ),
                   IconWithText(
-                    icon: Icons.content_paste_search,
+                    icon: Icons.man_2_outlined,
                     title: 'Manuel Ramírez',
                     subtitle: 'Director de Soporte, Promoción y Ventas',
                     color: Colors.blueGrey,
@@ -179,30 +179,30 @@ class IconWithText extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (title == 'VIDA') {
+        if (title == 'Patricia Moctezuma') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const Vida()),
+            MaterialPageRoute(builder: (context) => contactoDetalle(nombre: 'PATRICIA MOCTEZUMA', rol: 'GERNTE PROMOCIÓN VIDA', TEL: '5529417281', ext: '', mail: 'promocionvida@asesoresgam.com.mx',)),
           );
-        } else if (title == 'SINIESTROS') {
+        } else if (title == 'Diana Castro') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const Siniestro()),
+            MaterialPageRoute(builder: (context) => contactoDetalle(nombre: 'DIANA CASTRO GARCIA', rol: 'CONSULTOR ESPECIALIZADO VIDA', TEL: '5536430812', ext: '127', mail: 'vida@asesoresgam.com.mx',)),
           );
-        } else if (title == 'AUTOS') {
+        } else if (title == 'Veronica Sanchez') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const Auto()),
+            MaterialPageRoute(builder: (context) => contactoDetalle(nombre: 'VERONICA SANCHEZ MONTESINOS', rol: 'CONSULTOR INTEGRAL', TEL: '5585996060',ext:'0', mail: 'lomasverdes@asesoresgam.com.mx',)),
           );
-        } else if (title == 'GMM') {
+        } else if (title == 'Carolina Hernández') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const Gmm()),
+            MaterialPageRoute(builder: (context) => contactoDetalle(nombre: 'CAROLINA HERNANDEZ MORA', rol: 'GERENTE DE OPERACIÓN Y SERVICIO', TEL: '5521768838', ext: '106', mail: 'calidad@asesoresgam.com.mx',)),
           );
-        } else if (title == 'RECURSOS') {
+        } else if (title == 'Manuel Ramírez') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const Recurso()),
+            MaterialPageRoute(builder: (context) => contactoDetalle(nombre: 'MANUEL RAMIREZ', rol: 'DIRECTOR DE SOPORTE, PROMOCIÓN Y VENTAS', TEL: '', ext: '', mail: 'm.ramirez@asesoresgam.com.mx',)),
           );
         }
       },
@@ -226,6 +226,7 @@ class IconWithText extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 color: color,
               ),
+              textAlign: TextAlign.center,
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),

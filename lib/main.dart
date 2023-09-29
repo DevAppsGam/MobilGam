@@ -7,9 +7,6 @@ import 'Pages/gddsPage.dart';
 import 'Pages/powerPage.dart';
 import 'Pages/promocionesPage.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher.dart';
-
-
 
 void main() => runApp(const MyApp());
 
@@ -23,8 +20,8 @@ class MyApp extends StatelessWidget {
       title: 'GAM LOGIN',
       home: const SplashScreen(),
       routes: {
-        '/powerPage': (_) => Power(),
-        '/asesoresPage': (_) => Asesores(),
+        '/powerPage': (_) => const Power(),
+        '/asesoresPage': (_) =>  const Asesores(nombreUsuario: '',),
         '/LoginPage': (_) => const LoginPage(),
         '/promocionesPage': (_) => Promociones(),
         '/gddsPage': (_) => Gdds(),
@@ -32,7 +29,7 @@ class MyApp extends StatelessWidget {
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/Power') {
-          return MaterialPageRoute(builder: (_) => Power());
+          return MaterialPageRoute(builder: (_) => const Power());
         }
         return null;
       },
@@ -58,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(const Duration(seconds: 10));
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const LoginPage()),
+      MaterialPageRoute(builder: (context) =>  LoginPage()),
     );
   }
 
@@ -103,88 +100,90 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController controllerUser = TextEditingController();
   final TextEditingController controllerPass = TextEditingController();
-  String mensaje = '';
+  String errorMessage = '';
   bool obscurePassword = true;
+  bool isLoading = false;
 
   Future<void> login() async {
     final username = controllerUser.text;
     final password = controllerPass.text;
 
     if (username.isEmpty || password.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Campos Vacíos'),
-            content: const Text('Por favor, complete todos los campos.'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Aceptar'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
+      setState(() {
+        errorMessage = 'Por favor, complete todos los campos.';
+      });
       return;
     }
 
+    setState(() {
+      isLoading = true;
+      errorMessage = '';
+    });
+
     final response = await http.post(
-      Uri.parse("http://192.168.100.73/gam/login.php"),
+      Uri.parse("http://192.168.100.173/gam/login.php"),
       body: {
-        "username": username,
+        "nomusuario": username,
         "password": password,
       },
     );
+    print('Response: ${response.body}');
 
-    final Map<String, dynamic> datauser =
-    jsonDecode(response.body) as Map<String, dynamic>;
-    if (datauser.isEmpty) {
-      setState(() {
-        mensaje = "USUARIO O CONTRASEÑA INCORRECTA";
-      });
-    } else {
-      final String userType = datauser['tipo'];
-      switch (userType) {
-        case 'admin':
-          if (mounted) {
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (_) => Power()));
+    setState(() {
+      isLoading = false;
+    });
+
+    if (response.statusCode == 200) {
+      final dynamic responseData = jsonDecode(response.body);
+
+      if (responseData is Map<String, dynamic>) {
+        if (responseData.containsKey("error")) {
+          setState(() {
+            errorMessage = responseData["error"];
+          });
+        } else {
+          final int userType = responseData['tipo'];
+          final String nombreUsuario = responseData['nomusuario'];
+          //final String userId = responseData['id'];
+
+          switch (userType) {
+            case 1: // Tipo de usuario 1
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) =>  Asesores(nombreUsuario: nombreUsuario, )),
+                    (Route<dynamic> route) => false,
+              );
+              break;
+            case 2: // Tipo de usuario 2
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const Power()),
+              );
+              break;
+            case 3: // Tipo de usuario 3
+              Navigator.pushReplacementNamed(context, '/promocionesPage');
+              break;
+            case 4: // Tipo de usuario 4
+              Navigator.pushReplacementNamed(context, '/gddsPage');
+              break;
+            case 5: // Tipo de usuario 5
+              Navigator.pushReplacementNamed(context, '/operacionesPage');
+              break;
+            default:
+              setState(() {
+                errorMessage = 'Tipo de usuario desconocido';
+              });
           }
-          break;
-        case 'promocion':
-          if (mounted) {
-            Navigator.pushReplacementNamed(context, '/promocionesPage');
-          }
-          break;
-        case 'gdd':
-          if (mounted) {
-            Navigator.pushReplacementNamed(context, '/gddsPage');
-          }
-          break;
-        case 'operacion':
-          if (mounted) {
-            Navigator.pushReplacementNamed(context, '/operacionesPage');
-          }
-          break;
-        case 'agente':
-          if (mounted) {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => Asesores()),
-                  (Route<dynamic> route) => false,
-            );
-          }
-          break;
-        default:
-          if (mounted) {
-            setState(() {
-              mensaje = "TIPO DE USUARIO DESCONOCIDO";
-            });
-          }
+        }
+      } else {
+        setState(() {
+          errorMessage = 'Usuario o contraseña incorrecta';
+        });
       }
+    } else {
+      setState(() {
+        errorMessage = 'Error de conexión';
+      });
     }
   }
 
@@ -306,7 +305,7 @@ class _LoginPageState extends State<LoginPage> {
                   onTap: () {
                     const url =
                         'https://asesoresgam.com.mx/aviso-de-privacidad.php';
-                    launch(url as String);
+                    launchUrl(url as Uri);
                   },
                   child: const Text(
                     'Aviso de privacidad',
@@ -325,32 +324,10 @@ class _LoginPageState extends State<LoginPage> {
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  onPressed: () {
-                    if (controllerUser.text.isEmpty ||
-                        controllerPass.text.isEmpty) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Campos vacíos'),
-                            content: const Text(
-                              'Por favor ingrese el usuario y la contraseña.',
-                            ),
-                            actions: <Widget>[
-                              TextButton(
-                                child: const Text('Aceptar'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    } else {
-                      login();
-                      Navigator.pop(context);
-                    }
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                    login();
                   },
                   child: const Text(
                     'Ingresar',
@@ -359,14 +336,22 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                 Align(
+                errorMessage.isNotEmpty
+                    ? Text(
+                  errorMessage,
+                  style: const TextStyle(
+                    color: Colors.red,
+                  ),
+                )
+                    : const SizedBox(),
+                const Align(
                   alignment: Alignment.bottomCenter,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: const [
+                    children: [
                       SizedBox(height: 50),
                       Text(
-                        '© 2019 Grupo Administrativo Mexicano S.A de C.V | Todos los derechos reeservados',
+                        '© 2019 Grupo Administrativo Mexicano S.A de C.V | Todos los derechos reservados',
                         style: TextStyle(
                           fontSize: 12,
                           color: Color.fromRGBO(167, 168, 160, 1),

@@ -1,31 +1,42 @@
-## Proyecto de Asesores
+# Proyecto de Aplicación IntraGAM
 
-Este proyecto es una aplicación de Flutter para asesores, diseñada para proporcionar un menú de opciones y facilitar la navegación a diferentes secciones. El objetivo principal es brindar acceso rápido a diversas funcionalidades relacionadas con el asesoramiento.
+Bienvenido al proyecto de la Aplicación IntraGAM, una herramienta móvil desarrollada en Flutter diseñada para asesores y profesionales en el ámbito de seguros de vida. La aplicación permite gestionar información de contactos de manera eficiente y visualizar estadísticas relevantes mediante gráficas intuitivas.
 
-### Funcionalidades
+## Funcionalidades Destacadas
 
-La aplicación ofrece las siguientes funcionalidades principales:
+### 1. Inicio de Sesión Seguro
+- Accede a la aplicación con tus credenciales de usuario.
+- La autenticación se verifica para garantizar la seguridad de los datos.
+- Redirección automática a la pantalla principal después del inicio de sesión exitoso.
 
-- **Menú de opciones:** La pantalla principal muestra un menú con diferentes iconos y textos representativos de cada opción. Cada opción está asociada a un ícono y un título descriptivo.
-- **Colores personalizados:** Cada opción del menú puede tener un color personalizado. Los colores se definen en el código y se aplican tanto al ícono como al texto.
-- **Navegación:** Al seleccionar una opción del menú, se puede implementar la navegación a una página específica correspondiente a esa opción. Por ahora, se debe implementar esta funcionalidad en el código según las necesidades del proyecto.
-- **Botón de mensaje:** En la esquina inferior derecha, hay un botón con un ícono de mensaje. Al presionar este botón, se abre un enlace web predefinido (en este caso, "https://www.example.com"). Puedes modificar la URL según tus requisitos.
+### 2. Pantalla Principal Personalizada
+- Navega a través de un menú lateral con opciones claras como "INICIO", "CONTACTOS" y "Cerrar sesión".
+- Explora distintas secciones de la aplicación de manera intuitiva.
+- Acceso rápido a la sección de "CONTACTOS" para visualizar la lista de contactos de vida.
 
-### Estructura del proyecto
+### 3. Gestión de Contactos de Vida
+- Visualiza una cuadrícula de contactos de asesores de vida con su imagen, nombre y rol.
+- Selecciona un contacto para acceder a los detalles en la pantalla de "Detalles del Contacto".
 
-El proyecto se organiza de la siguiente manera:
+### 4. Detalles del Contacto en Detalle
+- Accede a información detallada como nombre, rol, número de teléfono y correo electrónico del contacto.
+- Llama al número de teléfono directamente desde la aplicación o compone un correo electrónico con un solo toque.
 
-- **`lib/`:** Este directorio contiene el código fuente de la aplicación.
-  - **`main.dart`:** Es el punto de entrada de la aplicación. Define la clase `Asesores` que crea y muestra la interfaz principal.
-  - **`asesoresPage.dart`:** Contiene la implementación de la página principal (`Asesores`). Aquí se encuentra el código para el menú de opciones, el botón de mensaje y la personalización de colores.
-- **`assets/`:** Aquí se almacenan los recursos estáticos utilizados en la aplicación, como imágenes. En particular, se encuentra la imagen de fondo en la ruta `assets/img/back.jpg`.
+### 5. Análisis Visual con Gráficas
+- Visualiza estadísticas relevantes de manera atractiva con gráficas interactivas.
+- Explora gráficas de pastel, de línea y de barras para comprender mejor los datos de las pólizas de vida.
 
-### Personalización
+## Tecnologías y Paquetes Utilizados
 
-Puedes personalizar la aplicación según tus necesidades modificando los siguientes aspectos:
+Este proyecto utiliza una variedad de tecnologías y paquetes para brindarte la mejor experiencia:
 
-- Agregar navegación a las opciones del menú: Dentro de la clase `IconWithText` en `asesoresPage.dart`, puedes implementar la navegación a páginas específicas cuando se selecciona una opción del menú.
-- Cambiar colores: En `asesoresPage.dart`, puedes modificar los colores asociados a cada opción del menú al establecer los valores de `color` en el constructor de `IconWithText`.
-- Modificar la imagen de fondo: Reemplaza la imagen actual (`assets/img/back.jpg`) en la carpeta `assets` por la imagen que desees utilizar como fondo.
+- Flutter: El versátil framework de desarrollo multiplataforma para aplicaciones móviles.
+- `url_launcher`: Un paquete esencial para abrir enlaces externos en aplicaciones nativas.
+- `fl_chart`: Herramienta poderosa para la creación de gráficas personalizadas y atractivas.
+- PHP y MySQL: Estos componentes se combinan para obtener información precisa de los contactos almacenados en la base de datos.
 
-Recuerda que este proyecto es solo un punto de partida y puedes ampliarlo y personalizarlo según tus necesidades. ¡Diviértete desarrollando tu aplicación de asesores con Flutter!
+## Licencia
+
+Este proyecto está bajo la Licencia de GAM en colaboración con GNP. Consulta el archivo [LICENSE](/LICENSE) para obtener información detallada sobre los términos y condiciones de uso.
+
+Siéntete libre de explorar, contribuir y aprovechar al máximo esta aplicación diseñada para facilitar tus tareas como asesor en el ámbito de seguros de vida. ¡Gracias por ser parte de este proyecto!
