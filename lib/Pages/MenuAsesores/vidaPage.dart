@@ -4,7 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 class Vida extends StatefulWidget {
-  const Vida({Key? key}) : super(key: key);
+  final String nombreUsuario;
+  const Vida({Key? key, required this.nombreUsuario}) : super(key: key);
 
   @override
   _VidaState createState() => _VidaState();
@@ -12,24 +13,21 @@ class Vida extends StatefulWidget {
 
 class _VidaState extends State<Vida> {
   List<Map<String, String>> datos = [];
-  final int _perPage = 3;
+  final int _perPage = 4;
   int _currentPage = 0;
   String filtroAplicado = '';
   Map<String, String> filterButtonText = {
     'ALTA DE POLIZA': 'ALTA DE POLIZA',
     'PAGOS': 'PAGOS',
     'MOVIMIENTOS': 'MOVIMIENTOS',
-    'a_tiempo': 'A TIEMPO',
-    'por_vencer': 'POR VENCER',
-    'vencidos': 'VENCIDOS',
   };
+
+  Set<String> activeFilters = Set<String>();
+  String searchTerm = ''; // Nuevo campo para el término de búsqueda
 
   bool isFilterActive(String filterName) {
     return activeFilters.contains(filterName);
   }
-
-  Set<String> activeFilters = Set<String>();
-  TextEditingController searchTextController = TextEditingController(); // Controlador de texto para búsqueda
 
   @override
   void initState() {
@@ -43,8 +41,8 @@ class _VidaState extends State<Vida> {
 
   Future<void> fetchData() async {
     final response =
-    await http.get(Uri.parse('http://192.168.1.89/gam/tablafoliosvida.php'));
-
+    await http.get(Uri.parse('http://192.168.1.72/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
+    print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
       setState(() {
@@ -62,8 +60,8 @@ class _VidaState extends State<Vida> {
   }
 
   Future<void> fetchDataWithFilter(String filterNames) async {
-    final response = await http
-        .get(Uri.parse('http://192.168.1.89/gam/tablafoliosvida.php?filter=$filterNames'));
+    final response = await http.get(Uri.parse(
+        'http://192.168.1.72/gam/tablafoliosvida.php?filter=$filterNames&username=${widget.nombreUsuario}'));
 
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
@@ -124,6 +122,79 @@ class _VidaState extends State<Vida> {
     }
   }
 
+  // Función para realizar la búsqueda
+  void performSearch() {
+    if (searchTerm.isNotEmpty) {
+      setState(() {
+        final filteredData = datos.where((item) {
+          final searchString = searchTerm.toLowerCase();
+
+          // Realizar la búsqueda en todos los campos de la fila
+          for (var value in item.values) {
+            final lowerValue = value.toLowerCase();
+            if (lowerValue.contains(searchString)) {
+              return true;
+            }
+          }
+
+          // También verifica si el término de búsqueda es un número y si coincide con algún valor numérico en la fila
+          if (double.tryParse(searchTerm) != null) {
+            for (var value in item.values) {
+              if (double.tryParse(value) == double.tryParse(searchTerm)) {
+                return true;
+              }
+            }
+          }
+
+          return false;
+        }).toList();
+
+        if (filteredData.isEmpty) {
+          // Mostrar alerta si no se encontraron resultados
+          _showNoResultsAlert();
+        } else {
+          datos = filteredData;
+        }
+      });
+    } else {
+      // Si el término de búsqueda está vacío, muestra todos los datos nuevamente.
+      fetchData();
+    }
+  }
+
+  void _showNoResultsAlert() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Sin Resultados'),
+          content: const Text('No se encontraron resultados.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                // Recargar la tabla original
+                fetchData();
+              },
+              child: const Text('Cerrar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+
+  @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    super.dispose();
+  }
+
   TableRow _buildTableHeaderRow() {
     return TableRow(
       children: [
@@ -181,49 +252,6 @@ class _VidaState extends State<Vida> {
     );
   }
 
-  String getPageInfo(int currentPage, int totalPages) {
-    return 'Página $currentPage / $totalPages';
-  }
-
-  void filterDataBySearchTerm(String searchTerm) {
-    List<Map<String, String>> filteredData = datos.where((item) {
-      for (var entry in item.entries) {
-        final value = entry.value;
-        if (value != null) {
-          final lowerCaseValue = value.toLowerCase();
-          if (lowerCaseValue.contains(searchTerm.toLowerCase())) {
-            return true;
-          }
-        }
-      }
-      return false;
-    }).toList();
-
-    setState(() {
-      datos = filteredData;
-    });
-  }
-
-  void clearSearch() {
-    searchTextController.clear();
-    filterDataBySearchTerm('');
-    fetchData();
-    // Establecer _currentPage a 0 para volver a la primera página
-    setState(() {
-      _currentPage = 0;
-    });
-  }
-
-
-  @override
-  void dispose() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     int totalElementos = datos.length;
@@ -246,9 +274,9 @@ class _VidaState extends State<Vida> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'BIENVENIDO ASESOR',
-          style: TextStyle(
+        title: Text(
+          'BIENVENIDO ${widget.nombreUsuario}',
+          style: const TextStyle(
             fontFamily: 'Montserrat',
           ),
         ),
@@ -283,37 +311,23 @@ class _VidaState extends State<Vida> {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: const Text('Buscar'),
-                              content: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    TextField(
-                                      controller: searchTextController,
-                                      decoration: const InputDecoration(
-                                        hintText: 'Escribe tu término de búsqueda',
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        String searchTerm = searchTextController.text;
-                                        filterDataBySearchTerm(searchTerm);
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text('Buscar'),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        // Limpiar la búsqueda y restablecer los datos originales
-                                        clearSearch();
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text('Limpiar'),
-                                    ),
-                                  ],
-                                ),
+                              title: const Text('Búsqueda'),
+                              content: TextField(
+                                onChanged: (value) {
+                                  setState(() {
+                                    searchTerm = value;
+                                  });
+                                },
                               ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    performSearch();
+                                  },
+                                  child: const Text('Buscar'),
+                                ),
+                              ],
                             );
                           },
                         );
@@ -334,18 +348,36 @@ class _VidaState extends State<Vida> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      const SizedBox(width: 16),
                       for (var filterName in filterButtonText.keys)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: ElevatedButton(
-                            onPressed: () =>
-                                toggleFiltro(filterName, filterButtonText[filterName]!),
-                            style: ElevatedButton.styleFrom(
-                              primary: isFilterActive(filterName) ? Colors.grey : Colors.blue,
-                            ),
-                            child: Text(filterButtonText[filterName]!),
+                        ElevatedButton(
+                          onPressed: () => toggleFiltro(filterName, filterButtonText[filterName]!),
+                          style: ElevatedButton.styleFrom(
+                            primary: isFilterActive(filterName) ? Colors.grey : Colors.blue,
                           ),
+                          child: Text(filterButtonText[filterName]!),
                         ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                          onPressed: (){
+
+                          },
+                          child: const Text('A TIEMPO'),
+                      ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: (){
+
+                        },
+                        child: const Text('POR VENCER'),
+                      ),
+                      const SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: (){
+
+                        },
+                        child: const Text('VENCIDOS'),
+                      ),
                     ],
                   ),
                 ),
@@ -373,18 +405,6 @@ class _VidaState extends State<Vida> {
                     _buildTableHeaderRow(),
                     for (var dato in currentPageData) _buildTableRow(dato),
                   ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  getPageInfo(_currentPage + 1, totalPaginas),
-                  style: const TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blueAccent,
-                  ),
                 ),
               ),
               Row(
@@ -438,6 +458,6 @@ class _VidaState extends State<Vida> {
 
 void main() {
   runApp(const MaterialApp(
-    home: Vida(),
+    home: Vida(nombreUsuario: ''),
   ));
 }

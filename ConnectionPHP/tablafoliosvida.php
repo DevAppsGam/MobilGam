@@ -10,56 +10,67 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
+$nombreUsuario = isset($_GET['username']) ? $_GET['username'] : '';
+
+// Consulta el id del agente correspondiente al nombreUsuario
+$sqlu = "SELECT id FROM datos_agente WHERE nomusuario = '$nombreUsuario'";
+
+// Ejecuta la consulta SQL
+$resultu = $conn->query($sqlu);
+
+// Verifica si se encontró un resultado
+if ($resultu->num_rows > 0) {
+    $row = $resultu->fetch_assoc();
+    $idAgente = $row['id']; // Almacena el id del agente en una variable
+} else {
+    // El nombre de usuario no se encontró en la tabla datos_agente
+   // echo "El nombre de usuario: '$nombreUsuario' no existe.";
+    exit; // Sale del script PHP
+}
+
 // Obtener el parámetro de filtro de la URL
 $filter = isset($_GET['filter']) ? $_GET['filter'] : '';
 
 // Divide el parámetro de filtro en un array utilizando la coma como separador
 $filtersArray = explode(',', $filter);
 
-// Obtén el ID del usuario autenticado desde la respuesta JSON de login.php
-$idUsuario = isset($response["id"]) ? $response["id"] : null;
+$sql = "SELECT * FROM folios WHERE id >= 20000 AND id_agente = 16 AND t_solicitud IN ('ALTA DE POLIZA', 'MOVIMIENTOS', 'PAGOS') ORDER BY fecha DESC";
 
-// Verificar si se obtuvo el ID del usuario
-if ($idUsuario !== null) {
-    // Personaliza la consulta SQL para incluir la condición del ID de usuario
-    $sql = "SELECT * FROM folios WHERE id > 20000 AND id_usuario = $idUsuario AND 1";
+// Define un array de filtros válidos
+$validFilters = array(
+    'ALTA DE POLIZA',
+    'PAGOS',
+    'MOVIMIENTOS',
+    'a_tiempo',
+    'por_vencer',
+    'vencidos'
+);
 
-    // Define un array de filtros válidos
-    $validFilters = array(
-        'ALTA DE POLIZA',
-        'PAGOS',
-        'MOVIMIENTOS',
-        'a_tiempo',
-        'por_vencer',
-        'vencidos'
-    );
-
-    // Verifica si se enviaron múltiples filtros
-    if (!empty($filtersArray)) {
-        $filterConditions = array();
-        foreach ($filtersArray as $filterItem) {
-            // Verifica si cada filtro es válido y construye las condiciones
-            if (in_array($filterItem, $validFilters)) {
-                $filterConditions[] = "t_solicitud = '$filterItem'";
-            }
-        }
-
-        // Combina las condiciones con "OR" y agrega al SQL si hay al menos una condición válida
-        if (!empty($filterConditions)) {
-            $sql .= " AND (" . implode(" OR ", $filterConditions) . ")";
+// Verifica si se enviaron múltiples filtros
+if (!empty($filtersArray)) {
+    $filterConditions = array();
+    foreach ($filtersArray as $filterItem) {
+        // Verifica si cada filtro es válido y construye las condiciones
+        if (in_array($filterItem, $validFilters)) {
+            $filterConditions[] = "t_solicitud = '$filterItem'";
         }
     }
 
-    // Ejecuta la consulta SQL modificada
-    $result = $conn->query($sql);
+    // Combina las condiciones con "OR" y agrega al SQL si hay al menos una condición válida
+    if (!empty($filterConditions)) {
+        $sql .= " AND (" . implode(" OR ", $filterConditions) . ")";
+    }
+}
 
-    $response = array();
+// Ejecuta la consulta SQL modificada
+$result = $conn->query($sql);
 
-    if ($result->num_rows > 0) {
-        // Recorrer los resultados y almacenarlos en el arreglo de respuesta
-        while ($row = $result->fetch_assoc()) {
-            $response[] = $row;
-        }
+$response = array();
+
+if ($result->num_rows > 0) {
+    // Recorrer los resultados y almacenarlos en el arreglo de respuesta
+    while ($row = $result->fetch_assoc()) {
+        $response[] = $row;
     }
 }
 
