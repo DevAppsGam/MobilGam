@@ -231,35 +231,36 @@ class _VidaState extends State<Vida> {
         _buildTableCell(datos['id'] ?? '', datos),
         _buildTableCell(datos['contratante'] ?? '', datos),
         _buildTableCell(datos['poliza'] ?? '', datos),
-        _buildTableCell(datos['polizap'] ?? '', datos),
+        _buildTableCell(datos['fgnp'] ?? '', datos),
         _buildTableCell(datos['fecha'] ?? '', datos),
         _buildTableCell(datos['estado'] ?? '', datos),
       ],
     );
   }
 
+  //VALIDAR UN CAMPO  VARIOS
   TableCell _buildTableCell (String text, Map <String, String> rowData){
     return TableCell(
-        child: GestureDetector(
-          onTap: (){
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context)=> DetalleVida(datosVida: rowData),
-                ),
-            );
-          },
-          child: Center(
-            child: Text(
-              text,
-              style: const TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 16,
-                color: Colors.black,
-              ),
+      child: GestureDetector(
+        onTap: (){
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context)=> DetalleVida(nombreUsuario: widget.nombreUsuario,),
+            ),
+          );
+        },
+        child: Center(
+          child: Text(
+            text,
+            style: const TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 16,
+              color: Colors.black,
             ),
           ),
         ),
+      ),
     );
   }
 
