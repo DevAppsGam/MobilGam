@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:appgam/Pages/MenuAsesores/Detalles/vidaDetallePage.dart';
 
 class Vida extends StatefulWidget {
   final String nombreUsuario;
@@ -41,7 +42,7 @@ class _VidaState extends State<Vida> {
 
   Future<void> fetchData() async {
     final response =
-    await http.get(Uri.parse('http://192.168.1.72/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
+    await http.get(Uri.parse('http://192.168.100.73/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
     print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
@@ -61,7 +62,7 @@ class _VidaState extends State<Vida> {
 
   Future<void> fetchDataWithFilter(String filterNames) async {
     final response = await http.get(Uri.parse(
-        'http://192.168.1.72/gam/tablafoliosvida.php?filter=$filterNames&username=${widget.nombreUsuario}'));
+        'http://192.168.100.73/gam/tablafoliosvida.php?filter=$filterNames&username=${widget.nombreUsuario}'));
 
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
@@ -227,28 +228,38 @@ class _VidaState extends State<Vida> {
   TableRow _buildTableRow(Map<String, String> datos) {
     return TableRow(
       children: [
-        _buildTableCell(datos['id'] ?? ''),
-        _buildTableCell(datos['contratante'] ?? ''),
-        _buildTableCell(datos['poliza'] ?? ''),
-        _buildTableCell(datos['polizap'] ?? ''),
-        _buildTableCell(datos['fecha'] ?? ''),
-        _buildTableCell(datos['estado'] ?? ''),
+        _buildTableCell(datos['id'] ?? '', datos),
+        _buildTableCell(datos['contratante'] ?? '', datos),
+        _buildTableCell(datos['poliza'] ?? '', datos),
+        _buildTableCell(datos['polizap'] ?? '', datos),
+        _buildTableCell(datos['fecha'] ?? '', datos),
+        _buildTableCell(datos['estado'] ?? '', datos),
       ],
     );
   }
 
-  TableCell _buildTableCell(String text) {
+  TableCell _buildTableCell (String text, Map <String, String> rowData){
     return TableCell(
-      child: Center(
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 16,
-            color: Colors.black,
+        child: GestureDetector(
+          onTap: (){
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context)=> DetalleVida(datosVida: rowData),
+                ),
+            );
+          },
+          child: Center(
+            child: Text(
+              text,
+              style: const TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 16,
+                color: Colors.black,
+              ),
+            ),
           ),
         ),
-      ),
     );
   }
 
@@ -359,10 +370,10 @@ class _VidaState extends State<Vida> {
                         ),
                       const SizedBox(width: 16),
                       ElevatedButton(
-                          onPressed: (){
+                        onPressed: (){
 
-                          },
-                          child: const Text('A TIEMPO'),
+                        },
+                        child: const Text('A TIEMPO'),
                       ),
                       const SizedBox(width: 16),
                       ElevatedButton(
