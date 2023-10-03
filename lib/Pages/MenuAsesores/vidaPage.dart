@@ -377,6 +377,9 @@ class _VidaState extends State<Vida> {
                         onPressed: (){
 
                         },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.lightGreen,
+                        ),
                         child: const Text('A TIEMPO'),
                       ),
                       const SizedBox(width: 16),
@@ -384,6 +387,9 @@ class _VidaState extends State<Vida> {
                         onPressed: (){
 
                         },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.yellow,
+                        ),
                         child: const Text('POR VENCER'),
                       ),
                       const SizedBox(width: 16),
@@ -391,6 +397,9 @@ class _VidaState extends State<Vida> {
                         onPressed: (){
 
                         },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.red,
+                        ),
                         child: const Text('VENCIDOS'),
                       ),
                     ],

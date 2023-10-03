@@ -23,9 +23,10 @@ class Asesores extends StatelessWidget {
             Scaffold.of(context).openDrawer();
           },
           child: Text(
-            "BIENVENIDO $nombreUsuario",
+            "Bienvenido $nombreUsuario",
             style: const TextStyle(
-              fontFamily: 'Montserrat',
+              fontFamily: 'Roboto',
+              fontSize: 24,
             ),
           ),
         ),
@@ -35,11 +36,11 @@ class Asesores extends StatelessWidget {
           children: [
             ListTile(
               title: const Text(
-                'INICIO',
+                'Inicio',
                 style: TextStyle(
-                  fontFamily: 'Montserrat',
+                  fontFamily: 'Roboto',
                   color: Colors.blueAccent,
-                  fontSize: 22,
+                  fontSize: 24,
                 ),
               ),
               onTap: () {
@@ -53,11 +54,11 @@ class Asesores extends StatelessWidget {
             ),
             ListTile(
               title: const Text(
-                'CONTACTOS',
+                'Contactos',
                 style: TextStyle(
-                  fontFamily: 'Montserrat',
+                  fontFamily: 'Roboto',
                   color: Colors.blueGrey,
-                  fontSize: 22,
+                  fontSize: 24,
                 ),
               ),
               onTap: () {
@@ -72,9 +73,9 @@ class Asesores extends StatelessWidget {
               title: const Text(
                 'Cerrar sesión',
                 style: TextStyle(
-                  fontFamily: 'Montserrat',
+                  fontFamily: 'Roboto',
                   color: Colors.deepOrange,
-                  fontSize: 22,
+                  fontSize: 24,
                 ),
               ),
               onTap: () {
@@ -95,6 +96,7 @@ class Asesores extends StatelessWidget {
           image: DecorationImage(
             image: AssetImage('assets/img/back.jpg'),
             fit: BoxFit.cover,
+
           ),
         ),
         child: Column(
@@ -103,10 +105,10 @@ class Asesores extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
-                'MENU',
+                'Menú',
                 style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 24,
+                  fontFamily: 'Roboto',
+                  fontSize: 36,
                   fontWeight: FontWeight.bold,
                   color: Colors.blueGrey,
                 ),
@@ -126,7 +128,8 @@ class Asesores extends StatelessWidget {
                   IconWithText(
                     icon: Icons.notification_important_rounded,
                     title: 'SINIESTROS',
-                    color: Colors.yellow, nombreUsuario: nombreUsuario,
+                    color: const Color.fromRGBO(241, 201, 132, 1.0),
+                    nombreUsuario: nombreUsuario,
                   ),
                   IconWithText(
                     icon: Icons.car_crash_rounded,
@@ -227,21 +230,32 @@ class IconWithText extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          IconTheme(
-            data: IconThemeData(color: color),
-            child: Icon(
-              icon,
-              size: 64,
+          Container(
+            width: 100, // Ajusta el tamaño del círculo según tus preferencias
+            height: 100, // Ajusta el tamaño del círculo según tus preferencias
+            decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(20),// Forma circular del contenedor
+              color: color ?? Colors.white, // Color de fondo del círculo (usará blanco si no se proporciona un color específico)
+            ),
+            child: Center(
+              child: IconTheme(
+                data: const IconThemeData(color: Colors.white), // Color del ícono (puedes personalizarlo)
+                child: Icon(
+                  icon,
+                  size: 64,
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 8),
           Text(
             title,
             style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 18,
+              fontFamily: 'Roboto',
+              fontSize: 26,
               fontWeight: FontWeight.bold,
-              color: color,
+              color: color ?? Colors.black, // Color del texto (usará negro si no se proporciona un color específico)
             ),
           ),
         ],

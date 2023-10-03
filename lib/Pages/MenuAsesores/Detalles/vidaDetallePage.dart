@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:file_picker/file_picker.dart';
 
 class DetalleVida extends StatefulWidget {
   final String nombreUsuario;
@@ -50,7 +51,6 @@ class _DetalleVidaState extends State<DetalleVida> {
 
   Future<List<Map<String, dynamic>>?> fetchDataForSecondTable() async {
     final String secondTableUrl = 'http://192.168.1.75/gam/detallevidadocumentos.php?id=${widget.id}';
-
     try {
       final response = await http.get(Uri.parse(secondTableUrl));
 
@@ -75,6 +75,24 @@ class _DetalleVidaState extends State<DetalleVida> {
       return null; // Devolvemos null en caso de error.
     }
   }
+
+  Future<void> _pickDocument() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      PlatformFile file = result.files.first;
+
+      // Aquí puedes acceder a la información del archivo seleccionado, como su nombre y bytes.
+      print('Nombre del archivo: ${file.name}');
+      print('Bytes del archivo: ${file.bytes}');
+
+      // También puedes realizar acciones adicionales, como enviar el archivo al servidor.
+    } else {
+      // El usuario canceló la selección de archivos.
+      print('Selección de archivos cancelada.');
+    }
+  }
+
 
 
   @override
@@ -110,8 +128,9 @@ class _DetalleVidaState extends State<DetalleVida> {
                 const SizedBox(height: 16),
                 DataTable(
                   columns: const [
-                    DataColumn(label: Text('')),
-                    DataColumn(label: Text('')),
+                    DataColumn(label: Text('Folio GAM')),
+                    DataColumn(label: Text('Línea de Negocio')),
+
                   ],
                   rows: [
                     DataRow(
@@ -196,6 +215,8 @@ class _DetalleVidaState extends State<DetalleVida> {
                   ],
                 ),
                 const SizedBox(height: 32),
+
+                const SizedBox(height: 32),
                 const Text(
                   'Documentos Relacionados',
                   style: TextStyle(
@@ -239,7 +260,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                                       // Lógica para abrir o ver el archivo aquí.
                                       // Puedes usar navegación o mostrar un visor de archivos, según tus necesidades.
                                     },
-                                    child: const Text('Ver'),
+                                    child: const Text('a'),
                                   ),
                                 ),
                                 DataCell(
@@ -248,7 +269,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                                       // Lógica para abrir o ver el archivo aquí.
                                       // Puedes usar navegación o mostrar un visor de archivos, según tus necesidades.
                                     },
-                                    child: const Text('Descargar'),
+                                    child: const Text('a'),
                                   ),
                                 ),
                                 DataCell(
@@ -270,8 +291,79 @@ class _DetalleVidaState extends State<DetalleVida> {
                       );
                     }
                   },
-                )
-
+                ),
+            /*
+            const SizedBox(height: 32),
+                const Text(
+                  'Subir Documentos',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blueGrey,
+                  ),
+                ),
+                DataTable(
+                  columns: const [
+                    DataColumn(label: Text('Subir Archivo')),
+                    DataColumn(label: Text('Opción')),
+                    DataColumn(label: Text('')),
+                    DataColumn(label: Text('')),
+                  ],
+                  rows: [
+                    DataRow(cells: [
+                      DataCell(ElevatedButton(
+                        onPressed: () {
+                          // Lógica para abrir el selector de archivos aquí
+                          _pickDocument();
+                        },
+                        child: const Text('Seleccionar Archivo'),
+                      )),
+                      DataCell(DropdownButton<String>(
+                        // Aquí configura la lista desplegable con las 10 opciones
+                        items: List.generate(10, (index) {
+                          return DropdownMenuItem<String>(
+                            value: 'Opción ${index + 1}',
+                            child: Text('Opción ${index + 1}'),
+                          );
+                        }),
+                        onChanged: (value) {
+                          // Lógica para manejar la selección de la opción aquí
+                        },
+                        value: null, // Puedes establecer un valor inicial si es necesario
+                      )),
+                      DataCell(ElevatedButton(
+                        onPressed: () {
+                          // Lógica para confirmar aquí
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.lightGreen,
+                        ),
+                        child: const Text('Confirmar'),
+                      )),
+                      DataCell(ElevatedButton(
+                        onPressed: () {
+                          // Lógica para cancelar aquí
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.redAccent,
+                        ),
+                        child: const Text('Cancelar'),
+                      )),
+                    ]),
+                  ],
+                ),
+                */
+                const SizedBox(height: 32),
+                const Text(
+                  'Historial',
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blueGrey,
+                  ),
+                ),
 
               ],
             ),

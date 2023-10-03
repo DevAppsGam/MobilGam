@@ -55,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(const Duration(seconds: 10));
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) =>  LoginPage()),
+      MaterialPageRoute(builder: (context) =>  const LoginPage()),
     );
   }
 
@@ -122,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
 
     final response = await http.post(
 
-      Uri.parse("http://192.168.1.75/gam/login.php"),
+      Uri.parse("http://192.168.1.95/gam/login.php"),
       body: {
         "nomusuario": username,
         "password": password,
@@ -218,11 +218,12 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  '!BIENVENIDO!',
+                  'Bienvenido',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Color.fromRGBO(73, 78, 84, 1),
+                    fontFamily: 'Roboto',
                   ),
                 ),
                 const SizedBox(height: 50),
@@ -245,6 +246,7 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
                   child: TextFormField(
+                    style: const TextStyle(fontFamily: 'Roboto'),
                     controller: controllerUser,
                     decoration: const InputDecoration(
                       hintText: 'USUARIO',
@@ -252,6 +254,7 @@ class _LoginPageState extends State<LoginPage> {
                         Icons.person_2_rounded,
                         color: Colors.black,
                       ),
+
                       fillColor: Colors.transparent,
                       filled: true,
                     ),
@@ -279,6 +282,7 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
                   child: TextField(
+                    style: const TextStyle(fontFamily: 'Roboto'),
                     controller: controllerPass,
                     obscureText: obscurePassword,
                     decoration: InputDecoration(
@@ -301,7 +305,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 14),
                 GestureDetector(
                   onTap: () {
                     const url =
@@ -314,6 +318,7 @@ class _LoginPageState extends State<LoginPage> {
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.blue,
+                      fontFamily: 'Roboto',
                     ),
                   ),
                 ),
@@ -334,6 +339,7 @@ class _LoginPageState extends State<LoginPage> {
                     'Ingresar',
                     style: TextStyle(
                       fontSize: 24,
+                      fontFamily: 'Roboto',
                     ),
                   ),
                 ),
@@ -356,6 +362,7 @@ class _LoginPageState extends State<LoginPage> {
                         style: TextStyle(
                           fontSize: 12,
                           color: Color.fromRGBO(167, 168, 160, 1),
+                          fontFamily: 'Roboto',
                         ),
                       ),
                     ],
