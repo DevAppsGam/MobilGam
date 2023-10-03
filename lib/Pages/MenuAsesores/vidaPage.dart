@@ -246,7 +246,10 @@ class _VidaState extends State<Vida> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context)=> DetalleVida(nombreUsuario: widget.nombreUsuario,),
+              builder: (context)=> DetalleVida(
+                nombreUsuario: widget.nombreUsuario,
+                id:text,
+              ),
             ),
           );
         },
