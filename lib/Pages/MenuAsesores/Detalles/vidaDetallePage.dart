@@ -251,7 +251,17 @@ class _DetalleVidaState extends State<DetalleVida> {
                                     child: const Text('Descargar'),
                                   ),
                                 ),
-                                const DataCell(Text('aprobado')),
+                                DataCell(
+                                  data['validado'] == true
+                                      ? const Icon(
+                                    Icons.check,
+                                    color: Colors.green, // Color verde para el ícono de paloma
+                                  )
+                                      : const Icon(
+                                    Icons.cancel,
+                                    color: Colors.red, // Color rojo para el ícono de tache
+                                  ),
+                                ),
                                 DataCell(Text(data['fecha_creacion'] ?? '***')),
                               ],
                             );
