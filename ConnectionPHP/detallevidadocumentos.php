@@ -14,7 +14,7 @@ if ($conn->connect_error) {
 $folioSelec = isset($_GET['id']) ? $_GET['id'] : '';
 
 // Consulta el id del agente correspondiente al nombreUsuario
-$sql = "SELECT nombre, fecha_creacion, nomusuario FROM archivos WHERE fk_folio = $folioSelec";
+$sql = "SELECT id, nombre, fecha_creacion, nomusuario FROM archivos WHERE fk_folio = $folioSelec";
 
 // Ejecuta la consulta SQL
 $result = $conn->query($sql);
@@ -26,12 +26,23 @@ if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         // Reemplaza valores nulos o vacíos por "***"
         foreach ($row as $key => $value) {
-
+            if ($value === null || $value === '') {
+                $row[$key] = '***';
+            }
         }
+
+        // Agregar información sobre la validación aquí
+        $idArchivo = $row['id'];
+        $sqlValidacion = "SELECT idarchivo FROM validar_archivos WHERE idvalido = $idArchivo";
+        $resultValidacion = $conn->query($sqlValidacion);
+        if ($resultValidacion->num_rows > 0) {
+            $row['validado'] = true; // El archivo está validado
+        } else {
+            $row['validado'] = false; // El archivo no está validado
+        }
+
         $response[] = $row;
-
     }
-
 }
 
 // Cerrar la conexión a la base de datos
