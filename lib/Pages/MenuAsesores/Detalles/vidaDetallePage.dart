@@ -99,7 +99,12 @@ class _DetalleVidaState extends State<DetalleVida> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detalles de la Póliza de ${widget.nombreUsuario}'),
+        title: Text('Detalles de la Póliza de ${widget.nombreUsuario}',
+          style: const TextStyle(
+            fontFamily: 'Roboto',
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),),
       ),
       body: Container(
         padding: const EdgeInsets.all(10),
@@ -119,7 +124,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                 const Text(
                   'Información de la Póliza',
                   style: TextStyle(
-                    fontFamily: 'Montserrat',
+                    fontFamily: 'Roboto',
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.blueGrey,
@@ -130,6 +135,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                   columns: const [
                     DataColumn(label: Text('Folio GAM')),
                     DataColumn(label: Text('Línea de Negocio')),
+
 
                   ],
                   rows: [

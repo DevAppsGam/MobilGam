@@ -257,9 +257,10 @@ class _VidaState extends State<Vida> {
           child: Text(
             text,
             style: const TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 16,
+              fontFamily: 'Roboto',
+              fontSize: 17,
               color: Colors.black,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
@@ -290,9 +291,10 @@ class _VidaState extends State<Vida> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'BIENVENIDO ${widget.nombreUsuario}',
+          'Bienvenido ${widget.nombreUsuario}',
           style: const TextStyle(
-            fontFamily: 'Montserrat',
+            fontFamily: 'Roboto',
+            fontSize: 24,
           ),
         ),
       ),
@@ -314,10 +316,11 @@ class _VidaState extends State<Vida> {
                     const Text(
                       'Mis Trámites de Vida',
                       style: TextStyle(
-                        fontFamily: 'Montserrat',
+                        fontFamily: 'Roboto',
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.blueGrey,
+
                       ),
                     ),
                     IconButton(
@@ -326,7 +329,8 @@ class _VidaState extends State<Vida> {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: const Text('Búsqueda'),
+                              title: const Text('Búsqueda',
+                              ),
                               content: TextField(
                                 onChanged: (value) {
                                   setState(() {
@@ -370,7 +374,11 @@ class _VidaState extends State<Vida> {
                           style: ElevatedButton.styleFrom(
                             primary: isFilterActive(filterName) ? Colors.grey : Colors.blue,
                           ),
-                          child: Text(filterButtonText[filterName]!),
+                          child: Text(filterButtonText[filterName]!,style: const TextStyle(
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                          ),),
                         ),
                       const SizedBox(width: 16),
                       ElevatedButton(
@@ -380,7 +388,14 @@ class _VidaState extends State<Vida> {
                         style: ElevatedButton.styleFrom(
                           primary: Colors.lightGreen,
                         ),
-                        child: const Text('A TIEMPO'),
+                        child: const Text(
+                          'A TIEMPO',
+                          style: TextStyle(
+                              fontFamily: 'Roboto',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                          ),
+                        ),
                       ),
                       const SizedBox(width: 16),
                       ElevatedButton(
@@ -388,9 +403,14 @@ class _VidaState extends State<Vida> {
 
                         },
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.yellow,
+                          primary: const Color.fromRGBO(241, 201, 132, 1.0),
                         ),
-                        child: const Text('POR VENCER'),
+                        child: const Text('POR VENCER',
+                          style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                          ),),
                       ),
                       const SizedBox(width: 16),
                       ElevatedButton(
@@ -398,9 +418,14 @@ class _VidaState extends State<Vida> {
 
                         },
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.red,
+                          primary: Colors.red  ,
                         ),
-                        child: const Text('VENCIDOS'),
+                        child: const Text('VENCIDOS',
+                          style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                          ),),
                       ),
                     ],
                   ),
@@ -411,7 +436,7 @@ class _VidaState extends State<Vida> {
                 child: Text(
                   filtroAplicado.isNotEmpty ? 'Filtro Aplicado: $filtroAplicado' : '',
                   style: const TextStyle(
-                    fontFamily: 'Montserrat',
+                    fontFamily: 'Roboto',
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.blueAccent,
@@ -431,6 +456,9 @@ class _VidaState extends State<Vida> {
                   ],
                 ),
               ),
+              const SizedBox(
+                width: 30,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -442,7 +470,13 @@ class _VidaState extends State<Vida> {
                         }
                       });
                     },
-                    child: const Text('Anterior'),
+                    child: const Text('Anterior',
+                      style: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                   const SizedBox(
                     width: 30,
@@ -455,7 +489,12 @@ class _VidaState extends State<Vida> {
                         }
                       });
                     },
-                    child: const Text('Siguiente'),
+                    child: const Text('Siguiente',
+                      style: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),),
                   ),
                 ],
               ),
