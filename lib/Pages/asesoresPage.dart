@@ -253,7 +253,7 @@ class IconWithText extends StatelessWidget {
             title,
             style: TextStyle(
               fontFamily: 'Roboto',
-              fontSize: 26,
+              fontSize: 24,
               fontWeight: FontWeight.bold,
               color: color ?? Colors.black, // Color del texto (usará negro si no se proporciona un color específico)
             ),

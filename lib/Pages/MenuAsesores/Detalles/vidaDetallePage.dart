@@ -23,7 +23,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   }
 
   Future<void> fetchDataFromPHP() async {
-    final String url = 'http://192.168.1.75/gam/detallevida.php?id=${widget.id}';
+    final String url = 'http://192.168.100.73/gam/detallevida.php?id=${widget.id}';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -50,7 +50,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   }
 
   Future<List<Map<String, dynamic>>?> fetchDataForSecondTable() async {
-    final String secondTableUrl = 'http://192.168.1.75/gam/detallevidadocumentos.php?id=${widget.id}';
+    final String secondTableUrl = 'http://192.168.100.73/gam/detallevidadocumentos.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(secondTableUrl));
 
@@ -93,18 +93,18 @@ class _DetalleVidaState extends State<DetalleVida> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detalles de la Póliza de ${widget.nombreUsuario}',
+        title: Text(
+          'Detalles de la Póliza de ${widget.nombreUsuario}',
           style: const TextStyle(
             fontFamily: 'Roboto',
             fontSize: 24,
             fontWeight: FontWeight.bold,
-          ),),
+          ),
+        ),
       ),
       body: Container(
         padding: const EdgeInsets.all(10),
@@ -131,97 +131,37 @@ class _DetalleVidaState extends State<DetalleVida> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                DataTable(
-                  columns: const [
-                    DataColumn(label: Text('Folio GAM')),
-                    DataColumn(label: Text('Línea de Negocio')),
-
-
-                  ],
-                  rows: [
-                    DataRow(
-                      cells: [
-                        const DataCell(Text('Folio GAM')),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    columns: const [
+                      DataColumn(label: Text('Folio GAM')),
+                      DataColumn(label: Text('Línea de Negocio')),
+                      DataColumn(label: Text('Fecha de Solicitud')),
+                      DataColumn(label: Text('Estado')),
+                      DataColumn(label: Text('Contratante')),
+                      DataColumn(label: Text('Póliza')),
+                      DataColumn(label: Text('Tipo de Solicitud')),
+                      DataColumn(label: Text('Tipo de movimiento')),
+                      DataColumn(label: Text('Prioridad')),
+                      DataColumn(label: Text('Comentarios')),
+                    ],
+                    rows: [
+                      DataRow(cells: [
                         DataCell(Text(data['id'] ?? '***')),
-                      ],
-                    ),
-                    DataRow(
-                      cells: [
-                        const DataCell(Text('Línea de Negocio')),
                         DataCell(Text(data['negocio'] ?? '***')),
-                      ],
-                    ),
-                    DataRow(
-                      cells: [
-                        const DataCell(Text('Fecha de Solicitud')),
                         DataCell(Text(data['fecha'] ?? '***')),
-                      ],
-                    ),
-                    DataRow(
-                      cells: [
-                        const DataCell(Text('Estado')),
                         DataCell(Text(data['estado'] ?? '***')),
-                      ],
-                    ),
-                    DataRow(
-                      cells: [
-                        const DataCell(Text('Contratante')),
                         DataCell(Text(data['contratante'] ?? '***')),
-                      ],
-                    ),
-                    DataRow(
-                      cells: [
-                        const DataCell(Text('Póliza')),
-                        DataCell(Text(data['poliza'] ?? '***')),
-                      ],
-                    ),
-                    DataRow(
-                      cells: [
-                        const DataCell(Text('Tipo de Solicitud')),
+                        DataCell(Text(data['polizap'] ?? '***')),
                         DataCell(Text(data['t_solicitud'] ?? '***')),
-                      ],
-                    ),
-                    DataRow(
-                      cells: [
-                        const DataCell(Text('Tipo de Movimiento')),
-                        DataCell(Text(data['movimiento'] ?? '***')),
-                      ],
-                    ),
-                    DataRow(
-                      cells: [
-                        const DataCell(Text('Monto')),
-                        DataCell(Text(data['monto'] ?? '***')),
-                      ],
-                    ),
-                    DataRow(
-                      cells: [
-                        const DataCell(Text('Moneda de Pagos')),
-                        DataCell(Text(data['moneda_pagos'] ?? '***')),
-                      ],
-                    ),
-                    DataRow(
-                      cells: [
-                        const DataCell(Text('Prioridad')),
+                        DataCell(Text(data['t_movimiento'] ?? '***')),
                         DataCell(Text(data['prioridad'] ?? '***')),
-                      ],
-                    ),
-                    DataRow(
-                      cells: [
-                        const DataCell(Text('Comentarios')),
                         DataCell(Text(data['comentarios'] ?? '***')),
-                      ],
-                    ),
-                    DataRow(
-                      cells: [
-                        const DataCell(Text('Folio GNP')),
-                        DataCell(Text(data['fgnp'] ?? '***')),
-                      ],
-                    ),
-                    // ... Otras filas de datos aquí ...
-                  ],
+                      ]),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 32),
-
                 const SizedBox(height: 32),
                 const Text(
                   'Documentos Relacionados',
@@ -261,23 +201,24 @@ class _DetalleVidaState extends State<DetalleVida> {
                                 DataCell(Text(data['nomusuario'] ?? '***')),
                                 DataCell(Text(data['nombre'] ?? '***')),
                                 DataCell(
-                                  ElevatedButton(
+                                  IconButton(
                                     onPressed: () {
                                       // Lógica para abrir o ver el archivo aquí.
                                       // Puedes usar navegación o mostrar un visor de archivos, según tus necesidades.
                                     },
-                                    child: const Text('a'),
+                                    icon: const Icon(Icons.search), // Cambia el icono aquí
                                   ),
                                 ),
                                 DataCell(
-                                  ElevatedButton(
+                                  IconButton(
                                     onPressed: () {
-                                      // Lógica para abrir o ver el archivo aquí.
-                                      // Puedes usar navegación o mostrar un visor de archivos, según tus necesidades.
+                                      // Lógica para descargar el archivo aquí.
+                                      // Puedes implementar la descarga del archivo en esta función.
                                     },
-                                    child: const Text('a'),
+                                    icon: Icon(Icons.file_download), // Cambia el icono aquí
                                   ),
                                 ),
+
                                 DataCell(
                                   data['validado'] == true
                                       ? const Icon(
@@ -298,8 +239,8 @@ class _DetalleVidaState extends State<DetalleVida> {
                     }
                   },
                 ),
-            /*
-            const SizedBox(height: 32),
+                /*
+                const SizedBox(height: 32),
                 const Text(
                   'Subir Documentos',
                   style: TextStyle(
@@ -370,7 +311,6 @@ class _DetalleVidaState extends State<DetalleVida> {
                     color: Colors.blueGrey,
                   ),
                 ),
-
               ],
             ),
           ),
