@@ -76,6 +76,33 @@ class _DetalleVidaState extends State<DetalleVida> {
     }
   }
 
+  Future<List<Map<String, dynamic>>?> fetchDataForThirdTable() async {
+    final String thirdTableUrl = 'http://192.168.1.75/gam/detallevidaobservaciones.php?id=${widget.id}';
+    try {
+      final response = await http.get(Uri.parse(thirdTableUrl));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonData = json.decode(response.body);
+
+        if (jsonData.isNotEmpty) {
+          // Los datos se obtuvieron correctamente, así que los devolvemos.
+          return jsonData.cast<Map<String, dynamic>>();
+        } else {
+          // No se encontraron datos en la tercera tabla.
+          return [];
+        }
+      } else {
+        // Manejar errores aquí, como mostrar un mensaje de error.
+        print('Error al obtener datos de la tercera tabla: ${response.statusCode}');
+        return null; // Devolvemos null en caso de error.
+      }
+    } catch (error) {
+      // Manejar errores de excepción aquí.
+      print('Error al obtener datos de la tercera tabla: $error');
+      return null; // Devolvemos null en caso de error.
+    }
+  }
+
   Future<void> _pickDocument() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
@@ -184,8 +211,8 @@ class _DetalleVidaState extends State<DetalleVida> {
                     } else {
                       final List<Map<String, dynamic>> secondTableData = snapshot.data!;
 
-                      return SingleChildScrollView( // Agregar el SingleChildScrollView aquí
-                        scrollDirection: Axis.horizontal, // Esto permite el desplazamiento horizontal
+                      return SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
                         child: DataTable(
                           columns: const [
                             DataColumn(label: Text('Usuario')),
@@ -215,10 +242,9 @@ class _DetalleVidaState extends State<DetalleVida> {
                                       // Lógica para descargar el archivo aquí.
                                       // Puedes implementar la descarga del archivo en esta función.
                                     },
-                                    icon: Icon(Icons.file_download), // Cambia el icono aquí
+                                    icon: const Icon(Icons.file_download), // Cambia el icono aquí
                                   ),
                                 ),
-
                                 DataCell(
                                   data['validado'] == true
                                       ? const Icon(
@@ -239,77 +265,65 @@ class _DetalleVidaState extends State<DetalleVida> {
                     }
                   },
                 ),
-                /*
-                const SizedBox(height: 32),
-                const Text(
-                  'Subir Documentos',
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blueGrey,
-                  ),
-                ),
-                DataTable(
-                  columns: const [
-                    DataColumn(label: Text('Subir Archivo')),
-                    DataColumn(label: Text('Opción')),
-                    DataColumn(label: Text('')),
-                    DataColumn(label: Text('')),
-                  ],
-                  rows: [
-                    DataRow(cells: [
-                      DataCell(ElevatedButton(
-                        onPressed: () {
-                          // Lógica para abrir el selector de archivos aquí
-                          _pickDocument();
-                        },
-                        child: const Text('Seleccionar Archivo'),
-                      )),
-                      DataCell(DropdownButton<String>(
-                        // Aquí configura la lista desplegable con las 10 opciones
-                        items: List.generate(10, (index) {
-                          return DropdownMenuItem<String>(
-                            value: 'Opción ${index + 1}',
-                            child: Text('Opción ${index + 1}'),
-                          );
-                        }),
-                        onChanged: (value) {
-                          // Lógica para manejar la selección de la opción aquí
-                        },
-                        value: null, // Puedes establecer un valor inicial si es necesario
-                      )),
-                      DataCell(ElevatedButton(
-                        onPressed: () {
-                          // Lógica para confirmar aquí
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.lightGreen,
-                        ),
-                        child: const Text('Confirmar'),
-                      )),
-                      DataCell(ElevatedButton(
-                        onPressed: () {
-                          // Lógica para cancelar aquí
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.redAccent,
-                        ),
-                        child: const Text('Cancelar'),
-                      )),
-                    ]),
-                  ],
-                ),
-                */
                 const SizedBox(height: 32),
                 const Text(
                   'Historial',
                   style: TextStyle(
-                    fontFamily: 'Montserrat',
+                    fontFamily: 'Roboto',
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.blueGrey,
                   ),
+                ),
+                FutureBuilder<List<Map<String, dynamic>>?>(
+                  future: fetchDataForThirdTable(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Text('No hay datos disponibles en el historial.');
+                    } else if (snapshot.hasError) {
+                      return const Text('Error al cargar los datos del historial.');
+                    } else {
+                      final List<Map<String, dynamic>> thirdTableData = snapshot.data!;
+
+                      return SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: DataTable(
+                          columns: const [
+                            DataColumn(label: Text('')),
+                            DataColumn(label: Text('Usuario')),
+                            DataColumn(label: Text('Observaciones')),
+                            DataColumn(label: Text('Estado')),
+                            DataColumn(label: Text('Fecha')),
+                          ],
+                          rows: thirdTableData.map((data) {
+                            return DataRow(
+                              cells: [
+                                /*
+                                DataCell(
+                                  // Aquí puedes mostrar una imagen si tienes una URL de imagen en tu data.
+                                  // Puedes usar Image.network o Image.asset según tus necesidades.
+                                  // Ejemplo:
+                                  Image.network(
+                                    data['imagen'] ?? '***',
+                                    width: 50, // Ajusta el tamaño de la imagen
+                                    height: 50,
+                                  ),
+                                ),
+                                 */
+                                const DataCell(Text('')),
+                                DataCell(Text(data['usuario'] ?? '***')),
+                                DataCell(Text(data['comentario'] ?? '***')),
+                                DataCell(Text(data['estado1'] ?? '***')),
+                                DataCell(Text(data['fecha_comentario'] ?? '***')),
+                              ],
+                            );
+                          }).toList(),
+                        ),
+                      );
+                    }
+                  },
                 ),
               ],
             ),

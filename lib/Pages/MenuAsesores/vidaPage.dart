@@ -329,14 +329,15 @@ class _VidaState extends State<Vida> {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: const Text('Búsqueda',
-                              ),
-                              content: TextField(
-                                onChanged: (value) {
-                                  setState(() {
-                                    searchTerm = value;
-                                  });
-                                },
+                              title: const Text('Búsqueda'),
+                              content: SingleChildScrollView(
+                                child: TextField(
+                                  onChanged: (value) {
+                                    setState(() {
+                                      searchTerm = value;
+                                    });
+                                  },
+                                ),
                               ),
                               actions: [
                                 TextButton(
@@ -350,6 +351,7 @@ class _VidaState extends State<Vida> {
                             );
                           },
                         );
+
                       },
                       icon: const Icon(
                         Icons.search,
