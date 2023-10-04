@@ -17,6 +17,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   Map<String, dynamic> data = {};
   bool isLoading = false;
   String errorMessage = '';
+  final TextEditingController _observationController = TextEditingController();
 
   @override
   void initState() {
@@ -133,6 +134,28 @@ class _DetalleVidaState extends State<DetalleVida> {
     } else {
       // El usuario canceló la selección de archivos.
       print('Selección de archivos cancelada.');
+    }
+  }
+
+  Future<void> _sendObservation(String observation) async {
+    const String url = 'http://192.168.1.75/gam/detallevidacrearobservacion.php';
+
+    try {
+      final response = await http.get(
+        Uri.parse('$url?id=${widget.id}&observacion=$observation'),
+      );
+
+      if (response.statusCode == 200) {
+        // La observación se envió con éxito al servidor PHP.
+        // Puedes mostrar un mensaje de éxito o realizar cualquier otra acción necesaria.
+        print('Observación enviada con éxito');
+      } else {
+        // Manejar errores aquí, como mostrar un mensaje de error.
+        print('Error al enviar la observación al servidor: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Manejar errores de excepción aquí.
+      print('Error al enviar la observación al servidor: $error');
     }
   }
 
@@ -350,7 +373,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                 const SizedBox(height: 32),
                 const Center(
                   child: Text(
-                    'Historial',
+                    'Historial de Observaciones',
                     style: TextStyle(
                       fontFamily: 'Roboto',
                       fontSize: 24,
@@ -422,6 +445,86 @@ class _DetalleVidaState extends State<DetalleVida> {
                     ),
                   ),
                 ),
+                SingleChildScrollView(
+                  child: DataTable(
+                    columnSpacing: 20, // Espacio entre columnas
+                    columns: const [
+                      DataColumn(
+                        label: Text('Observación'),
+                        // Establece un ancho máximo para la columna de observación
+                        // El valor puede ajustarse según tus necesidades
+                        numeric: false, // Esto evita que la columna se ajuste automáticamente al contenido
+                      ),
+                      DataColumn(
+                        label: Text(''),
+                        // Establece un ancho máximo para la columna de Enviar
+                        // El valor puede ajustarse según tus necesidades
+                        numeric: false,
+                      ),
+                    ],
+                    rows: [
+                      DataRow(cells: [
+                        DataCell(
+                          Container(
+                            constraints: const BoxConstraints(
+                              maxWidth: 600, minWidth: 600,
+                            ), // Ancho máximo de la celda
+                            child: TextField(
+                              controller: _observationController,
+                            ), // Celda con un campo de texto para la observación
+                          ),
+                        ),// Celda con un checkbox para Aceptar
+                        DataCell(
+                          ElevatedButton(
+                            onPressed: () {
+                              // Obtener el valor del campo de observación
+                              String observation = _observationController.text;
+
+                              // Llamar a la función para enviar la observación al servidor
+                              _sendObservation(observation);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.blue, // Color de fondo del botón "Enviar"
+                            ),
+                            child: const Text('Enviar'),
+                          ),
+
+                        ),
+                      ]),
+                      // Agrega más filas según sea necesario
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10,),
+                DataTable(
+                  columns: const [
+                    DataColumn(label: Text('Términos y Condiciones')),
+                    DataColumn(label: Text('')),
+                  ],
+                  rows: [
+                    DataRow(cells: [
+                      DataCell(
+                        Container(
+                          constraints: const BoxConstraints(
+                            maxWidth: 600, minWidth: 600,
+                          ), // Ancho máximo de la celda
+                          child: const Text('De acuerdo a la Circular 16 de GNP donde se solicita la documentación física en original sin tachaduras ni enmendaduras, en una sola tinta tal y como se emitió la póliza te solicitamos nos hagas llegar dicha documentación en un plazo máximo de 15 días.',style: TextStyle(fontFamily: 'Robot'),),
+                        ),
+                      ),
+                      DataCell(
+                        ElevatedButton(
+                          onPressed: () {
+                            // Lógica para aceptar los términos y condiciones aquí.
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.blue, // Color de fondo del botón "Aceptar"
+                          ),
+                          child: const Text('Aceptar'),
+                        ),
+                      ),
+                    ]),
+                  ],
+                )
               ],
             ),
           ),
