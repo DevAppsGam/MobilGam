@@ -14,7 +14,6 @@ $nombreUsuario = isset($_GET['username']) ? $_GET['username'] : '';
 
 // Consulta el id del agente correspondiente al nombreUsuario
 $sqlu = "SELECT id FROM datos_agente WHERE nomusuario = '$nombreUsuario'";
-
 // Ejecuta la consulta SQL
 $resultu = $conn->query($sqlu);
 
@@ -34,7 +33,7 @@ $filter = isset($_GET['filter']) ? $_GET['filter'] : '';
 // Divide el parámetro de filtro en un array utilizando la coma como separador
 $filtersArray = explode(',', $filter);
 
-$sql = "SELECT * FROM folios WHERE id >= 20000 AND id_agente = 16 AND t_solicitud IN ('ALTA DE POLIZA', 'MOVIMIENTOS', 'PAGOS') ORDER BY fecha DESC";
+$sql = "SELECT * FROM folios WHERE id >= 20000 AND id_agente = $idAgente AND t_solicitud IN ('ALTA DE POLIZA', 'MOVIMIENTOS', 'PAGOS') ";
 
 // Define un array de filtros válidos
 $validFilters = array(
@@ -70,6 +69,11 @@ $response = array();
 if ($result->num_rows > 0) {
     // Recorrer los resultados y almacenarlos en el arreglo de respuesta
     while ($row = $result->fetch_assoc()) {
+        foreach ($row as $key => $value) {
+            if ($value === null || $value === '' || strtolower($value) === 'null') {
+                $row[$key] = '***';
+            }
+        }
         $response[] = $row;
     }
 }

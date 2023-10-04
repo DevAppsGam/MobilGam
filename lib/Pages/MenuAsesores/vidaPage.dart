@@ -42,7 +42,7 @@ class _VidaState extends State<Vida> {
 
   Future<void> fetchData() async {
     final response =
-    await http.get(Uri.parse('http://192.168.1.75/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
+    await http.get(Uri.parse('http://192.168.100.73/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
     print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
@@ -62,7 +62,7 @@ class _VidaState extends State<Vida> {
 
   Future<void> fetchDataWithFilter(String filterNames) async {
     final response = await http.get(Uri.parse(
-        'http://192.168.1.75/gam/tablafoliosvida.php?filter=$filterNames&username=${widget.nombreUsuario}'));
+        'http://192.168.100.73/gam/tablafoliosvida.php?filter=$filterNames&username=${widget.nombreUsuario}'));
 
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
@@ -368,10 +368,11 @@ class _VidaState extends State<Vida> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const SizedBox(width: 16),
-                      Column(
-                        children: [
-                          for (var filterName in filterButtonText.keys)
-                            ElevatedButton(
+                      Row(
+                        children: filterButtonText.keys.map((filterName) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0), // Ajusta el valor según sea necesario
+                            child: ElevatedButton(
                               onPressed: () => toggleFiltro(filterName, filterButtonText[filterName]!),
                               style: ElevatedButton.styleFrom(
                                 primary: isFilterActive(filterName) ? Colors.grey : Colors.blue,
@@ -385,7 +386,8 @@ class _VidaState extends State<Vida> {
                                 ),
                               ),
                             ),
-                        ],
+                          );
+                        }).toList(),
                       ),
 
                       const SizedBox(width: 16),
@@ -399,7 +401,7 @@ class _VidaState extends State<Vida> {
                         child: const Text(
                           'A TIEMPO',
                           style: TextStyle(
-                              fontFamily: 'Roboto',
+                            fontFamily: 'Roboto',
                             fontWeight: FontWeight.bold,
                             fontSize: 17,
                           ),
