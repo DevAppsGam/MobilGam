@@ -20,7 +20,12 @@ class contactoDetalle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detalles del Contacto'),
+        title: const Text('Detalles del Contacto',
+          style: TextStyle(
+            fontFamily: 'Roboto',
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),),
       ),
       body: Stack(
         children: [
@@ -42,15 +47,16 @@ class contactoDetalle extends StatelessWidget {
                   const Padding(
                     padding: EdgeInsets.all(16.0),
                     child: Text(
-                      'CONTACTO VIDA',
+                      'Información del contacto VIDA',
                       style: TextStyle(
-                        fontFamily: 'Montserrat',
+                        fontFamily: 'Roboto',
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.blueGrey,
                       ),
                     ),
                   ),
+                  const SizedBox(height: 14,),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -69,6 +75,7 @@ class contactoDetalle extends StatelessWidget {
                               style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
+                                fontFamily: 'Roboto',
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -76,6 +83,7 @@ class contactoDetalle extends StatelessWidget {
                               rol,
                               style: const TextStyle(
                                 fontSize: 18,
+                                fontFamily: 'Roboto',
                               ),
                             ),
                           ],
@@ -94,7 +102,7 @@ class contactoDetalle extends StatelessWidget {
                       },
                       child: Text(
                         TEL,
-                        style: const TextStyle(fontSize: 16, color: Colors.blue),
+                        style: const TextStyle(fontSize: 16, color: Colors.blue,fontFamily: 'Roboto'),
                       ),
                     ),
                   ),
@@ -107,7 +115,7 @@ class contactoDetalle extends StatelessWidget {
                       },
                       child: Text(
                         mail,
-                        style: const TextStyle(fontSize: 16, color: Colors.blue),
+                        style: const TextStyle(fontSize: 16, color: Colors.blue,fontFamily: 'Roboto'),
                       ),
                     ),
                   ),

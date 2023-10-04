@@ -23,7 +23,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   }
 
   Future<void> fetchDataFromPHP() async {
-    final String url = 'http://192.168.100.73/gam/detallevida.php?id=${widget.id}';
+    final String url = 'http://192.168.1.75/gam/detallevida.php?id=${widget.id}';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -50,7 +50,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   }
 
   Future<List<Map<String, dynamic>>?> fetchDataForSecondTable() async {
-    final String secondTableUrl = 'http://192.168.100.73/gam/detallevidadocumentos.php?id=${widget.id}';
+    final String secondTableUrl = 'http://192.168.1.75/gam/detallevidadocumentos.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(secondTableUrl));
 

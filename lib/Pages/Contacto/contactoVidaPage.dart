@@ -18,9 +18,11 @@ class contactoVida extends StatelessWidget {
             Scaffold.of(context).openDrawer();
           },
           child: Text(
-            "BIENVENIDO $nombreUsuario",
+            "Bienvenido $nombreUsuario",
             style: const TextStyle(
-              fontFamily: 'Montserrat',
+              fontFamily: 'Roboto',
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
             ),
           ),
         ),
@@ -30,10 +32,11 @@ class contactoVida extends StatelessWidget {
           children: [
             ListTile(
               title: const Text(
-                'INICIO',
+                'Inicio',
                 style: TextStyle(
-                  fontFamily: 'Montserrat',
+                  fontFamily: 'Roboto',
                   color: Colors.blueAccent,
+                  fontSize: 24,
                 ),
               ),
               onTap: () {
@@ -46,10 +49,11 @@ class contactoVida extends StatelessWidget {
             ),
             ListTile(
               title: const Text(
-                'CONTACTOS',
+                'Contactos',
                 style: TextStyle(
-                  fontFamily: 'Montserrat',
+                  fontFamily: 'Roboto',
                   color: Colors.blueGrey,
+                  fontSize: 24,
                 ),
               ),
               onTap: () {
@@ -64,8 +68,9 @@ class contactoVida extends StatelessWidget {
               title: const Text(
                 'Cerrar sesión',
                 style: TextStyle(
-                  fontFamily: 'Montserrat',
+                  fontFamily: 'Roboto',
                   color: Colors.deepOrange,
+                  fontSize: 24,
                 ),
               ),
               onTap: () {
@@ -94,7 +99,7 @@ class contactoVida extends StatelessWidget {
               child: Text(
                 'Contacto de VIDA',
                 style: TextStyle(
-                  fontFamily: 'Montserrat',
+                  fontFamily: 'Roboto',
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.blueGrey,
@@ -221,7 +226,7 @@ class IconWithText extends StatelessWidget {
             Text(
               title,
               style: TextStyle(
-                fontFamily: 'Montserrat',
+                fontFamily: 'Roboto',
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: color,
@@ -233,7 +238,7 @@ class IconWithText extends StatelessWidget {
               child: Text(
                 subtitle,
                 style: TextStyle(
-                  fontFamily: 'Montserrat',
+                  fontFamily: 'Roboto',
                   fontSize: 14,
                   color: color,
                 ),

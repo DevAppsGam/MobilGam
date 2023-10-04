@@ -33,7 +33,7 @@ $filter = isset($_GET['filter']) ? $_GET['filter'] : '';
 // Divide el parámetro de filtro en un array utilizando la coma como separador
 $filtersArray = explode(',', $filter);
 
-$sql = "SELECT * FROM folios WHERE id >= 20000 AND id_agente = $idAgente AND t_solicitud IN ('ALTA DE POLIZA', 'MOVIMIENTOS', 'PAGOS') ";
+$sql = "SELECT * FROM folios WHERE id_agente = $idAgente AND t_solicitud IN ('ALTA DE POLIZA', 'MOVIMIENTOS', 'PAGOS')";
 
 // Define un array de filtros válidos
 $validFilters = array(
@@ -60,6 +60,9 @@ if (!empty($filtersArray)) {
         $sql .= " AND (" . implode(" OR ", $filterConditions) . ")";
     }
 }
+
+// Luego, aplica la ordenación
+$sql .= " ORDER BY fecha DESC"; // Ordena por fecha descendente
 
 // Ejecuta la consulta SQL modificada
 $result = $conn->query($sql);
