@@ -368,18 +368,26 @@ class _VidaState extends State<Vida> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const SizedBox(width: 16),
-                      for (var filterName in filterButtonText.keys)
-                        ElevatedButton(
-                          onPressed: () => toggleFiltro(filterName, filterButtonText[filterName]!),
-                          style: ElevatedButton.styleFrom(
-                            primary: isFilterActive(filterName) ? Colors.grey : Colors.blue,
-                          ),
-                          child: Text(filterButtonText[filterName]!,style: const TextStyle(
-                            fontFamily: 'Roboto',
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17,
-                          ),),
-                        ),
+                      Column(
+                        children: [
+                          for (var filterName in filterButtonText.keys)
+                            ElevatedButton(
+                              onPressed: () => toggleFiltro(filterName, filterButtonText[filterName]!),
+                              style: ElevatedButton.styleFrom(
+                                primary: isFilterActive(filterName) ? Colors.grey : Colors.blue,
+                              ),
+                              child: Text(
+                                filterButtonText[filterName]!,
+                                style: const TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 17,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+
                       const SizedBox(width: 16),
                       ElevatedButton(
                         onPressed: (){
