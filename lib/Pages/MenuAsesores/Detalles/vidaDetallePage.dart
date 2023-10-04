@@ -15,6 +15,8 @@ class DetalleVida extends StatefulWidget {
 
 class _DetalleVidaState extends State<DetalleVida> {
   Map<String, dynamic> data = {};
+  bool isLoading = false;
+  String errorMessage = '';
 
   @override
   void initState() {
@@ -23,6 +25,13 @@ class _DetalleVidaState extends State<DetalleVida> {
   }
 
   Future<void> fetchDataFromPHP() async {
+    if (!mounted) return; // Evitar actualizaciones si el widget ya no está en el árbol
+
+    setState(() {
+      isLoading = true;
+      errorMessage = '';
+    });
+
     final String url = 'http://192.168.1.75/gam/detallevida.php?id=${widget.id}';
 
     try {
@@ -34,18 +43,25 @@ class _DetalleVidaState extends State<DetalleVida> {
         if (jsonData.isNotEmpty) {
           setState(() {
             data = jsonData[0];
+            isLoading = false;
           });
         } else {
-          // Manejar el caso en el que no se encontraron datos.
-          // Puedes mostrar un mensaje de error o una página vacía.
+          setState(() {
+            isLoading = false;
+            errorMessage = 'No se encontraron datos.';
+          });
         }
       } else {
-        // Manejar errores aquí, como mostrar un mensaje de error.
-        print('Error al obtener datos: ${response.statusCode}');
+        setState(() {
+          isLoading = false;
+          errorMessage = 'Error al obtener datos: ${response.statusCode}';
+        });
       }
     } catch (error) {
-      // Manejar errores de excepción aquí.
-      print('Error: $error');
+      setState(() {
+        isLoading = false;
+        errorMessage = 'Error: $error';
+      });
     }
   }
 
@@ -148,13 +164,15 @@ class _DetalleVidaState extends State<DetalleVida> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Información de la Póliza',
-                  style: TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blueGrey,
+                const Center(
+                  child: Text(
+                    'Información de la Póliza',
+                    style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueGrey,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -190,24 +208,26 @@ class _DetalleVidaState extends State<DetalleVida> {
                   ),
                 ),
                 const SizedBox(height: 32),
-                const Text(
-                  'Documentos Relacionados',
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blueGrey,
+                const Center(
+                  child: Text(
+                    'Documentos Relacionados',
+                    style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueGrey,
+                    ),
                   ),
                 ),
                 FutureBuilder<List<Map<String, dynamic>>?>(
                   future: fetchDataForSecondTable(),
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
+                    if (isLoading) {
                       return const CircularProgressIndicator();
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return const Text('No hay datos disponibles en la segunda tabla.');
                     } else if (snapshot.hasError) {
-                      return const Text('Error al cargar los datos de la segunda tabla.');
+                      return Text('Error al cargar los datos de la segunda tabla: ${snapshot.error}');
                     } else {
                       final List<Map<String, dynamic>> secondTableData = snapshot.data!;
 
@@ -266,24 +286,88 @@ class _DetalleVidaState extends State<DetalleVida> {
                   },
                 ),
                 const SizedBox(height: 32),
-                const Text(
-                  'Historial',
-                  style: TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blueGrey,
+                const Center(
+                  child: Text(
+                    'Subir Documentos',
+                    style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueGrey,
+                    ),
+                  ),
+                ),
+                DataTable(
+                  columns: const [
+                    DataColumn(label: Text('Subir Archivo')),
+                    DataColumn(label: Text('Opción')),
+                    DataColumn(label: Text('')),
+                    DataColumn(label: Text('')),
+                  ],
+                  rows: [
+                    DataRow(cells: [
+                      DataCell(ElevatedButton(
+                        onPressed: () {
+                          // Lógica para abrir el selector de archivos aquí
+                          _pickDocument();
+                        },
+                        child: const Text('Seleccionar Archivo'),
+                      )),
+                      DataCell(DropdownButton<String>(
+                        // Aquí configura la lista desplegable con las 10 opciones
+                        items: List.generate(10, (index) {
+                          return DropdownMenuItem<String>(
+                            value: 'Opción ${index + 1}',
+                            child: Text('Opción ${index + 1}'),
+                          );
+                        }),
+                        onChanged: (value) {
+                          // Lógica para manejar la selección de la opción aquí
+                        },
+                        value: null, // Puedes establecer un valor inicial si es necesario
+                      )),
+                      DataCell(ElevatedButton(
+                        onPressed: () {
+                          // Lógica para confirmar aquí
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.lightGreen,
+                        ),
+                        child: const Text('Confirmar'),
+                      )),
+                      DataCell(ElevatedButton(
+                        onPressed: () {
+                          // Lógica para cancelar aquí
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.redAccent,
+                        ),
+                        child: const Text('Cancelar'),
+                      )),
+                    ]),
+                  ],
+                ),
+                const SizedBox(height: 32),
+                const Center(
+                  child: Text(
+                    'Historial',
+                    style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueGrey,
+                    ),
                   ),
                 ),
                 FutureBuilder<List<Map<String, dynamic>>?>(
                   future: fetchDataForThirdTable(),
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
+                    if (isLoading) {
                       return const CircularProgressIndicator();
                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return const Text('No hay datos disponibles en el historial.');
                     } else if (snapshot.hasError) {
-                      return const Text('Error al cargar los datos del historial.');
+                      return Text('Error al cargar los datos del historial: ${snapshot.error}');
                     } else {
                       final List<Map<String, dynamic>> thirdTableData = snapshot.data!;
 
@@ -311,7 +395,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                                     height: 50,
                                   ),
                                 ),
-                                 */
+                                */
                                 const DataCell(Text('')),
                                 DataCell(Text(data['usuario'] ?? '***')),
                                 DataCell(Text(data['comentario'] ?? '***')),
@@ -324,6 +408,19 @@ class _DetalleVidaState extends State<DetalleVida> {
                       );
                     }
                   },
+                ),
+
+                const SizedBox(height: 32),
+                const Center(
+                  child: Text(
+                    'Agregar observación',
+                    style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueGrey,
+                    ),
+                  ),
                 ),
               ],
             ),
