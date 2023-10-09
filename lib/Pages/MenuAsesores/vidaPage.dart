@@ -313,14 +313,15 @@ class _VidaState extends State<Vida> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'Mis Trámites de Vida',
-                      style: TextStyle(
-                        fontFamily: 'Roboto',
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blueGrey,
-
+                    const Center(
+                      child: Text(
+                        'Mis Trámites de Vida',
+                        style: TextStyle(
+                          fontFamily: 'Roboto',
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blueGrey,
+                        ),
                       ),
                     ),
                     IconButton(
