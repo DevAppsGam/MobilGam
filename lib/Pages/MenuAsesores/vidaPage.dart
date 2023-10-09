@@ -228,38 +228,41 @@ class _VidaState extends State<Vida> {
   TableRow _buildTableRow(Map<String, String> datos) {
     return TableRow(
       children: [
-        _buildTableCell(datos['id'] ?? '', datos),
-        _buildTableCell(datos['contratante'] ?? '', datos),
-        _buildTableCell(datos['poliza'] ?? '', datos),
-        _buildTableCell(datos['fgnp'] ?? '', datos),
-        _buildTableCell(datos['fecha'] ?? '', datos),
-        _buildTableCell(datos['estado'] ?? '', datos),
+        _buildTableCell(datos['id'] ?? '', datos, 'id'),
+        _buildTableCell(datos['contratante'] ?? '', datos, 'contratante'),
+        _buildTableCell(datos['poliza'] ?? '', datos, 'poliza'),
+        _buildTableCell(datos['fgnp'] ?? '', datos, 'fgnp'),
+        _buildTableCell(datos['fecha'] ?? '', datos, 'fecha'),
+        _buildTableCell(datos['estado'] ?? '', datos, 'estado'),
       ],
     );
   }
 
-  //VALIDAR UN CAMPO  VARIOS
-  TableCell _buildTableCell (String text, Map <String, String> rowData){
+  Widget _buildTableCell(String text, Map<String, String> datos, String columna) {
+    Color textColor = columna == 'id' ? Colors.lightBlueAccent : Colors.black;
+
     return TableCell(
       child: GestureDetector(
-        onTap: (){
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context)=> DetalleVida(
-                nombreUsuario: widget.nombreUsuario,
-                id:text,
+        onTap: () {
+          if (columna == 'id') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetalleVida(
+                  nombreUsuario: widget.nombreUsuario,
+                  id: text,
+                ),
               ),
-            ),
-          );
+            );
+          }
         },
         child: Center(
           child: Text(
             text,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Roboto',
               fontSize: 17,
-              color: Colors.black,
+              color: textColor,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -267,6 +270,7 @@ class _VidaState extends State<Vida> {
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
