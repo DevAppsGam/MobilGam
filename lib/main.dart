@@ -128,7 +128,6 @@ class _LoginPageState extends State<LoginPage> {
         "password": password,
       },
     );
-    print('Response: ${response.body}');
 
     setState(() {
       isLoading = false;
@@ -220,7 +219,7 @@ class _LoginPageState extends State<LoginPage> {
                 const Text(
                   'Bienvenido',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 28,
                     fontWeight: FontWeight.bold,
                     color: Color.fromRGBO(73, 78, 84, 1),
                     fontFamily: 'Roboto',
@@ -246,7 +245,7 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
                   child: TextFormField(
-                    style: const TextStyle(fontFamily: 'Roboto'),
+                    style: const TextStyle(fontFamily: 'Roboto', fontSize: 20),
                     controller: controllerUser,
                     decoration: const InputDecoration(
                       hintText: 'USUARIO',
@@ -282,7 +281,7 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
                   child: TextField(
-                    style: const TextStyle(fontFamily: 'Roboto'),
+                    style: const TextStyle(fontFamily: 'Roboto', fontSize: 20),
                     controller: controllerPass,
                     obscureText: obscurePassword,
                     decoration: InputDecoration(

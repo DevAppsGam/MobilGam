@@ -14,7 +14,7 @@ if ($conn->connect_error) {
 $folioSelec = isset($_GET['id']) ? $_GET['id'] : '';
 
 // Consulta el id del agente correspondiente al nombreUsuario
-$sql = "SELECT fecha_comentario, comentario, usuario, estado1 FROM comentarios WHERE folio = $folioSelec";
+$sql = "SELECT fecha_comentario, comentario, usuario, estado1 FROM comentarios WHERE folio = $folioSelec ORDER BY fecha_comentario desc";
 
 // Ejecuta la consulta SQL
 $result = $conn->query($sql);

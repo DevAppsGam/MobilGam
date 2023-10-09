@@ -62,8 +62,4 @@ try {
 // Devolver la respuesta en formato JSON al cliente (Flutter)
 header('Content-Type: application/json');
 echo json_encode($response);
-<<<<<<< HEAD
 ?>
-=======
-?>
->>>>>>> afa1338135bb3508c1130a09ca32ed628dc6819b
