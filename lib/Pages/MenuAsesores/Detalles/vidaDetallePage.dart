@@ -221,8 +221,6 @@ class _DetalleVidaState extends State<DetalleVida> {
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -395,13 +393,13 @@ class _DetalleVidaState extends State<DetalleVida> {
                   columns: const [
                     DataColumn(label: Text('Archivo')),
                     DataColumn(label: Text('')),
-                    DataColumn(label: SizedBox(width: 100, child: Text('Opción'))),
+                    DataColumn(label: SizedBox(width: 175, child: Text('Tipo de Documento'))),
                     DataColumn(label: Text('')),
                     DataColumn(label: Text('')),
                   ],
                   rows: [
                     DataRow(cells: [
-                      DataCell(_selectedFileName != null ? Text(_selectedFileName!) : Text('Ningún archivo seleccionado')),
+                      DataCell(_selectedFileName != null ? Text(_selectedFileName!) : const Text('Ningún archivo seleccionado')),
                       DataCell(ElevatedButton(
                         onPressed: () {
                           _pickDocument();
@@ -411,20 +409,65 @@ class _DetalleVidaState extends State<DetalleVida> {
                         ),
                         child: const Text('Seleccionar Archivo'),
                       )),
-                      DataCell(DropdownButton<String>(
-                        items: List.generate(10, (index) {
-                          return DropdownMenuItem<String>(
-                            value: 'Opción ${index + 1}',
-                            child: Text('Opción ${index + 1}'),
-                          );
-                        }),
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedOption = value;
-                          });
-                        },
-                        value: _selectedOption,// Ajusta el ancho según tus necesidades
-                      )),
+                      DataCell(
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: DropdownButton<String>(
+                            items: const [
+                              DropdownMenuItem<String>(
+                                value: 'Seleccionar', // Valor para la opción predeterminada
+                                child: Text('Seleccionar'),
+                              ),
+                              DropdownMenuItem<String>(
+                                value: 'Solicitud',
+                                child: Text('Solicitud'),
+                              ),
+                              DropdownMenuItem<String>(
+                                value: 'Identificación',
+                                child: Text('Identificación'),
+                              ),
+                              DropdownMenuItem<String>(
+                                value: 'Comprobante de domicilio',
+                                child: Text('Comprobante de domicilio'),
+                              ),
+                              DropdownMenuItem<String>(
+                                value: 'Cartas de Extraprima',
+                                child: Text('Cartas de Extraprima'),
+                              ),
+                              DropdownMenuItem<String>(
+                                value: 'Cartas de Rechazo',
+                                child: Text('Cartas de Rechazo'),
+                              ),
+                              DropdownMenuItem<String>(
+                                value: 'Cartas Adicionales',
+                                child: Text('Cartas Adicionales'),
+                              ),
+                              DropdownMenuItem<String>(
+                                value: 'Cuestionario Adicional de Suscripción',
+                                child: Text('Cuestionario Adicional de Suscripción'),
+                              ),
+                              DropdownMenuItem<String>(
+                                value: 'Formato de Cobranza Electrónica',
+                                child: Text('Formato de Cobranza Electrónica'),
+                              ),
+                              DropdownMenuItem<String>(
+                                value: 'Hoja H107',
+                                child: Text('Hoja H107'),
+                              ),
+                              DropdownMenuItem<String>(
+                                value: 'Solicitudes Adicionales',
+                                child: Text('Solicitudes Adicionales'),
+                              ),
+                            ],
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedOption = value;
+                              });
+                            },
+                            value: _selectedOption ?? 'Seleccionar',
+                          ),
+                        ),
+                      ),
                       DataCell(ElevatedButton(
                         onPressed: () {
                           if (_selectedFileName != null && _selectedOption != null) {
