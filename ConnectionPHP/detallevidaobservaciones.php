@@ -14,7 +14,7 @@ if ($conn->connect_error) {
 $folioSelec = isset($_GET['id']) ? $_GET['id'] : '';
 
 // Consulta el id del agente correspondiente al nombreUsuario
-$sql = "SELECT fecha_comentario, comentario, usuario, estado1 FROM comentarios WHERE folio = $folioSelec ORDER BY fecha_comentario desc";
+$sql = "SELECT DATE(fecha_comentario) AS fecha_comentario, comentario, usuario, estado1 FROM comentarios WHERE folio = $folioSelec ORDER BY fecha_comentario DESC";
 
 // Ejecuta la consulta SQL
 $result = $conn->query($sql);
@@ -32,6 +32,11 @@ if ($result->num_rows > 0) {
         }
         $response[] = $row;
     }
+
+    // Ordena los comentarios por fecha en orden descendente (los más recientes primero)
+    usort($response, function($a, $b) {
+        return strtotime($b['fecha_comentario']) - strtotime($a['fecha_comentario']);
+    });
 }
 
 // Cerrar la conexión a la base de datos

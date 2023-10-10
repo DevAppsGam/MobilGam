@@ -19,9 +19,14 @@ class _DetalleVidaState extends State<DetalleVida> {
   bool isLoading = false;
   String errorMessage = '';
   final TextEditingController _observationController = TextEditingController();
+  String? _selectedFileName;
+  String? _selectedOption;
+
+
+  List<Map<String, dynamic>>? dataForFirstTable;
+  final ScrollController _scrollController = ScrollController();
 
   List<Map<String, dynamic>>? dataForThirdTable;
-  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -29,6 +34,17 @@ class _DetalleVidaState extends State<DetalleVida> {
     fetchDataFromPHP();
     fetchDataForThirdTable();
   }
+
+  DataColumn createDataColumnForFirstTable(String label, List<Map<String, dynamic>> data) {
+    bool shouldShowColumn = !data.any((row) => row[label] == '***');
+
+    if (shouldShowColumn) {
+      return DataColumn(label: Text(label));
+    } else {
+      return const DataColumn(label: SizedBox.shrink());
+    }
+  }
+
 
   Future<void> fetchDataFromPHP() async {
     if (!mounted) return;
@@ -99,30 +115,22 @@ class _DetalleVidaState extends State<DetalleVida> {
 
 
   Future<void> _pickDocument() async {
-    final status = await Permission.storage.request();
-
-    if (status.isGranted) {
-      // Acceso concedido, puedes abrir el selector de archivos aquí.
-      FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-      if (result != null) {
-        // Manejar el archivo seleccionado aquí.
-        final filePath = result.files.single.path;
-        final fileName = result.files.single.name;
-        // Puedes usar filePath y fileName según tus necesidades.
-        print('Archivo seleccionado: $fileName');
-      } else {
-        // El usuario canceló la selección de archivos.
-      }
-    } else if (status.isDenied) {
-      // El usuario denegó el permiso, puedes mostrar un mensaje de error o pedirlo nuevamente.
-      print('Permiso de almacenamiento externo denegado.');
-    } else if (status.isPermanentlyDenied) {
-      // El usuario denegó permanentemente el permiso, puedes mostrar un mensaje y dirigir al usuario a la configuración de la aplicación.
-      print('Permiso de almacenamiento externo denegado permanentemente.');
-      openAppSettings(); // Abre la configuración de la aplicación.
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      // El usuario seleccionó un archivo, puedes manejarlo aquí.
+      final filePath = result.files.single.path;
+      final fileName = result.files.single.name;
+      // Puedes usar filePath y fileName según tus necesidades.
+      print('Archivo seleccionado: $fileName');
+      setState(() {
+        _selectedFileName = fileName;
+      });
+    } else {
+      // El usuario canceló la selección de archivos.
+      print('Selección de archivos cancelada.');
     }
   }
+
 
 
   Future<void> _sendObservation(String observation) async {
@@ -148,6 +156,33 @@ class _DetalleVidaState extends State<DetalleVida> {
       }
     } catch (error) {
       print('Error al enviar la observación al servidor: $error');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>?> fetchDataForSecondTable() async {
+    final String secondTableUrl = 'http://192.168.1.75/gam/detallevidadocumentos.php?id=${widget.id}';
+    try {
+      final response = await http.get(Uri.parse(secondTableUrl));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonData = json.decode(response.body);
+
+        if (jsonData.isNotEmpty) {
+          // Los datos se obtuvieron correctamente, así que los devolvemos.
+          return jsonData.cast<Map<String, dynamic>>();
+        } else {
+          // No se encontraron datos en la segunda tabla.
+          return [];
+        }
+      } else {
+        // Manejar errores aquí, como mostrar un mensaje de error.
+        print('Error al obtener datos de la segunda tabla: ${response.statusCode}');
+        return null; // Devolvemos null en caso de error.
+      }
+    } catch (error) {
+      // Manejar errores de excepción aquí.
+      print('Error al obtener datos de la segunda tabla: $error');
+      return null; // Devolvemos null en caso de error.
     }
   }
 
@@ -229,6 +264,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                   ),
                 ),
                 const SizedBox(height: 16),
+
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: DataTable(
@@ -274,54 +310,73 @@ class _DetalleVidaState extends State<DetalleVida> {
                 ),
                 if (isLoading)
                   const CircularProgressIndicator()
-                else if (!dataForThirdTable!.isEmpty)
-                  const Text('No hay datos disponibles en la segunda tabla.')
-                else if (dataForThirdTable != null && dataForThirdTable!.isEmpty)
-                    Text('Error al cargar los datos de la segunda tabla: $errorMessage')
                   else
                     SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        columns: const [
-                          DataColumn(label: Text('Usuario')),
-                          DataColumn(label: Text('Nombre del Archivo')),
-                          DataColumn(label: Text('Ver')),
-                          DataColumn(label: Text('Descargar')),
-                          DataColumn(label: Text('Aprobado')),
-                          DataColumn(label: Text('Fecha de Carga')),
-                        ],
-                        rows: dataForThirdTable!.map((data) {
-                          return DataRow(
-                            cells: [
-                              DataCell(Text(data['nomusuario'] ?? '***')),
-                              DataCell(Text(data['nombre'] ?? '***')),
-                              DataCell(
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.search),
-                                ),
+                      child: FutureBuilder<List<Map<String, dynamic>>?>(
+                        future: fetchDataForSecondTable(),
+                        builder: (context, snapshot) {
+                          if (isLoading) {
+                            return const CircularProgressIndicator();
+                          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                            return const Text('No hay datos disponibles en la segunda tabla.');
+                          } else if (snapshot.hasError) {
+                            return Text('Error al cargar los datos de la segunda tabla: ${snapshot.error}');
+                          } else {
+                            final List<Map<String, dynamic>> secondTableData = snapshot.data!;
+
+                            return SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: DataTable(
+                                columns: const [
+                                  DataColumn(label: Text('Usuario')),
+                                  DataColumn(label: Text('Nombre del Archivo')),
+                                  DataColumn(label: Text('Ver')),
+                                  DataColumn(label: Text('Descargar')),
+                                  DataColumn(label: Text('Aprobado')),
+                                  DataColumn(label: Text('Fecha de Carga')),
+                                ],
+                                rows: secondTableData.map((data) {
+                                  return DataRow(
+                                    cells: [
+                                      DataCell(Text(data['nomusuario'] ?? '***')),
+                                      DataCell(Text(data['nombre'] ?? '***')),
+                                      DataCell(
+                                        IconButton(
+                                          onPressed: () {
+                                            // Lógica para abrir o ver el archivo aquí.
+                                            // Puedes usar navegación o mostrar un visor de archivos, según tus necesidades.
+                                          },
+                                          icon: const Icon(Icons.search), // Cambia el icono aquí
+                                        ),
+                                      ),
+                                      DataCell(
+                                        IconButton(
+                                          onPressed: () {
+                                            // Lógica para descargar el archivo aquí.
+                                            // Puedes implementar la descarga del archivo en esta función.
+                                          },
+                                          icon: const Icon(Icons.file_download), // Cambia el icono aquí
+                                        ),
+                                      ),
+                                      DataCell(
+                                        data['validado'] == true
+                                            ? const Icon(
+                                          Icons.check,
+                                          color: Colors.green, // Color verde para el ícono de paloma
+                                        )
+                                            : const Icon(
+                                          Icons.cancel,
+                                          color: Colors.red, // Color rojo para el ícono de tache
+                                        ),
+                                      ),
+                                      DataCell(Text(data['fecha_creacion'] ?? '***')),
+                                    ],
+                                  );
+                                }).toList(),
                               ),
-                              DataCell(
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.file_download),
-                                ),
-                              ),
-                              DataCell(
-                                data['validado'] == true
-                                    ? const Icon(
-                                  Icons.check,
-                                  color: Colors.green,
-                                )
-                                    : const Icon(
-                                  Icons.cancel,
-                                  color: Colors.red,
-                                ),
-                              ),
-                              DataCell(Text(data['fecha_creacion'] ?? '***')),
-                            ],
-                          );
-                        }).toList(),
+                            );
+                          }
+                        },
                       ),
                     ),
                 const SizedBox(height: 32),
@@ -338,17 +393,22 @@ class _DetalleVidaState extends State<DetalleVida> {
                 ),
                 DataTable(
                   columns: const [
-                    DataColumn(label: Text('Subir Archivo')),
-                    DataColumn(label: Text('Opción')),
+                    DataColumn(label: Text('Archivo')),
+                    DataColumn(label: Text('')),
+                    DataColumn(label: SizedBox(width: 100, child: Text('Opción'))),
                     DataColumn(label: Text('')),
                     DataColumn(label: Text('')),
                   ],
                   rows: [
                     DataRow(cells: [
+                      DataCell(_selectedFileName != null ? Text(_selectedFileName!) : Text('Ningún archivo seleccionado')),
                       DataCell(ElevatedButton(
                         onPressed: () {
                           _pickDocument();
                         },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.blue,
+                        ),
                         child: const Text('Seleccionar Archivo'),
                       )),
                       DataCell(DropdownButton<String>(
@@ -358,18 +418,39 @@ class _DetalleVidaState extends State<DetalleVida> {
                             child: Text('Opción ${index + 1}'),
                           );
                         }),
-                        onChanged: (value) {},
-                        value: null,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedOption = value;
+                          });
+                        },
+                        value: _selectedOption,// Ajusta el ancho según tus necesidades
                       )),
                       DataCell(ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          if (_selectedFileName != null && _selectedOption != null) {
+                            // Realiza la acción de carga y procesamiento aquí
+                            print('Archivo seleccionado: $_selectedFileName');
+                            print('Opción seleccionada: $_selectedOption');
+                            // Puedes agregar código para cargar el archivo y procesarlo aquí
+                          } else {
+                            // Muestra un mensaje de error si no se seleccionó un archivo o una opción
+                            print('Por favor, selecciona un archivo y una opción antes de confirmar.');
+                          }
+                        },
                         style: ElevatedButton.styleFrom(
                           primary: Colors.lightGreen,
                         ),
                         child: const Text('Confirmar'),
                       )),
                       DataCell(ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          // Aquí puedes realizar acciones para cancelar la operación, si es necesario
+                          // También puedes limpiar el estado aquí si es necesario
+                          setState(() {
+                            _selectedFileName = null;
+                            _selectedOption = null;
+                          });
+                        },
                         style: ElevatedButton.styleFrom(
                           primary: Colors.redAccent,
                         ),
@@ -399,7 +480,6 @@ class _DetalleVidaState extends State<DetalleVida> {
                     scrollDirection: Axis.horizontal,
                     child: DataTable(
                       columns: const [
-                        DataColumn(label: Text('')),
                         DataColumn(label: Text('Usuario')),
                         DataColumn(label: Text('Observaciones')),
                         DataColumn(label: Text('Estado')),
@@ -408,7 +488,6 @@ class _DetalleVidaState extends State<DetalleVida> {
                       rows: dataForThirdTable!.map((data) {
                         return DataRow(
                           cells: [
-                            const DataCell(Text('')),
                             DataCell(Text(data['usuario'] ?? '***')),
                             DataCell(Text(data['comentario'] ?? '***')),
                             DataCell(Text(data['estado1'] ?? '***')),
