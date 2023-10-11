@@ -21,6 +21,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   final TextEditingController _observationController = TextEditingController();
   String? _selectedFileName;
   String? _selectedOption;
+  String? _selectedFileType;
 
 
   List<Map<String, dynamic>>? dataForFirstTable;
@@ -54,7 +55,7 @@ class _DetalleVidaState extends State<DetalleVida> {
       errorMessage = '';
     });
 
-    final String url = 'http://192.168.1.75/gam/detallevida.php?id=${widget.id}';
+    final String url = 'http://192.168.100.73/gam/detallevida.php?id=${widget.id}';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -89,7 +90,7 @@ class _DetalleVidaState extends State<DetalleVida> {
 
   Future<void> fetchDataForThirdTable() async {
     final String thirdTableUrl =
-        'http://192.168.1.75/gam/detallevidaobservaciones.php?id=${widget.id}';
+        'http://192.168.100.73/gam/detallevidaobservaciones.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(thirdTableUrl));
 
@@ -134,7 +135,7 @@ class _DetalleVidaState extends State<DetalleVida> {
 
 
   Future<void> _sendObservation(String observation) async {
-    const String url = 'http://192.168.1.75/gam/detallevidacrearobservacion.php';
+    const String url = 'http://192.168.100.73/gam/detallevidacrearobservacion.php';
 
     try {
       final response = await http.get(
@@ -160,7 +161,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   }
 
   Future<List<Map<String, dynamic>>?> fetchDataForSecondTable() async {
-    final String secondTableUrl = 'http://192.168.1.75/gam/detallevidadocumentos.php?id=${widget.id}';
+    final String secondTableUrl = 'http://192.168.100.73/gam/detallevidadocumentos.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(secondTableUrl));
 
@@ -185,6 +186,33 @@ class _DetalleVidaState extends State<DetalleVida> {
       return null; // Devolvemos null en caso de error.
     }
   }
+
+
+  Future<void> uploadDocument(String fileName, String id) async {
+    // Escapa los caracteres especiales en el nombre del archivo, si es necesario
+    final escapedFileName = Uri.encodeComponent(fileName);
+
+    // Crea la URL con los parámetros en la forma adecuada
+    final url = 'http://192.168.100.73/gam/detallevidasubirdoc.php?id=$id&archivo=$escapedFileName';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        // La solicitud se realizó con éxito, puedes manejar la respuesta aquí si es necesario.
+        print('Documento enviado con éxito');
+      } else {
+        // Maneja los errores de la solicitud aquí.
+        print('Error al enviar el documento al servidor: ${response.statusCode}');
+      }
+    } catch (error) {
+      // Maneja los errores de excepción aquí.
+      print('Error al enviar el documento al servidor: $error');
+    }
+  }
+
+
+
 
   Future<void> _mostrarDialogoCerrarFolio() async {
     return showDialog<void>(
@@ -410,13 +438,14 @@ class _DetalleVidaState extends State<DetalleVida> {
                         child: const Text('Seleccionar Archivo'),
                       )),
                       DataCell(
+
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: DropdownButton<String>(
                             items: const [
                               DropdownMenuItem<String>(
                                 value: 'Seleccionar', // Valor para la opción predeterminada
-                                child: Text('Seleccionar'),
+                                child: Text('Seleccionar',),
                               ),
                               DropdownMenuItem<String>(
                                 value: 'Solicitud',
@@ -462,29 +491,42 @@ class _DetalleVidaState extends State<DetalleVida> {
                             onChanged: (value) {
                               setState(() {
                                 _selectedOption = value;
+                                // Actualizar el nombre del archivo según el tipo de documento
+                                if (value != 'Seleccionar') {
+                                _selectedFileName = '../archivos/$value${widget.id}.pdf';
+                                } else {
+                                _selectedFileName = null; // No se seleccionó un tipo de documento
+                                }
                               });
                             },
                             value: _selectedOption ?? 'Seleccionar',
                           ),
                         ),
                       ),
-                      DataCell(ElevatedButton(
-                        onPressed: () {
-                          if (_selectedFileName != null && _selectedOption != null) {
-                            // Realiza la acción de carga y procesamiento aquí
-                            print('Archivo seleccionado: $_selectedFileName');
-                            print('Opción seleccionada: $_selectedOption');
-                            // Puedes agregar código para cargar el archivo y procesarlo aquí
-                          } else {
-                            // Muestra un mensaje de error si no se seleccionó un archivo o una opción
-                            print('Por favor, selecciona un archivo y una opción antes de confirmar.');
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.lightGreen,
-                        ),
-                        child: const Text('Confirmar'),
-                      )),
+                      DataCell(
+                          ElevatedButton(
+                            onPressed: () {
+                              if (_selectedFileName != null && _selectedOption != null) {
+                                // Realiza la acción de carga y procesamiento aquí
+                                print('Archivo seleccionado: $_selectedFileName');
+                                print('Opción seleccionada: $_selectedOption');
+
+                                // Llama a la función para cargar el documento al servidor PHP.
+                                final fileName = _selectedFileName ?? ''; // Valor por defecto si _selectedFileName es nulo
+                                uploadDocument(fileName, widget.id);
+                              } else {
+                                // Muestra un mensaje de error si no se seleccionó un archivo o una opción
+                                print('Por favor, selecciona un archivo y una opción antes de confirmar.');
+                              }
+
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.lightGreen,
+                            ),
+                            child: const Text('Confirmar'),
+                          )
+
+                      ),
                       DataCell(ElevatedButton(
                         onPressed: () {
                           // Aquí puedes realizar acciones para cancelar la operación, si es necesario
