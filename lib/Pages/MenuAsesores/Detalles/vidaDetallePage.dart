@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:path/path.dart' as path; // Importa la biblioteca path y dale un alias, como "path"
+import 'dart:io';
+
 
 class DetalleVida extends StatefulWidget {
   final String nombreUsuario;
@@ -124,13 +126,14 @@ class _DetalleVidaState extends State<DetalleVida> {
       // Puedes usar filePath y fileName según tus necesidades.
       print('Archivo seleccionado: $fileName');
       setState(() {
-        _selectedFileName = fileName;
+        _selectedFileName = fileName; // Actualiza _selectedFileName con el nombre del archivo seleccionado
       });
     } else {
       // El usuario canceló la selección de archivos.
       print('Selección de archivos cancelada.');
     }
   }
+
 
 
 
@@ -210,6 +213,31 @@ class _DetalleVidaState extends State<DetalleVida> {
       print('Error al enviar el documento al servidor: $error');
     }
   }
+
+  Future<void> uploadFile(String fileName, String id) async {
+    final file = File(fileName); // Abre el archivo seleccionado
+    const url = 'http://192.168.100.73/gam/upload.php'; // URL del servicio de carga en el servidor
+
+    final request = http.MultipartRequest('POST', Uri.parse(url));
+    request.files.add(
+      http.MultipartFile(
+        'file', // Nombre del campo en el formulario
+        file.readAsBytes().asStream(),
+        file.lengthSync(),
+          filename: path.basename(file.path), // Nombre del archivo
+      ),
+    );
+    request.fields['id'] = id; // Puedes enviar otros datos junto con el archivo, como el ID
+
+    final response = await request.send();
+
+    if (response.statusCode == 200) {
+      print('Documento enviado con éxito');
+    } else {
+      print('Error al enviar el archivo al servidor: ${response.statusCode}');
+    }
+  }
+
 
 
 
