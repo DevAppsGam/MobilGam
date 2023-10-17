@@ -57,7 +57,7 @@ class _DetalleVidaState extends State<DetalleVida> {
       errorMessage = '';
     });
 
-    final String url = 'http://192.168.100.73/gam/detallevida.php?id=${widget.id}';
+    final String url = 'http://192.168.1.79/gam/detallevida.php?id=${widget.id}';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -92,7 +92,7 @@ class _DetalleVidaState extends State<DetalleVida> {
 
   Future<void> fetchDataForThirdTable() async {
     final String thirdTableUrl =
-        'http://192.168.100.73/gam/detallevidaobservaciones.php?id=${widget.id}';
+        'http://192.168.1.79/gam/detallevidaobservaciones.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(thirdTableUrl));
 
@@ -138,7 +138,7 @@ class _DetalleVidaState extends State<DetalleVida> {
 
 
   Future<void> _sendObservation(String observation) async {
-    const String url = 'http://192.168.100.73/gam/detallevidacrearobservacion.php';
+    const String url = 'http://192.168.1.79/gam/detallevidacrearobservacion.php';
 
     try {
       final response = await http.get(
@@ -164,7 +164,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   }
 
   Future<List<Map<String, dynamic>>?> fetchDataForSecondTable() async {
-    final String secondTableUrl = 'http://192.168.100.73/gam/detallevidadocumentos.php?id=${widget.id}';
+    final String secondTableUrl = 'http://192.168.1.79/gam/detallevidadocumentos.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(secondTableUrl));
 
@@ -196,7 +196,7 @@ class _DetalleVidaState extends State<DetalleVida> {
     final escapedFileName = Uri.encodeComponent(fileName);
 
     // Crea la URL con los parámetros en la forma adecuada
-    final url = 'http://192.168.100.73/gam/detallevidasubirdoc.php?id=$id&archivo=$escapedFileName';
+    final url = 'http://192.168.1.79/gam/detallevidasubirdoc.php?id=$id&archivo=$escapedFileName';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -216,7 +216,7 @@ class _DetalleVidaState extends State<DetalleVida> {
 
   Future<void> uploadFile(String fileName, String id) async {
     final file = File(fileName); // Abre el archivo seleccionado
-    const url = 'http://192.168.100.73/gam/upload.php'; // URL del servicio de carga en el servidor
+    const url = 'http://192.168.1.79/gam/upload.php'; // URL del servicio de carga en el servidor
 
     final request = http.MultipartRequest('POST', Uri.parse(url));
     request.files.add(
@@ -238,17 +238,13 @@ class _DetalleVidaState extends State<DetalleVida> {
     }
   }
 
-
-
-
-
   Future<void> _mostrarDialogoCerrarFolio() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // El usuario debe tocar un botón para cerrar el cuadro de diálogo
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Términos y condiciones',style: TextStyle(fontFamily: 'Roboto',fontSize: 28),),
+          title: const Text('Términos y condiciones',style: TextStyle(fontFamily: 'Roboto',fontSize: 24),),
           content: const Text('De acuerdo a la Circular 16 de GNP donde se solicita la documentación física en original sin tachaduras ni enmendaduras, en una sola tinta tal y como se emitió la póliza te solicitamos nos hagas llegar dicha documentación en un plazo máximo de 15 días.', style: TextStyle(fontFamily: 'Roboto'),),
           actions: <Widget>[
             Center(
@@ -287,6 +283,7 @@ class _DetalleVidaState extends State<DetalleVida> {
             fontFamily: 'Roboto',
             fontSize: 24,
             fontWeight: FontWeight.bold,
+            color: Color.fromRGBO(246, 246, 246, 1),
           ),
         ),
       ),
@@ -313,7 +310,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                       fontFamily: 'Roboto',
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blueGrey,
+                      color: Color.fromRGBO(73, 78, 84, 1),
                     ),
                   ),
                 ),
@@ -323,29 +320,38 @@ class _DetalleVidaState extends State<DetalleVida> {
                   scrollDirection: Axis.horizontal,
                   child: DataTable(
                     columns: const [
-                      DataColumn(label: Text('Folio GAM')),
-                      DataColumn(label: Text('Línea de Negocio')),
-                      DataColumn(label: Text('Fecha de Solicitud')),
-                      DataColumn(label: Text('Estado')),
-                      DataColumn(label: Text('Contratante')),
-                      DataColumn(label: Text('Póliza')),
-                      DataColumn(label: Text('Tipo de Solicitud')),
-                      DataColumn(label: Text('Tipo de movimiento')),
-                      DataColumn(label: Text('Prioridad')),
-                      DataColumn(label: Text('Comentarios')),
+                      DataColumn(
+                          label: Text(
+                            'Folio GAM',
+                            style: TextStyle(
+                                fontFamily: 'Roboto',
+                                fontSize: 18,
+                                color: Color.fromRGBO(15, 132, 194, 1),
+                            ),
+                          )
+                      ),
+                      DataColumn(label: Text('Línea de Negocio',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
+                      DataColumn(label: Text('Fecha de Solicitud',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
+                      DataColumn(label: Text('Estado',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
+                      DataColumn(label: Text('Contratante',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
+                      DataColumn(label: Text('Póliza',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
+                      DataColumn(label: Text('Tipo de Solicitud',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
+                      DataColumn(label: Text('Tipo de movimiento',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
+                      DataColumn(label: Text('Prioridad',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
+                      DataColumn(label: Text('Comentarios',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
                     ],
                     rows: [
                       DataRow(cells: [
-                        DataCell(Text(data['id'] ?? '***')),
-                        DataCell(Text(data['negocio'] ?? '***')),
-                        DataCell(Text(data['fecha'] ?? '***')),
-                        DataCell(Text(data['estado'] ?? '***')),
-                        DataCell(Text(data['contratante'] ?? '***')),
-                        DataCell(Text(data['polizap'] ?? '***')),
-                        DataCell(Text(data['t_solicitud'] ?? '***')),
-                        DataCell(Text(data['t_movimiento'] ?? '***')),
-                        DataCell(Text(data['prioridad'] ?? '***')),
-                        DataCell(Text(data['comentarios'] ?? '***')),
+                        DataCell(Text(data['id'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
+                        DataCell(Text(data['negocio'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
+                        DataCell(Text(data['fecha'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
+                        DataCell(Text(data['estado'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
+                        DataCell(Text(data['contratante'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
+                        DataCell(Text(data['polizap'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
+                        DataCell(Text(data['t_solicitud'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
+                        DataCell(Text(data['t_movimiento'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
+                        DataCell(Text(data['prioridad'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
+                        DataCell(Text(data['comentarios'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
                       ]),
                     ],
                   ),
@@ -358,7 +364,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                       fontFamily: 'Roboto',
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blueGrey,
+                      color: Color.fromRGBO(73, 78, 84, 1),
                     ),
                   ),
                 ),
@@ -372,7 +378,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                           if (isLoading) {
                             return const CircularProgressIndicator();
                           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                            return const Text('No hay datos disponibles en la segunda tabla.');
+                            return const Text('No hay docuemntos en esta póliza.',style: TextStyle(fontFamily: 'Roboto',fontSize: 20,color: Color.fromRGBO(15, 132, 194, 1),),);
                           } else if (snapshot.hasError) {
                             return Text('Error al cargar los datos de la segunda tabla: ${snapshot.error}');
                           } else {
@@ -382,18 +388,18 @@ class _DetalleVidaState extends State<DetalleVida> {
                               scrollDirection: Axis.horizontal,
                               child: DataTable(
                                 columns: const [
-                                  DataColumn(label: Text('Usuario')),
-                                  DataColumn(label: Text('Nombre del Archivo')),
-                                  DataColumn(label: Text('Ver')),
-                                  DataColumn(label: Text('Descargar')),
-                                  DataColumn(label: Text('Aprobado')),
-                                  DataColumn(label: Text('Fecha de Carga')),
+                                  DataColumn(label: Text('Usuario',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
+                                  DataColumn(label: Text('Nombre del Archivo',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
+                                  DataColumn(label: Text('Ver',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
+                                  DataColumn(label: Text('Descargar',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
+                                  DataColumn(label: Text('Aprobado',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
+                                  DataColumn(label: Text('Fecha de Carga',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
                                 ],
                                 rows: secondTableData.map((data) {
                                   return DataRow(
                                     cells: [
-                                      DataCell(Text(data['nomusuario'] ?? '***')),
-                                      DataCell(Text(data['nombre'] ?? '***')),
+                                      DataCell(Text(data['nomusuario'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
+                                      DataCell(Text(data['nombre'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
                                       DataCell(
                                         IconButton(
                                           onPressed: () {
@@ -423,7 +429,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                                           color: Colors.red, // Color rojo para el ícono de tache
                                         ),
                                       ),
-                                      DataCell(Text(data['fecha_creacion'] ?? '***')),
+                                      DataCell(Text(data['fecha_creacion'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
                                     ],
                                   );
                                 }).toList(),
@@ -441,21 +447,28 @@ class _DetalleVidaState extends State<DetalleVida> {
                       fontFamily: 'Roboto',
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blueGrey,
+                      color: Color.fromRGBO(73, 78, 84, 1),
                     ),
                   ),
                 ),
                 DataTable(
                   columns: const [
-                    DataColumn(label: Text('Archivo')),
+                    DataColumn(label: Text('Archivo',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
                     DataColumn(label: Text('')),
-                    DataColumn(label: SizedBox(width: 175, child: Text('Tipo de Documento'))),
+                    DataColumn(label: SizedBox(width: 175, child: Text('Tipo de Documento',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),))),
                     DataColumn(label: Text('')),
                     DataColumn(label: Text('')),
                   ],
                   rows: [
-                    DataRow(cells: [
-                      DataCell(_selectedFileName != null ? Text(_selectedFileName!) : const Text('Ningún archivo seleccionado')),
+                    DataRow(
+                        cells: [
+                          DataCell(
+                            SizedBox(
+                              height: 250,
+                              child: _selectedFileName != null ? Text(_selectedFileName!) : const Text('Ningún archivo seleccionado',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
+                            ),
+                          ),
+
                       DataCell(ElevatedButton(
                         onPressed: () {
                           _pickDocument();
@@ -466,54 +479,53 @@ class _DetalleVidaState extends State<DetalleVida> {
                         child: const Text('Seleccionar Archivo'),
                       )),
                       DataCell(
-
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: DropdownButton<String>(
                             items: const [
                               DropdownMenuItem<String>(
                                 value: 'Seleccionar', // Valor para la opción predeterminada
-                                child: Text('Seleccionar',),
+                                child: Text('Seleccionar',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
                               ),
                               DropdownMenuItem<String>(
                                 value: 'Solicitud',
-                                child: Text('Solicitud'),
+                                child: Text('Solicitud',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
                               ),
                               DropdownMenuItem<String>(
                                 value: 'Identificación',
-                                child: Text('Identificación'),
+                                child: Text('Identificación',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
                               ),
                               DropdownMenuItem<String>(
                                 value: 'Comprobante de domicilio',
-                                child: Text('Comprobante de domicilio'),
+                                child: Text('Comprobante de domicilio',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
                               ),
                               DropdownMenuItem<String>(
                                 value: 'Cartas de Extraprima',
-                                child: Text('Cartas de Extraprima'),
+                                child: Text('Cartas de Extraprima',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
                               ),
                               DropdownMenuItem<String>(
                                 value: 'Cartas de Rechazo',
-                                child: Text('Cartas de Rechazo'),
+                                child: Text('Cartas de Rechazo',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
                               ),
                               DropdownMenuItem<String>(
                                 value: 'Cartas Adicionales',
-                                child: Text('Cartas Adicionales'),
+                                child: Text('Cartas Adicionales',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
                               ),
                               DropdownMenuItem<String>(
                                 value: 'Cuestionario Adicional de Suscripción',
-                                child: Text('Cuestionario Adicional de Suscripción'),
+                                child: Text('Cuestionario Adicional de Suscripción',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
                               ),
                               DropdownMenuItem<String>(
                                 value: 'Formato de Cobranza Electrónica',
-                                child: Text('Formato de Cobranza Electrónica'),
+                                child: Text('Formato de Cobranza Electrónica',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
                               ),
                               DropdownMenuItem<String>(
                                 value: 'Hoja H107',
-                                child: Text('Hoja H107'),
+                                child: Text('Hoja H107',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
                               ),
                               DropdownMenuItem<String>(
                                 value: 'Solicitudes Adicionales',
-                                child: Text('Solicitudes Adicionales'),
+                                child: Text('Solicitudes Adicionales',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
                               ),
                             ],
                             onChanged: (value) {

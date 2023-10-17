@@ -42,7 +42,7 @@ class _VidaState extends State<Vida> {
 
   Future<void> fetchData() async {
     final response =
-    await http.get(Uri.parse('http://192.168.100.73/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
+    await http.get(Uri.parse('http://192.168.1.79/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
     print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
@@ -62,7 +62,7 @@ class _VidaState extends State<Vida> {
 
   Future<void> fetchDataWithFilter(String filterNames) async {
     final response = await http.get(Uri.parse(
-        'http://192.168.100.73/gam/tablafoliosvida.php?filter=$filterNames&username=${widget.nombreUsuario}'));
+        'http://192.168.1.79/gam/tablafoliosvida.php?filter=$filterNames&username=${widget.nombreUsuario}'));
 
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
@@ -168,7 +168,7 @@ class _VidaState extends State<Vida> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Sin Resultados'),
+          title: const Text('Sin Resultados', style: TextStyle(fontFamily: 'Roboto'),),
           content: const Text('No se encontraron resultados.'),
           actions: [
             TextButton(
@@ -199,26 +199,30 @@ class _VidaState extends State<Vida> {
   TableRow _buildTableHeaderRow() {
     return TableRow(
       children: [
-        _buildTableHeaderCell('Folio GAM'),
-        _buildTableHeaderCell('Nombre del Contratante'),
-        _buildTableHeaderCell('N Poliza'),
-        _buildTableHeaderCell('Folio GNP'),
-        _buildTableHeaderCell('Fecha Promesa'),
-        _buildTableHeaderCell('Estatus Trámite'),
+        _buildTableHeaderCell(' Folio GAM'),
+        _buildTableHeaderCell(' Nombre del Contratante '),
+        _buildTableHeaderCell(' N Poliza'),
+        _buildTableHeaderCell(' Folio GNP'),
+        _buildTableHeaderCell(' Fecha Promesa '),
+        _buildTableHeaderCell(' Estatus Trámite'),
       ],
     );
   }
 
   TableCell _buildTableHeaderCell(String text) {
     return TableCell(
-      child: Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: 15.0,
+          horizontal: 13.0,
+        ),
         child: Text(
           text,
           style: const TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 18,
+            fontFamily: 'Roboto',
+            fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.blueAccent,
+            color: Color.fromRGBO(31, 123, 206, 1),
           ),
         ),
       ),
@@ -239,7 +243,7 @@ class _VidaState extends State<Vida> {
   }
 
   Widget _buildTableCell(String text, Map<String, String> datos, String columna) {
-    Color textColor = columna == 'id' ? Colors.lightBlueAccent : Colors.black;
+    Color textColor = columna == 'id' ? const Color.fromRGBO(15, 132, 194, 1) : Colors.black;
 
     return TableCell(
       child: GestureDetector(
@@ -256,12 +260,16 @@ class _VidaState extends State<Vida> {
             );
           }
         },
-        child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 5.0,
+            horizontal: 13.0,
+          ),
           child: Text(
             text,
             style: TextStyle(
               fontFamily: 'Roboto',
-              fontSize: 17,
+              fontSize: 16,
               color: textColor,
               fontWeight: FontWeight.bold,
             ),
@@ -324,7 +332,7 @@ class _VidaState extends State<Vida> {
                           fontFamily: 'Roboto',
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.blueGrey,
+                          color: Color.fromRGBO(73, 78, 84, 1),
                         ),
                       ),
                     ),
@@ -464,7 +472,7 @@ class _VidaState extends State<Vida> {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Table(
                   border: TableBorder.all(
-                    color: Colors.blueAccent,
+                    color: const Color.fromRGBO(91, 112, 124, 0),
                     width: 2.0,
                   ),
                   children: [

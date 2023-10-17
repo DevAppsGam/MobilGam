@@ -27,6 +27,7 @@ class Asesores extends StatelessWidget {
             style: const TextStyle(
               fontFamily: 'Roboto',
               fontSize: 24,
+              color: Color.fromRGBO(246, 246, 246, 1),
             ),
           ),
         ),
@@ -110,7 +111,7 @@ class Asesores extends StatelessWidget {
                   fontFamily: 'Roboto',
                   fontSize: 36,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blueGrey,
+                  color: Color.fromRGBO(73, 78, 84, 1),
                 ),
               ),
             ),
@@ -122,34 +123,38 @@ class Asesores extends StatelessWidget {
                   IconWithText(
                     icon: Icons.diversity_1_rounded,
                     title: 'VIDA',
-                    color: Colors.green,
+                    color: const Color.fromRGBO(67, 198, 80, 1),
                     nombreUsuario: nombreUsuario,
                   ),
                   IconWithText(
                     icon: Icons.notification_important_rounded,
                     title: 'SINIESTROS',
-                    color: const Color.fromRGBO(241, 201, 132, 1.0),
+                    color: const Color.fromRGBO(214, 117, 55, 1),
                     nombreUsuario: nombreUsuario,
                   ),
                   IconWithText(
                     icon: Icons.car_crash_rounded,
                     title: 'AUTOS',
-                    color: Colors.orange, nombreUsuario: nombreUsuario,
+                    color: const Color.fromRGBO(223, 23, 50, 1),
+                    nombreUsuario: nombreUsuario,
                   ),
                    IconWithText(
                     icon: Icons.medical_information_rounded,
                     title: 'GMM',
-                    color: Colors.blueAccent, nombreUsuario: nombreUsuario,
+                    color: const Color.fromRGBO(53, 162, 219, 1),
+                     nombreUsuario: nombreUsuario,
                   ),
                    IconWithText(
                     icon: Icons.content_paste_search,
                     title: 'RECURSOS',
-                    color: Colors.blueGrey, nombreUsuario: nombreUsuario,
+                    color: const Color.fromRGBO(15, 132, 225, 1),
+                     nombreUsuario: nombreUsuario,
                   ),
                    IconWithText(
                     icon: Icons.graphic_eq_outlined,
                     title: 'ESTADISTICAS',
-                    color: Colors.redAccent, nombreUsuario: nombreUsuario,
+                    color: const Color.fromRGBO(184, 7, 31, 1),
+                     nombreUsuario: nombreUsuario,
                   ),
                 ],
               ),
@@ -160,7 +165,7 @@ class Asesores extends StatelessWidget {
               child: IconButton(
                 onPressed: () {
                   const url = 'https://www.example.com';
-                  launchUrl(url as Uri);
+                  launch(url);
                 },
                 icon: const Icon(
                   Icons.message_rounded,
@@ -186,6 +191,18 @@ class IconWithText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String imagePath = '';
+    switch (title) {
+      case 'VIDA':
+        imagePath = 'assets/img/Vida_.png';
+        break;
+      case 'GMM':
+        imagePath = 'assets/img/GMM_.png';
+        break;
+    // Agrega más casos según sea necesario para cada título
+      default:
+        imagePath = 'assets/img/GAM_TV.png'; // Imagen predeterminada en caso de que no haya coincidencia
+    }
     return GestureDetector(
       onTap: () {
         switch (title) {
@@ -239,12 +256,10 @@ class IconWithText extends StatelessWidget {
               color: color ?? Colors.white, // Color de fondo del círculo (usará blanco si no se proporciona un color específico)
             ),
             child: Center(
-              child: IconTheme(
-                data: const IconThemeData(color: Colors.white), // Color del ícono (puedes personalizarlo)
-                child: Icon(
-                  icon,
-                  size: 64,
-                ),
+              child: Image.asset(
+                imagePath,
+                width: 64,
+                height: 64,
               ),
             ),
           ),

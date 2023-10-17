@@ -49,7 +49,7 @@ try {
             "id" => $userData["id"]
         ];
     } else {
-        $response = ["error" => "Credenciales incorrectas"];
+        $response = ["error" => "Usuario y/o contraseña incorrecto, vuelva a intentar"];
     }
 
     // Cerrar la conexión a la base de datos

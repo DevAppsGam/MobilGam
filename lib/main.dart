@@ -74,9 +74,9 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/img/LOGOGAM.png',
-                width: 150,
-                height: 150,
+                'assets/img/GAM_TV.png',
+                width: 250,
+                height: 250,
               ),
               const SizedBox(height: 20),
               const CircularProgressIndicator(
@@ -122,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
 
     final response = await http.post(
 
-      Uri.parse("http://192.168.100.73/gam/login.php"),
+      Uri.parse("http://192.168.1.79/gam/login.php"),
       body: {
         "nomusuario": username,
         "password": password,
@@ -316,7 +316,7 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blue,
+                      color: Color.fromRGBO(31, 123, 206, 1),
                       fontFamily: 'Roboto',
                     ),
                   ),
@@ -324,7 +324,7 @@ class _LoginPageState extends State<LoginPage> {
                 const Spacer(),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(242, 115, 23, 1),
+                    backgroundColor: const Color.fromRGBO(245, 137, 63, 2),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -360,7 +360,7 @@ class _LoginPageState extends State<LoginPage> {
                         '© 2019 Grupo Administrativo Mexicano S.A de C.V | Todos los derechos reservados',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Color.fromRGBO(167, 168, 160, 1),
+                          color: Color.fromRGBO(246, 246, 246, 1),
                           fontFamily: 'Roboto',
                         ),
                       ),
