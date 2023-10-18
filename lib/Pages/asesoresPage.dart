@@ -129,7 +129,7 @@ class Asesores extends StatelessWidget {
                   IconWithText(
                     icon: Icons.notification_important_rounded,
                     title: 'SINIESTROS',
-                    color: const Color.fromRGBO(214, 117, 55, 1),
+                    color: const Color.fromRGBO(249, 240, 10, 1),
                     nombreUsuario: nombreUsuario,
                   ),
                   IconWithText(
@@ -147,13 +147,13 @@ class Asesores extends StatelessWidget {
                    IconWithText(
                     icon: Icons.content_paste_search,
                     title: 'RECURSOS',
-                    color: const Color.fromRGBO(15, 132, 225, 1),
+                    color: const Color.fromRGBO(115, 117, 121, 1),
                      nombreUsuario: nombreUsuario,
                   ),
                    IconWithText(
                     icon: Icons.graphic_eq_outlined,
                     title: 'ESTADISTICAS',
-                    color: const Color.fromRGBO(184, 7, 31, 1),
+                    color: const Color.fromRGBO(65, 178, 182, 1),
                      nombreUsuario: nombreUsuario,
                   ),
                 ],
@@ -194,10 +194,22 @@ class IconWithText extends StatelessWidget {
     String imagePath = '';
     switch (title) {
       case 'VIDA':
-        imagePath = 'assets/img/Vida_.png';
+        imagePath = 'assets/img/Vida_Blanco.png';
         break;
       case 'GMM':
-        imagePath = 'assets/img/GMM_.png';
+        imagePath = 'assets/img/GMM_Blanco.png';
+        break;
+      case 'SINIESTROS':
+        imagePath = 'assets/img/Siniestros_Blanco.png';
+        break;
+      case 'AUTOS':
+        imagePath = 'assets/img/Autos_Blanco.png';
+        break;
+      case 'RECURSOS':
+        imagePath = 'assets/img/Recursos_Blanco.png';
+        break;
+      case 'ESTADISTICAS':
+        imagePath = 'assets/img/Estadisticas_Blanco.png';
         break;
     // Agrega más casos según sea necesario para cada título
       default:
