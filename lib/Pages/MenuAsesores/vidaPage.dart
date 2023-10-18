@@ -265,15 +265,18 @@ class _VidaState extends State<Vida> {
             vertical: 5.0,
             horizontal: 13.0,
           ),
-          child: Text(
-            text,
-            style: TextStyle(
-              fontFamily: 'Roboto',
-              fontSize: 16,
-              color: textColor,
-              fontWeight: FontWeight.bold,
+          child: Center(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 16,
+                color: textColor,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
+
         ),
       ),
     );
