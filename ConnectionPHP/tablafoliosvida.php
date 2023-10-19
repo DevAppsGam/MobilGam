@@ -10,6 +10,8 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
+$d_promesar=0;
+
 $feriadosAlta = array(
     '2019-01-01','2019-02-04','2019-03-18','2019-04-18','2019-04-19','2019-05-01','2019-05-10','2019-09-16','2019-11-18','2019-12-12',
     '2019-12-25','2019-12-31','2020-01-01','2020-02-03','2020-03-16','2020-04-09','2020-04-10','2020-05-01','2020-09-16','2020-11-16',
@@ -136,7 +138,17 @@ if ($result->num_rows > 0) {
                     break;
             case 'MOVIMIENTOS':
                 if ($row['estado'] != 'CANCELADO' && $row['estado'] != 'ENVIADO') {
-
+                    $sqlr = "select * from producto where producto='" . $row['producto'] . "'";
+                    $resr = mysqli_query($conn, $sqlr);
+                    while ($verr = mysqli_fetch_row($resr)) {
+                        $d_promesar = $verr[3];
+                    }
+                    $fechaPromesa = obtenerFechaPromesa($conn, $row['id']);
+                        if ($fechaPromesa) {
+                            $dias = $d_promesar; // Ajusta los días según tus requisitos
+                            $fechaVencimiento = calcularFechaVencimiento($fechaPromesa, $dias, $feriadosAlta);
+                            $row['fecha_promesa'] = date('d-m-Y', $fechaVencimiento);
+                        }
                 } else {
                     $row['fecha_promesa'] = '***';
                 }
