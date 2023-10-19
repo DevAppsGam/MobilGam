@@ -352,8 +352,8 @@ class _DetalleVidaState extends State<DetalleVida> {
                               data['t_solicitud'] == 'PAGOS'
                                   ? data['polizap'] ?? '***'
                                   : data['t_solicitud'] == 'ALTA DE POLIZA'
-                                  ? data['fgnp'] ?? '***'
-                                  : data['poliza'] ?? '***',
+                                  ? data['polizap'] ?? '***'
+                                  : data['polizap'] ?? '***',
                               style: const TextStyle(
                                   fontFamily: 'Roboto',
                                   fontSize: 18

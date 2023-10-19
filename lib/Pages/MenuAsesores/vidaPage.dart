@@ -250,6 +250,8 @@ class _VidaState extends State<Vida> {
     // Ajuste basado en el valor de 't_solicitud'
     if (datos['t_solicitud'] == 'PAGOS') {
       nPolizaValue = datos['polizap'] ?? '';  // Aquí debes proporcionar el nombre correcto del campo que contiene el valor para 'N Poliza' cuando 't_solicitud' es 'PAGOS'.
+    }else if(datos['t_solicitud']=='ALTA DE POLIZA'){
+      nPolizaValue=datos['polizap'] ?? '';
     }
 
     return TableCell(
