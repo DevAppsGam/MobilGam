@@ -107,7 +107,17 @@ if ($result->num_rows > 0) {
         switch ($row['t_solicitud']) {
             case 'ALTA DE POLIZA':
                 if ($row['estado'] != 'CANCELADO' && $row['estado'] != 'ENVIADO') {
-
+                    $sqlr = "select * from rango where tiporan='" . $row['rango'] . "'";
+                    $resr = mysqli_query($conn, $sqlr);
+                    while ($verr = mysqli_fetch_row($resr)) {
+                        $d_promesar = $verr[2];
+                    }
+                    $fechaPromesa = obtenerFechaPromesa($conn, $row['id']);
+                        if ($fechaPromesa) {
+                            $dias = $d_promesar; // Ajusta los días según tus requisitos
+                            $fechaVencimiento = calcularFechaVencimiento($fechaPromesa, $dias, $feriadosAlta);
+                            $row['fecha_promesa'] = date('d-m-Y', $fechaVencimiento);
+                        }
                 } else {
                     $row['fecha_promesa'] = '***';
                 }

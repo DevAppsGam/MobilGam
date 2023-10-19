@@ -200,8 +200,8 @@ class _VidaState extends State<Vida> {
     return TableRow(
       children: [
         _buildTableHeaderCell(' Folio GAM'),
-        _buildTableHeaderCell(' Nombre del Contratante '),
-        _buildTableHeaderCell(' N Poliza'),
+        _buildTableHeaderCell(' Contratante '),
+        _buildTableHeaderCell(' N° Póliza'),
         _buildTableHeaderCell(' Folio GNP'),
         _buildTableHeaderCell(' Fecha Promesa '),
         _buildTableHeaderCell(' Estatus Trámite'),
