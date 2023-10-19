@@ -42,7 +42,7 @@ class _VidaState extends State<Vida> {
 
   Future<void> fetchData() async {
     final response =
-    await http.get(Uri.parse('http://192.168.1.99/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
+    await http.get(Uri.parse('http://192.168.100.73/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
     print(response.body);
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
@@ -62,7 +62,7 @@ class _VidaState extends State<Vida> {
 
   Future<void> fetchDataWithFilter(String filterNames) async {
     final response = await http.get(Uri.parse(
-        'http://192.168.1.99/gam/tablafoliosvida.php?filter=$filterNames&username=${widget.nombreUsuario}'));
+        'http://192.168.100.73/gam/tablafoliosvida.php?filter=$filterNames&username=${widget.nombreUsuario}'));
 
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
@@ -236,7 +236,7 @@ class _VidaState extends State<Vida> {
         _buildTableCell(datos['contratante'] ?? '', datos, 'contratante'),
         _buildTableCell(datos['poliza'] ?? '', datos, 'poliza'),
         _buildTableCell(datos['fgnp'] ?? '', datos, 'fgnp'),
-        _buildTableCell(datos['fecha'] ?? '', datos, 'fecha'),
+        _buildTableCell(datos['fecha_promesa'] ?? '', datos, 'fecha_promesa'),
         _buildTableCell(datos['estado'] ?? '', datos, 'estado'),
       ],
     );
@@ -244,6 +244,13 @@ class _VidaState extends State<Vida> {
 
   Widget _buildTableCell(String text, Map<String, String> datos, String columna) {
     Color textColor = columna == 'id' ? const Color.fromRGBO(15, 132, 194, 1) : Colors.black;
+    String nPolizaValue = datos['poliza'] ?? ''; // Usar el operador '!' para asegurarse de que 'datos['polizap']' no sea nulo
+
+
+    // Ajuste basado en el valor de 't_solicitud'
+    if (datos['t_solicitud'] == 'PAGOS') {
+      nPolizaValue = datos['polizap'] ?? '';  // Aquí debes proporcionar el nombre correcto del campo que contiene el valor para 'N Poliza' cuando 't_solicitud' es 'PAGOS'.
+    }
 
     return TableCell(
       child: GestureDetector(
@@ -267,7 +274,7 @@ class _VidaState extends State<Vida> {
           ),
           child: Center(
             child: Text(
-              text,
+              columna == 'poliza' ? nPolizaValue : text,
               style: TextStyle(
                 fontFamily: 'Roboto',
                 fontSize: 16,

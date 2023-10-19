@@ -57,7 +57,7 @@ class _DetalleVidaState extends State<DetalleVida> {
       errorMessage = '';
     });
 
-    final String url = 'http://192.168.1.99/gam/detallevida.php?id=${widget.id}';
+    final String url = 'http://192.168.100.73/gam/detallevida.php?id=${widget.id}';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -92,7 +92,7 @@ class _DetalleVidaState extends State<DetalleVida> {
 
   Future<void> fetchDataForThirdTable() async {
     final String thirdTableUrl =
-        'http://192.168.1.99/gam/detallevidaobservaciones.php?id=${widget.id}';
+        'http://192.168.100.73/gam/detallevidaobservaciones.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(thirdTableUrl));
 
@@ -138,7 +138,7 @@ class _DetalleVidaState extends State<DetalleVida> {
 
 
   Future<void> _sendObservation(String observation) async {
-    const String url = 'http://192.168.1.99/gam/detallevidacrearobservacion.php';
+    const String url = 'http://192.168.100.73/gam/detallevidacrearobservacion.php';
 
     try {
       final response = await http.get(
@@ -164,7 +164,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   }
 
   Future<List<Map<String, dynamic>>?> fetchDataForSecondTable() async {
-    final String secondTableUrl = 'http://192.168.1.99/gam/detallevidadocumentos.php?id=${widget.id}';
+    final String secondTableUrl = 'http://192.168.100.73/gam/detallevidadocumentos.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(secondTableUrl));
 
@@ -196,7 +196,7 @@ class _DetalleVidaState extends State<DetalleVida> {
     final escapedFileName = Uri.encodeComponent(fileName);
 
     // Crea la URL con los parámetros en la forma adecuada
-    final url = 'http://192.168.1.99/gam/detallevidasubirdoc.php?id=$id&archivo=$escapedFileName';
+    final url = 'http://192.168.100.73/gam/detallevidasubirdoc.php?id=$id&archivo=$escapedFileName';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -216,7 +216,7 @@ class _DetalleVidaState extends State<DetalleVida> {
 
   Future<void> uploadFile(String fileName, String id) async {
     final file = File(fileName); // Abre el archivo seleccionado
-    const url = 'http://192.168.1.99/gam/upload.php'; // URL del servicio de carga en el servidor
+    const url = 'http://192.168.100.73/gam/upload.php'; // URL del servicio de carga en el servidor
 
     final request = http.MultipartRequest('POST', Uri.parse(url));
     request.files.add(
@@ -347,7 +347,19 @@ class _DetalleVidaState extends State<DetalleVida> {
                         DataCell(Text(data['fecha'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
                         DataCell(Text(data['estado'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
                         DataCell(Text(data['contratante'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
-                        DataCell(Text(data['polizap'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
+                        DataCell(
+                            Text(
+                              data['t_solicitud'] == 'PAGOS'
+                                  ? data['polizap'] ?? '***'
+                                  : data['t_solicitud'] == 'ALTA DE POLIZA'
+                                  ? data['fgnp'] ?? '***'
+                                  : data['poliza'] ?? '***',
+                              style: const TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontSize: 18
+                              ),
+                            )
+                        ),
                         DataCell(Text(data['t_solicitud'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
                         DataCell(Text(data['t_movimiento'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
                         DataCell(Text(data['prioridad'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
