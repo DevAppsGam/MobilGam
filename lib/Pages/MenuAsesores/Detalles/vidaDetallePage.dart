@@ -462,139 +462,143 @@ class _DetalleVidaState extends State<DetalleVida> {
                     ),
                   ),
                 ),
-                DataTable(
-                  columns: const [
-                    DataColumn(label: Text('Archivo',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
-                    DataColumn(label: Text('')),
-                    DataColumn(label: SizedBox(width: 175, child: Text('Tipo de Documento',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),))),
-                    DataColumn(label: Text('')),
-                    DataColumn(label: Text('')),
-                  ],
-                  rows: [
-                    DataRow(
-                        cells: [
-                          DataCell(
-                            SizedBox(
-                              height: 250,
-                              child: _selectedFileName != null ? Text(_selectedFileName!) : const Text('Ningún archivo seleccionado',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
+                SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: DataTable(
+                    columns: const [
+                      DataColumn(label: Text('Archivo',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
+                      DataColumn(label: Text('')),
+                      DataColumn(label: SizedBox(width: 175, child: Text('Tipo de Documento',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),))),
+                      DataColumn(label: Text('')),
+                      DataColumn(label: Text('')),
+                    ],
+                    rows: [
+                      DataRow(
+                          cells: [
+                            DataCell(
+                              SizedBox(
+                                height: 250,
+                                child: _selectedFileName != null ? Text(_selectedFileName!) : const Text('Ningún archivo seleccionado',style: TextStyle(fontFamily: 'Roboto',fontSize: 14),),
+                              ),
                             ),
-                          ),
 
-                      DataCell(ElevatedButton(
-                        onPressed: () {
-                          _pickDocument();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.blue,
-                        ),
-                        child: const Text('Seleccionar Archivo'),
-                      )),
-                      DataCell(
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: DropdownButton<String>(
-                            items: const [
-                              DropdownMenuItem<String>(
-                                value: 'Seleccionar', // Valor para la opción predeterminada
-                                child: Text('Seleccionar',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
+                            DataCell(ElevatedButton(
+                              onPressed: () {
+                                _pickDocument();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.blue,
                               ),
-                              DropdownMenuItem<String>(
-                                value: 'Solicitud',
-                                child: Text('Solicitud',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
+                              child: const Text('Seleccionar Archivo'),
+                            )),
+                            DataCell(
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: DropdownButton<String>(
+                                  items: const [
+                                    DropdownMenuItem<String>(
+                                      value: 'Seleccionar', // Valor para la opción predeterminada
+                                      child: Text('Seleccionar',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
+                                    ),
+                                    DropdownMenuItem<String>(
+                                      value: 'Solicitud',
+                                      child: Text('Solicitud',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
+                                    ),
+                                    DropdownMenuItem<String>(
+                                      value: 'Identificación',
+                                      child: Text('Identificación',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
+                                    ),
+                                    DropdownMenuItem<String>(
+                                      value: 'Comprobante de domicilio',
+                                      child: Text('Comprobante de domicilio',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
+                                    ),
+                                    DropdownMenuItem<String>(
+                                      value: 'Cartas de Extraprima',
+                                      child: Text('Cartas de Extraprima',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
+                                    ),
+                                    DropdownMenuItem<String>(
+                                      value: 'Cartas de Rechazo',
+                                      child: Text('Cartas de Rechazo',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
+                                    ),
+                                    DropdownMenuItem<String>(
+                                      value: 'Cartas Adicionales',
+                                      child: Text('Cartas Adicionales',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
+                                    ),
+                                    DropdownMenuItem<String>(
+                                      value: 'Cuestionario Adicional de Suscripción',
+                                      child: Text('Cuestionario Adicional de Suscripción',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
+                                    ),
+                                    DropdownMenuItem<String>(
+                                      value: 'Formato de Cobranza Electrónica',
+                                      child: Text('Formato de Cobranza Electrónica',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
+                                    ),
+                                    DropdownMenuItem<String>(
+                                      value: 'Hoja H107',
+                                      child: Text('Hoja H107',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
+                                    ),
+                                    DropdownMenuItem<String>(
+                                      value: 'Solicitudes Adicionales',
+                                      child: Text('Solicitudes Adicionales',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
+                                    ),
+                                  ],
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedOption = value;
+                                      // Actualizar el nombre del archivo según el tipo de documento
+                                      if (value != 'Seleccionar') {
+                                        _selectedFileName = '../archivos/$value${widget.id}.pdf';
+                                      } else {
+                                        _selectedFileName = null; // No se seleccionó un tipo de documento
+                                      }
+                                    });
+                                  },
+                                  value: _selectedOption ?? 'Seleccionar',
+                                ),
                               ),
-                              DropdownMenuItem<String>(
-                                value: 'Identificación',
-                                child: Text('Identificación',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                              ),
-                              DropdownMenuItem<String>(
-                                value: 'Comprobante de domicilio',
-                                child: Text('Comprobante de domicilio',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                              ),
-                              DropdownMenuItem<String>(
-                                value: 'Cartas de Extraprima',
-                                child: Text('Cartas de Extraprima',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                              ),
-                              DropdownMenuItem<String>(
-                                value: 'Cartas de Rechazo',
-                                child: Text('Cartas de Rechazo',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                              ),
-                              DropdownMenuItem<String>(
-                                value: 'Cartas Adicionales',
-                                child: Text('Cartas Adicionales',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                              ),
-                              DropdownMenuItem<String>(
-                                value: 'Cuestionario Adicional de Suscripción',
-                                child: Text('Cuestionario Adicional de Suscripción',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                              ),
-                              DropdownMenuItem<String>(
-                                value: 'Formato de Cobranza Electrónica',
-                                child: Text('Formato de Cobranza Electrónica',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                              ),
-                              DropdownMenuItem<String>(
-                                value: 'Hoja H107',
-                                child: Text('Hoja H107',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                              ),
-                              DropdownMenuItem<String>(
-                                value: 'Solicitudes Adicionales',
-                                child: Text('Solicitudes Adicionales',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                              ),
-                            ],
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedOption = value;
-                                // Actualizar el nombre del archivo según el tipo de documento
-                                if (value != 'Seleccionar') {
-                                _selectedFileName = '../archivos/$value${widget.id}.pdf';
-                                } else {
-                                _selectedFileName = null; // No se seleccionó un tipo de documento
-                                }
-                              });
-                            },
-                            value: _selectedOption ?? 'Seleccionar',
-                          ),
-                        ),
-                      ),
-                      DataCell(
-                          ElevatedButton(
-                            onPressed: () {
-                              if (_selectedFileName != null && _selectedOption != null) {
-                                // Realiza la acción de carga y procesamiento aquí
-                                print('Archivo seleccionado: $_selectedFileName');
-                                print('Opción seleccionada: $_selectedOption');
-
-                                // Llama a la función para cargar el documento al servidor PHP.
-                                final fileName = _selectedFileName ?? ''; // Valor por defecto si _selectedFileName es nulo
-                                uploadDocument(fileName, widget.id);
-                              } else {
-                                // Muestra un mensaje de error si no se seleccionó un archivo o una opción
-                                print('Por favor, selecciona un archivo y una opción antes de confirmar.');
-                              }
-
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.lightGreen,
                             ),
-                            child: const Text('Confirmar'),
-                          )
+                            DataCell(
+                                ElevatedButton(
+                                  onPressed: () {
+                                    if (_selectedFileName != null && _selectedOption != null) {
+                                      // Realiza la acción de carga y procesamiento aquí
+                                      print('Archivo seleccionado: $_selectedFileName');
+                                      print('Opción seleccionada: $_selectedOption');
 
-                      ),
-                      DataCell(ElevatedButton(
-                        onPressed: () {
-                          // Aquí puedes realizar acciones para cancelar la operación, si es necesario
-                          // También puedes limpiar el estado aquí si es necesario
-                          setState(() {
-                            _selectedFileName = null;
-                            _selectedOption = null;
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.redAccent,
-                        ),
-                        child: const Text('Cancelar'),
-                      )),
-                    ]),
-                  ],
+                                      // Llama a la función para cargar el documento al servidor PHP.
+                                      final fileName = _selectedFileName ?? ''; // Valor por defecto si _selectedFileName es nulo
+                                      uploadDocument(fileName, widget.id);
+                                    } else {
+                                      // Muestra un mensaje de error si no se seleccionó un archivo o una opción
+                                      print('Por favor, selecciona un archivo y una opción antes de confirmar.');
+                                    }
+
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Colors.lightGreen,
+                                  ),
+                                  child: const Text('Confirmar'),
+                                )
+
+                            ),
+                            DataCell(ElevatedButton(
+                              onPressed: () {
+                                // Aquí puedes realizar acciones para cancelar la operación, si es necesario
+                                // También puedes limpiar el estado aquí si es necesario
+                                setState(() {
+                                  _selectedFileName = null;
+                                  _selectedOption = null;
+                                });
+                              },
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.redAccent,
+                              ),
+                              child: const Text('Cancelar'),
+                            )),
+                          ]),
+                    ],
+                  ),
                 ),
+
                 const SizedBox(height: 32),
                 const Center(
                   child: Text(
