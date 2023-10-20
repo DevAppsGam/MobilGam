@@ -30,7 +30,7 @@ function obtenerFechaPromesa($conexion, $folio){
     $result = mysqli_stmt_get_result($stmt);
     $fechaPromesa = null;
     if ($row = mysqli_fetch_row($result)) {
-        $fechaPromesa = $row[0];
+        $fechaPromesa = date('Y-m-d H:i:s', strtotime($row[0]));
     }
     mysqli_stmt_close($stmt);
     return $fechaPromesa;
@@ -119,23 +119,79 @@ if ($result->num_rows > 0) {
                             $dias = $d_promesar; // Ajusta los días según tus requisitos
                             $fechaVencimiento = calcularFechaVencimiento($fechaPromesa, $dias, $feriadosAlta);
                             $row['fecha_promesa'] = date('d-m-Y', $fechaVencimiento);
+                            // Verificación de la fecha actual con la fecha de vencimiento para el semáforo
+                            $fechaVencimiento = strtotime(date('d-m-Y', $fechaVencimiento));
+                            $fechaActual = time();
+                            $row['fecha_vencimiento'] = $fechaVencimiento;
+                            $row['fecha_actual'] = $fechaActual;
+
+                            // Nuevo fragmento corregido
+                            $consulta = "select cd_estado from cam_estado where folio='".$row['id']."'";
+                            $resultado = mysqli_query($conn, $consulta);
+
+                            while ($verfecha = mysqli_fetch_row($resultado)) {
+                                $datosfecha = $verfecha[0]; //cambio de estado
+                                $fechap = strtotime(date("d-m-Y", strtotime($datosfecha))); //formateo de la fecha cambio de estado
+
+                                if ($row['estado'] == "TERMINADO CON POLIZA" || $row['estado'] == "TERMINADO") { //corrección en condiciones
+
+                                    if ($fechaVencimiento > $fechap) {
+                                        $row['semaforo'] = 'verde'; //actualización del semáforo
+                                    } else if ($fechaVencimiento < $fechap) {
+                                        $row['semaforo'] = 'rojo'; //actualización del semáforo
+                                    } else if ($fechaVencimiento == $fechap) {
+                                        $row['semaforo'] = 'amarillo'; //actualización del semáforo
+                                    }
+                                    $row['fecha_promesa'] = date('d-m-Y', $fechaVencimiento); // Asegúrate de ajustar el formato si es necesario
+                                }
+                            }
                         }
                 } else {
                     $row['fecha_promesa'] = '***';
+                    $row['semaforo'] = '***';
                 }
                 break;
                 case 'PAGOS':
-                    if ($row['estado'] != 'CANCELADO' && $row['estado'] != 'ENVIADO') {
-                        $fechaPromesa = obtenerFechaPromesa($conn, $row['id']);
-                        if ($fechaPromesa) {
-                            $dias = 1; // Ajusta los días según tus requisitos
-                            $fechaVencimiento = calcularFechaVencimiento($fechaPromesa, $dias, $feriadosAlta);
-                            $row['fecha_promesa'] = date('d-m-Y', $fechaVencimiento);
+        if ($row['estado'] != 'CANCELADO' && $row['estado'] != 'ENVIADO') {
+            $fechaPromesa = obtenerFechaPromesa($conn, $row['id']);
+            // Reemplaza la sección del semáforo para PAGOS y MOVIMIENTOS
+            if ($fechaPromesa) {
+                $dias = $d_promesar; // Ajusta los días según tus requisitos
+                $fechaVencimiento = calcularFechaVencimiento($fechaPromesa, $dias, $feriadosAlta);
+                $row['fecha_promesa'] = date('d-m-Y', $fechaVencimiento);
+
+                $fechaVencimiento = strtotime(date('d-m-Y', $fechaVencimiento));
+                $fechaActual = time();
+
+
+
+                // Nuevo fragmento corregido
+                $consulta = "select cd_estado from cam_estado where folio='".$row['id']."'";
+                $resultado = mysqli_query($conn, $consulta);
+
+                while ($verfecha = mysqli_fetch_row($resultado)) {
+                    $datosfecha = $verfecha[0]; //cambio de estado
+                    $fechap = strtotime(date("d-m-Y", strtotime($datosfecha))); //formateo de la fecha cambio de estado
+
+                    if ($row['estado'] == "TERMINADO CON POLIZA" || $row['estado'] == "TERMINADO") { //corrección en condiciones
+
+                        if ($fechaVencimiento > $fechap) {
+                            $row['semaforo'] = 'verde'; //actualización del semáforo
+                        } else if ($fechaVencimiento < $fechap) {
+                            $row['semaforo'] = 'rojo'; //actualización del semáforo
+                        } else if ($fechaVencimiento == $fechap) {
+                            $row['semaforo'] = 'amarillo'; //actualización del semáforo
                         }
-                    } else {
-                        $row['fecha_promesa'] = '***';
+                        $row['fecha_promesa'] = date('d-m-Y', $fechaVencimiento); // Asegúrate de ajustar el formato si es necesario
                     }
-                    break;
+                }
+                // Fin del nuevo fragmento
+            }
+        } else {
+            $row['fecha_promesa'] = '***';
+            $row['semaforo'] = '***';
+        }
+        break;
             case 'MOVIMIENTOS':
                 if ($row['estado'] != 'CANCELADO' && $row['estado'] != 'ENVIADO') {
                     $sqlr = "select * from producto where producto='" . $row['producto'] . "'";
@@ -149,8 +205,32 @@ if ($result->num_rows > 0) {
                             $fechaVencimiento = calcularFechaVencimiento($fechaPromesa, $dias, $feriadosAlta);
                             $row['fecha_promesa'] = date('d-m-Y', $fechaVencimiento);
                         }
+                        $fechaVencimiento = strtotime(date('d-m-Y', $fechaVencimiento));
+                        $fechaActual = time();
+
+                         // Nuevo fragmento corregido
+                         $consulta = "select cd_estado from cam_estado where folio='".$row['id']."'";
+                         $resultado = mysqli_query($conn, $consulta);
+
+                         while ($verfecha = mysqli_fetch_row($resultado)) {
+                             $datosfecha = $verfecha[0]; //cambio de estado
+                             $fechap = strtotime(date("d-m-Y", strtotime($datosfecha))); //formateo de la fecha cambio de estado
+
+                             if ($row['estado'] == "TERMINADO CON POLIZA" || $row['estado'] == "TERMINADO") { //corrección en condiciones
+
+                                 if ($fechaVencimiento > $fechap) {
+                                     $row['semaforo'] = 'verde'; //actualización del semáforo
+                                 } else if ($fechaVencimiento < $fechap) {
+                                     $row['semaforo'] = 'rojo'; //actualización del semáforo
+                                 } else if ($fechaVencimiento == $fechap) {
+                                     $row['semaforo'] = 'amarillo'; //actualización del semáforo
+                                 }
+                                 $row['fecha_promesa'] = date('d-m-Y', $fechaVencimiento); // Asegúrate de ajustar el formato si es necesario
+                             }
+                         }
                 } else {
                     $row['fecha_promesa'] = '***';
+                    $row['semaforo'] = '***';
                 }
                 break;
             default:

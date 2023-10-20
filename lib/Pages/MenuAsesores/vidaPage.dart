@@ -249,13 +249,23 @@ class _VidaState extends State<Vida> {
   Widget _buildTableCell(String text, Map<String, String> datos, String columna) {
     Color textColor = columna == 'id' ? const Color.fromRGBO(15, 132, 194, 1) : Colors.black;
     String nPolizaValue = datos['poliza'] ?? ''; // Usar el operador '!' para asegurarse de que 'datos['polizap']' no sea nulo
-
+    Color textColorf = columna == 'fecha_promesa' ? const Color.fromRGBO(15, 132, 194, 1) : Colors.black;
 
     // Ajuste basado en el valor de 't_solicitud'
     if (datos['t_solicitud'] == 'PAGOS') {
       nPolizaValue = datos['polizap'] ?? '';  // Aquí debes proporcionar el nombre correcto del campo que contiene el valor para 'N Poliza' cuando 't_solicitud' es 'PAGOS'.
     }else if(datos['t_solicitud']=='ALTA DE POLIZA'){
       nPolizaValue=datos['polizap'] ?? '';
+    }
+
+    if(columna=='fecha_promesa'){
+      if(datos['semaforo']=='verde'){
+        textColor = Colors.green;
+      } else if(datos['semaforo']=='rojo'){
+        textColor=Colors.red;
+      }else if(datos['semaforo']=='amarillo'){
+        textColor=Colors.yellow;
+      }
     }
 
     return TableCell(
