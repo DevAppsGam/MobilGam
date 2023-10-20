@@ -132,10 +132,8 @@ class _DetalleVidaState extends State<DetalleVida> {
       // El usuario canceló la selección de archivos.
       print('Selección de archivos cancelada.');
     }
+    fetchDataForThirdTable();
   }
-
-
-
 
   Future<void> _sendObservation(String observation) async {
     const String url = 'http://192.168.100.73/gam/detallevidacrearobservacion.php';
@@ -204,6 +202,7 @@ class _DetalleVidaState extends State<DetalleVida> {
       if (response.statusCode == 200) {
         // La solicitud se realizó con éxito, puedes manejar la respuesta aquí si es necesario.
         print('Documento enviado con éxito');
+        fetchDataForThirdTable();
       } else {
         // Maneja los errores de la solicitud aquí.
         print('Error al enviar el documento al servidor: ${response.statusCode}');
@@ -353,7 +352,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                                   ? data['polizap'] ?? '***'
                                   : data['t_solicitud'] == 'ALTA DE POLIZA'
                                   ? data['polizap'] ?? '***'
-                                  : data['polizap'] ?? '***',
+                                  : data['poliza'] ?? '***',
                               style: const TextStyle(
                                   fontFamily: 'Roboto',
                                   fontSize: 18
@@ -361,7 +360,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                             )
                         ),
                         DataCell(Text(data['t_solicitud'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
-                        DataCell(Text(data['t_movimiento'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
+                        DataCell(Text(data['movimiento'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
                         DataCell(Text(data['prioridad'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
                         DataCell(Text(data['comentarios'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
                       ]),

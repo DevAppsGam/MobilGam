@@ -63,27 +63,32 @@ class _VidaState extends State<Vida> {
     }
   }
 
+  Future<void> fetchDataWithFilter(String? filterNames) async {
+    if (filterNames != null) {
+      final response = await http.get(Uri.parse(
+          'http://192.168.100.73/gam/tablafoliosvida.php?filter=$filterNames&username=${widget.nombreUsuario}'));
 
-  Future<void> fetchDataWithFilter(String filterNames) async {
-    final response = await http.get(Uri.parse(
-        'http://192.168.100.73/gam/tablafoliosvida.php?filter=$filterNames&username=${widget.nombreUsuario}'));
-
-    if (response.statusCode == 200) {
-      List<dynamic> jsonResponse = json.decode(response.body);
-      setState(() {
-        datos = jsonResponse.map((dynamic item) {
-          Map<String, String> mappedItem = {};
-          for (var entry in item.entries) {
-            mappedItem[entry.key] = entry.value ?? '';
-          }
-          return mappedItem;
-        }).toList();
-        filtroAplicado = filterNames;
-      });
+      if (response.statusCode == 200) {
+        List<dynamic> jsonResponse = json.decode(response.body);
+        setState(() {
+          datos = jsonResponse.map((dynamic item) {
+            Map<String, String> mappedItem = {};
+            for (var entry in item.entries) {
+              // Asegúrate de que el valor sea convertido a String antes de asignarlo
+              mappedItem[entry.key] = entry.value.toString();
+            }
+            return mappedItem;
+          }).toList();
+          filtroAplicado = filterButtonText[filterNames] ?? '';
+        });
+      } else {
+        _showErrorDialog('Hubo un problema al obtener los datos.');
+      }
     } else {
-      _showErrorDialog('Hubo un problema al obtener los datos.');
+      // Manejar la lógica en caso de que filterNames sea nulo.
     }
   }
+
 
   void _showErrorDialog(String message) {
     showDialog(
@@ -126,6 +131,8 @@ class _VidaState extends State<Vida> {
       fetchData();
     }
   }
+
+
 
   // Función para realizar la búsqueda
   void performSearch() {
@@ -188,8 +195,6 @@ class _VidaState extends State<Vida> {
       },
     );
   }
-
-
 
   @override
   void dispose() {
@@ -308,7 +313,10 @@ class _VidaState extends State<Vida> {
 
   @override
   Widget build(BuildContext context) {
-    int totalElementos = datos.length;
+    List<Map<String, String>> allData = List.from(datos);
+    List<Map<String, String>> filteredData = List.from(datos);
+
+    int totalElementos = filteredData.length;
     int totalPaginas = (totalElementos + _perPage - 1) ~/ _perPage;
 
     if (totalPaginas > 0) {
@@ -324,7 +332,7 @@ class _VidaState extends State<Vida> {
       fin = totalElementos;
     }
 
-    List<Map<String, String>> currentPageData = datos.sublist(inicio, fin);
+    List<Map<String, String>> currentPageData = filteredData.sublist(inicio, fin);
 
     return Scaffold(
       appBar: AppBar(
@@ -423,7 +431,7 @@ class _VidaState extends State<Vida> {
                                 style: const TextStyle(
                                   fontFamily: 'Roboto',
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 15,
+                                  fontSize: 14,
                                 ),
                               ),
                             ),
@@ -434,7 +442,7 @@ class _VidaState extends State<Vida> {
                       const SizedBox(width: 16),
                       ElevatedButton(
                         onPressed: (){
-
+                          fetchDataWithFilter('A_TIEMPO');
                         },
                         style: ElevatedButton.styleFrom(
                           primary: Colors.lightGreen,
@@ -444,7 +452,7 @@ class _VidaState extends State<Vida> {
                           style: TextStyle(
                             fontFamily: 'Roboto',
                             fontWeight: FontWeight.bold,
-                            fontSize: 17,
+                            fontSize: 15,
                           ),
                         ),
                       ),
@@ -460,7 +468,7 @@ class _VidaState extends State<Vida> {
                           style: TextStyle(
                             fontFamily: 'Roboto',
                             fontWeight: FontWeight.bold,
-                            fontSize: 17,
+                            fontSize: 15,
                           ),),
                       ),
                       const SizedBox(width: 16),
@@ -475,7 +483,7 @@ class _VidaState extends State<Vida> {
                           style: TextStyle(
                             fontFamily: 'Roboto',
                             fontWeight: FontWeight.bold,
-                            fontSize: 17,
+                            fontSize: 15,
                           ),),
                       ),
                     ],
