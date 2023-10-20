@@ -41,24 +41,28 @@ class _VidaState extends State<Vida> {
   }
 
   Future<void> fetchData() async {
-    final response =
-    await http.get(Uri.parse('http://192.168.100.73/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
-    print(response.body);
-    if (response.statusCode == 200) {
-      List<dynamic> jsonResponse = json.decode(response.body);
-      setState(() {
-        datos = jsonResponse.map((dynamic item) {
-          Map<String, String> mappedItem = {};
-          for (var entry in item.entries) {
-            mappedItem[entry.key] = entry.value ?? '';
-          }
-          return mappedItem;
-        }).toList();
-      });
-    } else {
+    try {
+      final response = await http.get(Uri.parse('http://192.168.100.73/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
+      if (response.statusCode == 200) {
+        List<dynamic> jsonResponse = json.decode(response.body);
+        setState(() {
+          datos = jsonResponse.map((dynamic item) {
+            Map<String, String> mappedItem = {};
+            for (var entry in item.entries) {
+              mappedItem[entry.key] = entry.value.toString();
+            }
+            return mappedItem;
+          }).toList();
+        });
+      } else {
+        _showErrorDialog('Hubo un problema al obtener los datos.');
+      }
+    } catch (e) {
+      print('Error al obtener los datos: $e');
       _showErrorDialog('Hubo un problema al obtener los datos.');
     }
   }
+
 
   Future<void> fetchDataWithFilter(String filterNames) async {
     final response = await http.get(Uri.parse(
@@ -200,7 +204,7 @@ class _VidaState extends State<Vida> {
     return TableRow(
       children: [
         _buildTableHeaderCell(' Folio GAM'),
-        _buildTableHeaderCell(' Contratante '),
+        _buildTableHeaderCell(' Nombre del Contratante '),
         _buildTableHeaderCell(' N° Póliza'),
         _buildTableHeaderCell(' Folio GNP'),
         _buildTableHeaderCell(' Fecha Promesa '),
