@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:url_launcher/url_launcher.dart';
 import 'Pages/asesoresPage.dart';
 import 'Pages/operacionesPage.dart';
 import 'Pages/gddsPage.dart';
 import 'Pages/powerPage.dart';
 import 'Pages/promocionesPage.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 void main() => runApp(const MyApp());
 
@@ -21,11 +21,11 @@ class MyApp extends StatelessWidget {
       home: const SplashScreen(),
       routes: {
         '/powerPage': (_) => const Power(),
-        '/asesoresPage': (_) =>  const Asesores(nombreUsuario: '',),
+        '/asesoresPage': (_) => const Asesores(nombreUsuario: ''),
         '/LoginPage': (_) => const LoginPage(),
-        '/promocionesPage': (_) => Promociones(),
-        '/gddsPage': (_) => Gdds(),
-        '/operacionesPage': (_) => Operaciones(),
+        '/promocionesPage': (_) =>  Promociones(),
+        '/gddsPage': (_) =>  Gdds(),
+        '/operacionesPage': (_) =>  Operaciones(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/Power') {
@@ -55,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(const Duration(seconds: 10));
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) =>  const LoginPage()),
+      MaterialPageRoute(builder: (context) => const LoginPage()),
     );
   }
 
@@ -75,8 +75,8 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               Image.asset(
                 'assets/img/GAM_TV.png',
-                width: 250,
-                height: 250,
+                width: 200,
+                height: 200,
               ),
               const SizedBox(height: 20),
               const CircularProgressIndicator(
@@ -121,8 +121,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     final response = await http.post(
-
-      Uri.parse("http://192.168.100.73/gam/login.php"),
+      Uri.parse("http://192.168.1.79/gam/login.php"),
       body: {
         "nomusuario": username,
         "password": password,
@@ -134,7 +133,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     if (response.statusCode == 200) {
-      final dynamic responseData =  jsonDecode(response.body);
+      final dynamic responseData = jsonDecode(response.body);
 
       if (responseData is Map<String, dynamic>) {
         if (responseData.containsKey("error")) {
@@ -144,29 +143,29 @@ class _LoginPageState extends State<LoginPage> {
         } else {
           final int userType = responseData['tipo'];
           final String nombreUsuario = responseData['nomusuario'];
-          //final String userId = responseData['id'];
 
           switch (userType) {
-            case 1: // Tipo de usuario 1
+            case 1:
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (_) =>  Asesores(nombreUsuario: nombreUsuario, )),
+                MaterialPageRoute(
+                    builder: (_) => Asesores(nombreUsuario: nombreUsuario)),
                     (Route<dynamic> route) => false,
               );
               break;
-            case 2: // Tipo de usuario 2
+            case 2:
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (_) => const Power()),
               );
               break;
-            case 3: // Tipo de usuario 3
+            case 3:
               Navigator.pushReplacementNamed(context, '/promocionesPage');
               break;
-            case 4: // Tipo de usuario 4
+            case 4:
               Navigator.pushReplacementNamed(context, '/gddsPage');
               break;
-            case 5: // Tipo de usuario 5
+            case 5:
               Navigator.pushReplacementNamed(context, '/operacionesPage');
               break;
             default:
@@ -196,180 +195,153 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Form(
-        child: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/img/back.jpg"),
-              fit: BoxFit.cover,
-            ),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/img/back.jpg"),
+            fit: BoxFit.cover,
           ),
-          child: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                const SizedBox(height: 100),
-                Image.asset(
-                  'assets/img/IntraGAM.png',
-                  width: 170.0,
-                  height: 250.0,
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Bienvenido',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromRGBO(73, 78, 84, 1),
-                    fontFamily: 'Roboto',
-                  ),
-                ),
-                const SizedBox(height: 50),
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.2,
-                  padding: const EdgeInsets.only(
-                    top: 4,
-                    left: 16,
-                    right: 16,
-                    bottom: 4,
-                  ),
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(50)),
-                    color: Colors.transparent,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 5,
-                      ),
-                    ],
-                  ),
-                  child: TextFormField(
-                    style: const TextStyle(fontFamily: 'Roboto', fontSize: 20),
-                    controller: controllerUser,
-                    decoration: const InputDecoration(
-                      hintText: 'USUARIO',
-                      icon: Icon(
-                        Icons.person_2_rounded,
-                        color: Colors.black,
-                      ),
-
-                      fillColor: Colors.transparent,
-                      filled: true,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  width: MediaQuery.of(context).size.width / 1.2,
-                  height: 50,
-                  margin: const EdgeInsets.only(top: 32),
-                  padding: const EdgeInsets.only(
-                    top: 4,
-                    left: 16,
-                    right: 16,
-                    bottom: 4,
-                  ),
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(50)),
-                    color: Colors.transparent,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 5,
-                      ),
-                    ],
-                  ),
-                  child: TextField(
-                    style: const TextStyle(fontFamily: 'Roboto', fontSize: 20),
-                    controller: controllerPass,
-                    obscureText: obscurePassword,
-                    decoration: InputDecoration(
-                      icon: const Icon(
-                        Icons.vpn_key,
-                        color: Colors.black,
-                      ),
-                      hintText: 'CONTRASEÑA',
-                      fillColor: Colors.transparent,
-                      filled: true,
-                      suffixIcon: GestureDetector(
-                        onTap: togglePasswordVisibility,
-                        child: Icon(
-                          obscurePassword
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                GestureDetector(
-                  onTap: () {
-                    const url =
-                        'https://asesoresgam.com.mx/aviso-de-privacidad.php';
-                    launchUrl(url as Uri);
-                  },
-                  child: const Text(
-                    'Aviso de privacidad',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromRGBO(31, 123, 206, 1),
-                      fontFamily: 'Roboto',
-                    ),
-                  ),
-                ),
-                const Spacer(),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(245, 137, 63, 2),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  onPressed: isLoading
-                      ? null
-                      : () {
-                    login();
-                  },
-                  child: const Text(
-                    'Ingresar',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontFamily: 'Roboto',
-                    ),
-                  ),
-                ),
-                errorMessage.isNotEmpty
-                    ? Text(
-                  errorMessage,
-                  style: const TextStyle(
-                    color: Colors.red,
-                  ),
-                )
-                    : const SizedBox(),
-                const Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      SizedBox(height: 50),
-                      Text(
-                        '© 2019 Grupo Administrativo Mexicano S.A de C.V | Todos los derechos reservados',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Color.fromRGBO(246, 246, 246, 1),
-                          fontFamily: 'Roboto',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+        ),
+        child: ListView(
+          children: <Widget>[
+            const SizedBox(height: 200),
+            Image.asset(
+              'assets/img/IntraGAM.png',
+              width: 100.0,
+              height: 65.0,
             ),
-          ),
+            const SizedBox(height: 50),
+            const Center(
+              child: Text(
+                'Bienvenido',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromRGBO(73, 78, 84, 1),
+                  fontFamily: 'Roboto',
+                ),
+              ),
+            ),
+            const SizedBox(height: 50),
+            Container(
+              width: MediaQuery.of(context).size.width / 1.2,
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(50)),
+                color: Colors.transparent,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 5,
+                  ),
+                ],
+              ),
+              child: TextFormField(
+                style: const TextStyle(fontFamily: 'Roboto', fontSize: 20),
+                controller: controllerUser,
+                decoration: const InputDecoration(
+                  hintText: 'USUARIO',
+                  icon: Icon(
+                    Icons.person_2_rounded,
+                    color: Colors.black,
+                  ),
+                  fillColor: Colors.transparent,
+                  filled: true,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              width: MediaQuery.of(context).size.width / 1.2,
+              height: 50,
+              margin: const EdgeInsets.only(top: 32),
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(50)),
+                color: Colors.transparent,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 5,
+                  ),
+                ],
+              ),
+              child: TextField(
+                style: const TextStyle(fontFamily: 'Roboto', fontSize: 20),
+                controller: controllerPass,
+                obscureText: obscurePassword,
+                decoration: InputDecoration(
+                  icon: const Icon(
+                    Icons.vpn_key,
+                    color: Colors.black,
+                  ),
+                  hintText: 'CONTRASEÑA',
+                  fillColor: Colors.transparent,
+                  filled: true,
+                  suffixIcon: GestureDetector(
+                    onTap: togglePasswordVisibility,
+                    child: Icon(
+                      obscurePassword ? Icons.visibility : Icons.visibility_off,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
+            GestureDetector(
+              onTap: () {
+                const url = 'https://asesoresgam.com.mx/aviso-de-privacidad.php';
+                launchUrl(url as Uri);
+              },
+              child: const Text(
+                'Aviso de privacidad',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromRGBO(31, 123, 206, 1),
+                  fontFamily: 'Roboto',
+                ),
+              ),
+            ),
+            const SizedBox(height: 50),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromRGBO(245, 137, 63, 2),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              onPressed: isLoading ? null : () {
+                login();
+              },
+              child: const Text(
+                'Ingresar',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontFamily: 'Roboto',
+                ),
+              ),
+            ),
+            if (errorMessage.isNotEmpty)
+              Text(
+                errorMessage,
+                style: const TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+            const SizedBox(height: 50),
+            const Text(
+              '© 2019 Grupo Administrativo Mexicano S.A de C.V | Todos los derechos reservados',
+              style: TextStyle(
+                fontSize: 12,
+                color: Color.fromRGBO(246, 246, 246, 1),
+                fontFamily: 'Roboto',
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );

@@ -129,13 +129,13 @@ class Asesores extends StatelessWidget {
                   IconWithText(
                     icon: Icons.notification_important_rounded,
                     title: 'SINIESTROS',
-                    color: const Color.fromRGBO(249, 240, 10, 1),
+                    color: const Color.fromRGBO(249, 224, 128, 1.0),
                     nombreUsuario: nombreUsuario,
                   ),
                   IconWithText(
                     icon: Icons.car_crash_rounded,
                     title: 'AUTOS',
-                    color: const Color.fromRGBO(223, 23, 50, 1),
+                    color: const Color.fromRGBO(214, 117, 55, 1),
                     nombreUsuario: nombreUsuario,
                   ),
                    IconWithText(

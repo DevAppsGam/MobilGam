@@ -57,7 +57,7 @@ class _DetalleVidaState extends State<DetalleVida> {
       errorMessage = '';
     });
 
-    final String url = 'http://192.168.100.73/gam/detallevida.php?id=${widget.id}';
+    final String url = 'http://192.168.1.79/gam/detallevida.php?id=${widget.id}';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -92,7 +92,7 @@ class _DetalleVidaState extends State<DetalleVida> {
 
   Future<void> fetchDataForThirdTable() async {
     final String thirdTableUrl =
-        'http://192.168.100.73/gam/detallevidaobservaciones.php?id=${widget.id}';
+        'http://192.168.1.79/gam/detallevidaobservaciones.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(thirdTableUrl));
 
@@ -136,7 +136,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   }
 
   Future<void> _sendObservation(String observation) async {
-    const String url = 'http://192.168.100.73/gam/detallevidacrearobservacion.php';
+    const String url = 'http://192.168.1.79/gam/detallevidacrearobservacion.php';
 
     try {
       final response = await http.get(
@@ -162,7 +162,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   }
 
   Future<List<Map<String, dynamic>>?> fetchDataForSecondTable() async {
-    final String secondTableUrl = 'http://192.168.100.73/gam/detallevidadocumentos.php?id=${widget.id}';
+    final String secondTableUrl = 'http://192.168.1.79/gam/detallevidadocumentos.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(secondTableUrl));
 
@@ -194,7 +194,7 @@ class _DetalleVidaState extends State<DetalleVida> {
     final escapedFileName = Uri.encodeComponent(fileName);
 
     // Crea la URL con los parámetros en la forma adecuada
-    final url = 'http://192.168.100.73/gam/detallevidasubirdoc.php?id=$id&archivo=$escapedFileName';
+    final url = 'http://192.168.1.79/gam/detallevidasubirdoc.php?id=$id&archivo=$escapedFileName';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -215,7 +215,7 @@ class _DetalleVidaState extends State<DetalleVida> {
 
   Future<void> uploadFile(String fileName, String id) async {
     final file = File(fileName); // Abre el archivo seleccionado
-    const url = 'http://192.168.100.73/gam/upload.php'; // URL del servicio de carga en el servidor
+    const url = 'http://192.168.1.79/gam/upload.php'; // URL del servicio de carga en el servidor
 
     final request = http.MultipartRequest('POST', Uri.parse(url));
     request.files.add(
@@ -505,39 +505,39 @@ class _DetalleVidaState extends State<DetalleVida> {
                                       child: Text('Solicitud',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
                                     ),
                                     DropdownMenuItem<String>(
-                                      value: 'Identificación',
+                                      value: 'Identificacion',
                                       child: Text('Identificación',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
                                     ),
                                     DropdownMenuItem<String>(
-                                      value: 'Comprobante de domicilio',
-                                      child: Text('Comprobante de domicilio',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
+                                      value: 'Comprobante_domicilio',
+                                      child: Text('Comprobante de Domicilio',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
                                     ),
                                     DropdownMenuItem<String>(
-                                      value: 'Cartas de Extraprima',
+                                      value: 'Cartas_Extraprima',
                                       child: Text('Cartas de Extraprima',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
                                     ),
                                     DropdownMenuItem<String>(
-                                      value: 'Cartas de Rechazo',
+                                      value: 'Cartas_Rechazo',
                                       child: Text('Cartas de Rechazo',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
                                     ),
                                     DropdownMenuItem<String>(
-                                      value: 'Cartas Adicionales',
+                                      value: 'Cartas_Adicionales',
                                       child: Text('Cartas Adicionales',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
                                     ),
                                     DropdownMenuItem<String>(
-                                      value: 'Cuestionario Adicional de Suscripción',
+                                      value: 'Cuestionario_Adicional_Suscripción',
                                       child: Text('Cuestionario Adicional de Suscripción',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
                                     ),
                                     DropdownMenuItem<String>(
-                                      value: 'Formato de Cobranza Electrónica',
+                                      value: 'Formato_Cobranza_Electrónica',
                                       child: Text('Formato de Cobranza Electrónica',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
                                     ),
                                     DropdownMenuItem<String>(
-                                      value: 'Hoja H107',
+                                      value: 'Hoja_H107',
                                       child: Text('Hoja H107',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
                                     ),
                                     DropdownMenuItem<String>(
-                                      value: 'Solicitudes Adicionales',
+                                      value: 'Solicitudes_Adicionales',
                                       child: Text('Solicitudes Adicionales',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
                                     ),
                                   ],
@@ -546,7 +546,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                                       _selectedOption = value;
                                       // Actualizar el nombre del archivo según el tipo de documento
                                       if (value != 'Seleccionar') {
-                                        _selectedFileName = '../archivos/$value${widget.id}.pdf';
+                                        _selectedFileName = '$value${widget.id}.pdf';
                                       } else {
                                         _selectedFileName = null; // No se seleccionó un tipo de documento
                                       }
