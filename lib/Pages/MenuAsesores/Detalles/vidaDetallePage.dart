@@ -423,7 +423,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                       buildTableCell('Contratante', isHeader: true),
                       buildTableCell('Póliza', isHeader: true),
                       buildTableCell('Tipo de Solicitud', isHeader: true),
-                      buildTableCell('Prioridad', isHeader: true),
+                      buildTableCell('Comentarios', isHeader: true),
                     ]),
                     TableRow(children: [
                       buildTableCell(data['contratante'] ?? '***'),
@@ -435,18 +435,18 @@ class _DetalleVidaState extends State<DetalleVida> {
                             : data['polizap'] ?? '***',
                       ),
                       buildTableCell(data['t_solicitud'] ?? '***'),
-                      buildTableCell(data['prioridad'] ?? '***'),
+                      buildTableCell(data['comentarios'] ?? '***'),
                     ]),
                     TableRow(children: [
+                      buildTableCell('Prioridad', isHeader: true),
                       buildTableCell(
-                        data['t_solicitud'] == 'MOVIMIENTOS'
-                          ? 'Tipo de Movimiento'
-                        : data['t_solicitud'] == 'PAGOS'
-                        ? 'Moneda'
-                        : 'Moneda',
+                          data['t_solicitud'] == 'MOVIMIENTOS'
+                              ? 'Tipo de Movimiento'
+                              : data['t_solicitud'] == 'PAGOS'
+                              ? 'Moneda'
+                              : 'Moneda',
                           isHeader: true
                       ),
-                      buildTableCell('Comentarios', isHeader: true),
                       buildTableCell(
                           data['t_solicitud'] == 'MOVIMIENTOS'
                               ? ''
@@ -465,14 +465,16 @@ class _DetalleVidaState extends State<DetalleVida> {
                       ),
                     ]),
                     TableRow(children: [
+                      buildTableCell(data['prioridad'] ?? '***'),
                       buildTableCell(
                         data['t_solicitud'] == 'MOVIMIENTOS'
-                            ? data['movimiento'] ?? '***'
+                            ?  data['movimiento'] ?? '***'
                             : data['t_solicitud'] == 'PAGOS'
                             ? data['moneda_pagos'] ?? ''
-                            : data['moneda_pagos'] ?? '',
+                            : data['t_solicitud'] == 'ALTA DE POLIZA'
+                            ? data['monedap'] ?? '***'
+                            : data['monedap'] ?? '***',
                       ),
-                      buildTableCell(data['comentarios'] ?? '***'),
                       buildTableCell(
                         data['t_solicitud'] == 'MOVIMIENTOS'
                             ?  ''

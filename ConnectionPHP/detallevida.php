@@ -14,7 +14,7 @@ if ($conn->connect_error) {
 $folioSelec = isset($_GET['id']) ? $_GET['id'] : '';
 
 // Consulta el id del agente correspondiente al nombreUsuario
-$sql = "SELECT id, negocio, DATE(fecha) AS fecha, estado, contratante, poliza, polizap, t_solicitud, monto, moneda_pagos, prioridad, comentarios, movimiento, fgnp FROM folios WHERE id = $folioSelec";
+$sql = "SELECT id, negocio, DATE(fecha) AS fecha, estado, contratante,producto, poliza, polizap, t_solicitud, monto, moneda_pagos, prioridad, comentarios, movimiento, fgnp, monedap FROM folios WHERE id = $folioSelec";
 
 // Ejecuta la consulta SQL
 $result = $conn->query($sql);
