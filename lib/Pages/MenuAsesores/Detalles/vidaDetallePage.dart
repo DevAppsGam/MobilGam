@@ -57,7 +57,7 @@ class _DetalleVidaState extends State<DetalleVida> {
       errorMessage = '';
     });
 
-    final String url = 'http://192.168.1.79/gam/detallevida.php?id=${widget.id}';
+    final String url = 'http://192.168.1.131/gam/detallevida.php?id=${widget.id}';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -92,7 +92,7 @@ class _DetalleVidaState extends State<DetalleVida> {
 
   Future<void> fetchDataForThirdTable() async {
     final String thirdTableUrl =
-        'http://192.168.1.79/gam/detallevidaobservaciones.php?id=${widget.id}';
+        'http://192.168.1.131/gam/detallevidaobservaciones.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(thirdTableUrl));
 
@@ -136,7 +136,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   }
 
   Future<void> _sendObservation(String observation) async {
-    const String url = 'http://192.168.1.79/gam/detallevidacrearobservacion.php';
+    const String url = 'http://192.168.1.131/gam/detallevidacrearobservacion.php';
 
     try {
       final response = await http.get(
@@ -162,7 +162,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   }
 
   Future<List<Map<String, dynamic>>?> fetchDataForSecondTable() async {
-    final String secondTableUrl = 'http://192.168.1.79/gam/detallevidadocumentos.php?id=${widget.id}';
+    final String secondTableUrl = 'http://192.168.1.131/gam/detallevidadocumentos.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(secondTableUrl));
 
@@ -194,7 +194,7 @@ class _DetalleVidaState extends State<DetalleVida> {
     final escapedFileName = Uri.encodeComponent(fileName);
 
     // Crea la URL con los parámetros en la forma adecuada
-    final url = 'http://192.168.1.79/gam/detallevidasubirdoc.php?id=$id&archivo=$escapedFileName';
+    final url = 'http://192.168.1.131/gam/detallevidasubirdoc.php?id=$id&archivo=$escapedFileName';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -215,7 +215,7 @@ class _DetalleVidaState extends State<DetalleVida> {
 
   Future<void> uploadFile(String fileName, String id) async {
     final file = File(fileName); // Abre el archivo seleccionado
-    const url = 'http://192.168.1.79/gam/upload.php'; // URL del servicio de carga en el servidor
+    const url = 'http://192.168.1.131/gam/upload.php'; // URL del servicio de carga en el servidor
 
     final request = http.MultipartRequest('POST', Uri.parse(url));
     request.files.add(
@@ -272,6 +272,22 @@ class _DetalleVidaState extends State<DetalleVida> {
     );
   }
 
+  Widget buildTableCell(String text, {bool isHeader = false}) {
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      alignment: Alignment.center,
+      child: Text(
+        text,
+        style: TextStyle(
+          fontFamily: 'Roboto',
+          fontSize: 18,
+          color: isHeader ? const Color.fromRGBO(15, 132, 194, 1) : Colors.black,
+          // Aquí, si es un encabezado, se usa el color azul; de lo contrario, se usa el color negro.
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -314,7 +330,6 @@ class _DetalleVidaState extends State<DetalleVida> {
                   ),
                 ),
                 const SizedBox(height: 16),
-
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: DataTable(
@@ -335,7 +350,16 @@ class _DetalleVidaState extends State<DetalleVida> {
                       DataColumn(label: Text('Contratante',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
                       DataColumn(label: Text('Póliza',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
                       DataColumn(label: Text('Tipo de Solicitud',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
-                      DataColumn(label: Text('Tipo de movimiento',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
+                      DataColumn(
+                          label: Text(
+                            'Tipo de movimiento',
+                            style: TextStyle(
+                              fontFamily: 'Roboto',
+                              fontSize: 18,
+                              color: Color.fromRGBO(15, 132, 194, 1),
+                            ),
+                          )
+                      ),
                       DataColumn(label: Text('Prioridad',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
                       DataColumn(label: Text('Comentarios',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
                     ],
@@ -360,13 +384,124 @@ class _DetalleVidaState extends State<DetalleVida> {
                             )
                         ),
                         DataCell(Text(data['t_solicitud'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
-                        DataCell(Text(data['movimiento'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
+                        DataCell(
+                            Text(
+                              data['t_solicitud'] == 'PAGOS'
+                                  ? data['monto'] ?? '***'
+                                  : data['t_solicitud'] == 'ALTA DE POLIZA'
+                                  ? data['movimiento'] ?? '***'
+                                  : data['movimiento'] ?? '***',
+                              style: const TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontSize: 18),
+                            )
+                        ),
                         DataCell(Text(data['prioridad'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
                         DataCell(Text(data['comentarios'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
                       ]),
                     ],
                   ),
                 ),
+                const SizedBox(height: 32,),
+                Table(
+                  border: TableBorder.all(),
+                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                  children: [
+                    TableRow(children: [
+                      buildTableCell('Folio GAM', isHeader: true),
+                      buildTableCell('Línea de Negocio', isHeader: true),
+                      buildTableCell('Fecha de Solicitud', isHeader: true),
+                      buildTableCell('Estado', isHeader: true),
+                    ]),
+                    TableRow(children: [
+                      buildTableCell(data['id'] ?? '***'),
+                      buildTableCell(data['negocio'] ?? '***'),
+                      buildTableCell(data['fecha'] ?? '***'),
+                      buildTableCell(data['estado'] ?? '***'),
+                    ]),
+                    TableRow(children: [
+                      buildTableCell('Contratante', isHeader: true),
+                      buildTableCell('Póliza', isHeader: true),
+                      buildTableCell('Tipo de Solicitud', isHeader: true),
+                      buildTableCell('Prioridad', isHeader: true),
+                    ]),
+                    TableRow(children: [
+                      buildTableCell(data['contratante'] ?? '***'),
+                      buildTableCell(
+                        data['t_solicitud'] == 'MOVIMIENTOS'
+                            ? data['poliza'] ?? '***'
+                            : data['t_solicitud'] == 'PAGOS'
+                            ? data['polizap'] ?? '***'
+                            : data['polizap'] ?? '***',
+                      ),
+                      buildTableCell(data['t_solicitud'] ?? '***'),
+                      buildTableCell(data['prioridad'] ?? '***'),
+                    ]),
+                    TableRow(children: [
+                      buildTableCell(
+                        data['t_solicitud'] == 'MOVIMIENTOS'
+                          ? 'Tipo de Movimiento'
+                        : data['t_solicitud'] == 'PAGOS'
+                        ? 'Moneda'
+                        : 'Moneda',
+                          isHeader: true
+                      ),
+                      buildTableCell('Comentarios', isHeader: true),
+                      buildTableCell(
+                          data['t_solicitud'] == 'MOVIMIENTOS'
+                              ? ''
+                              : data['t_solicitud'] == 'PAGOS'
+                              ? 'Monto'
+                              : 'Producto',
+                          isHeader: true
+                      ),
+                      buildTableCell(
+                          data['t_solicitud'] == 'MOVIMIENTOS'
+                              ? ''
+                              : data['t_solicitud'] == 'PAGOS'
+                              ? 'Folio GNP'
+                              : 'Folio GNP',
+                          isHeader: true
+                      ),
+                    ]),
+                    TableRow(children: [
+                      buildTableCell(
+                        data['t_solicitud'] == 'MOVIMIENTOS'
+                            ? data['movimiento'] ?? '***'
+                            : data['t_solicitud'] == 'PAGOS'
+                            ? data['moneda_pagos'] ?? ''
+                            : data['moneda_pagos'] ?? '',
+                      ),
+                      buildTableCell(data['comentarios'] ?? '***'),
+                      buildTableCell(
+                        data['t_solicitud'] == 'MOVIMIENTOS'
+                            ?  ''
+                            : data['t_solicitud'] == 'PAGOS'
+                            ? data['monto'] ?? ''
+                            : data['producto'] ?? '',
+                      ),
+                      buildTableCell(
+                        data['t_solicitud'] == 'MOVIMIENTOS'
+                            ? ''
+                            : data['t_solicitud'] == 'PAGOS'
+                            ? data['fgnp'] ?? ''
+                            : data['fgnp'] ?? '',
+                      ),
+                    ]),
+                    //TableRow(children: [
+                      //buildTableCell(data['t_solicitud'] ?? '***'),
+                      //buildTableCell(
+                        //data['t_solicitud'] == 'PAGOS'
+                          //  ? data['monto'] ?? '***'
+                            //: data['t_solicitud'] == 'ALTA DE POLIZA'
+                            //? data['movimiento'] ?? '***'
+                            //: data['movimiento'] ?? '***',
+                      //),
+                      //buildTableCell(data['prioridad'] ?? '***'),
+                    //]),
+                  ],
+                ),
+
                 const SizedBox(height: 32),
                 const Center(
                   child: Text(
