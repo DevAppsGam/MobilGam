@@ -333,15 +333,23 @@ class _DetalleVidaState extends State<DetalleVida> {
                 const SizedBox(height: 16),
                 const SizedBox(height: 32,),
                 Table(
-                  border: TableBorder.all(),
+                  border: const TableBorder(
+                    horizontalInside: BorderSide(
+                      width: 1,
+                      color: Color.fromRGBO(73, 78, 84, .5),
+                      style: BorderStyle.solid,
+                    ),
+                  ),
                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   children: [
-                    TableRow(children: [
-                      buildTableCell('Folio GAM', isHeader: true),
-                      buildTableCell('Línea de Negocio', isHeader: true),
-                      buildTableCell('Fecha de Solicitud', isHeader: true),
-                      buildTableCell('Estado', isHeader: true),
-                    ]),
+                    TableRow(
+                        decoration: BoxDecoration(color: Colors.grey[300]),
+                        children: [
+                          buildTableCell('Folio GAM', isHeader: true),
+                          buildTableCell('Línea de Negocio', isHeader: true),
+                          buildTableCell('Fecha de Solicitud', isHeader: true),
+                          buildTableCell('Estado', isHeader: true),
+                      ]),
                     TableRow(children: [
                       buildTableCell(data['id'] ?? '***'),
                       buildTableCell(data['negocio'] ?? '***'),
