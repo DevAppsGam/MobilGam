@@ -343,7 +343,6 @@ class _DetalleVidaState extends State<DetalleVida> {
                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   children: [
                     TableRow(
-                        decoration: BoxDecoration(color: Colors.grey[300]),
                         children: [
                           buildTableCell('Folio GAM', isHeader: true),
                           buildTableCell('Línea de Negocio', isHeader: true),
@@ -490,6 +489,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 10),
                 if (isLoading)
                   const CircularProgressIndicator()
                   else
@@ -506,57 +506,151 @@ class _DetalleVidaState extends State<DetalleVida> {
                           } else {
                             final List<Map<String, dynamic>> secondTableData = snapshot.data!;
 
-                            return SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: DataTable(
-                                columns: const [
-                                  DataColumn(label: Text('Usuario',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
-                                  DataColumn(label: Text('Nombre del Archivo',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
-                                  DataColumn(label: Text('Ver',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
-                                  DataColumn(label: Text('Descargar',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
-                                  DataColumn(label: Text('Aprobado',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
-                                  DataColumn(label: Text('Fecha de Carga',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
-                                ],
-                                rows: secondTableData.map((data) {
-                                  return DataRow(
-                                    cells: [
-                                      DataCell(Text(data['nomusuario'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
-                                      DataCell(Text(data['nombre'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
-                                      DataCell(
-                                        IconButton(
-                                          onPressed: () {
-                                            // Lógica para abrir o ver el archivo aquí.
-                                            // Puedes usar navegación o mostrar un visor de archivos, según tus necesidades.
-                                          },
-                                          icon: const Icon(Icons.search), // Cambia el icono aquí
+                            return Table(
+                              border: TableBorder.all(),
+                              children: [
+                                const TableRow(
+                                  decoration: BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)),
+                                  children: [
+                                    TableCell(
+                                      child: Center(
+                                        child: Text(
+                                          'Usuario',
+                                          style: TextStyle(
+                                            fontFamily: 'Roboto',
+                                            fontSize: 18,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
-                                      DataCell(
-                                        IconButton(
-                                          onPressed: () {
-                                            // Lógica para descargar el archivo aquí.
-                                            // Puedes implementar la descarga del archivo en esta función.
-                                          },
-                                          icon: const Icon(Icons.file_download), // Cambia el icono aquí
+                                    ),
+                                    TableCell(
+                                      child: Center(
+                                        child: Text(
+                                          'Nombre del Archivo',
+                                          style: TextStyle(
+                                            fontFamily: 'Roboto',
+                                            fontSize: 18,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
-                                      DataCell(
-                                        data['validado'] == true
-                                            ? const Icon(
-                                          Icons.check,
-                                          color: Colors.green, // Color verde para el ícono de paloma
-                                        )
-                                            : const Icon(
-                                          Icons.cancel,
-                                          color: Colors.red, // Color rojo para el ícono de tache
+                                    ),
+                                    TableCell(
+                                      child: Center(
+                                        child: Text(
+                                          'Ver',
+                                          style: TextStyle(
+                                            fontFamily: 'Roboto',
+                                            fontSize: 18,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
-                                      DataCell(Text(data['fecha_creacion'] ?? '***',style: const TextStyle(fontFamily: 'Roboto',fontSize: 18),)),
+                                    ),
+                                    TableCell(
+                                      child: Center(
+                                        child: Text(
+                                          'Descargar',
+                                          style: TextStyle(
+                                            fontFamily: 'Roboto',
+                                            fontSize: 18,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    TableCell(
+                                      child: Center(
+                                        child: Text(
+                                          'Aprobado',
+                                          style: TextStyle(
+                                            fontFamily: 'Roboto',
+                                            fontSize: 18,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    TableCell(
+                                      child: Center(
+                                        child: Text(
+                                          'Fecha de Carga',
+                                          style: TextStyle(
+                                            fontFamily: 'Roboto',
+                                            fontSize: 18,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                for (var data in secondTableData)
+                                  TableRow(
+                                    children: [
+                                      TableCell(
+                                        child: Center(
+                                          child: Text(
+                                            data['nomusuario'] ?? '***',
+                                            style: const TextStyle(fontFamily: 'Roboto', fontSize: 18),
+                                          ),
+                                        ),
+                                      ),
+                                      TableCell(
+                                        child: Center(
+                                          child: Text(
+                                            data['nombre'] ?? '***',
+                                            style: const TextStyle(fontFamily: 'Roboto', fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                      TableCell(
+                                        child: Center(
+                                          child: IconButton(
+                                            onPressed: () {
+                                              // Lógica para abrir o ver el archivo aquí.
+                                              // Puedes usar navegación o mostrar un visor de archivos, según tus necesidades.
+                                            },
+                                            icon: const Icon(Icons.search), // Cambia el icono aquí
+                                          ),
+                                        ),
+                                      ),
+                                      TableCell(
+                                        child: Center(
+                                          child: IconButton(
+                                            onPressed: () {
+                                              // Lógica para descargar el archivo aquí.
+                                              // Puedes implementar la descarga del archivo en esta función.
+                                            },
+                                            icon: const Icon(Icons.file_download), // Cambia el icono aquí
+                                          ),
+                                        ),
+                                      ),
+                                      TableCell(
+                                        child: Center(
+                                          child: data['validado'] == true
+                                              ? const Icon(
+                                            Icons.check,
+                                            color: Colors.green, // Color verde para el ícono de paloma
+                                          )
+                                              : const Icon(
+                                            Icons.cancel,
+                                            color: Colors.red, // Color rojo para el ícono de tache
+                                          ),
+                                        ),
+                                      ),
+                                      TableCell(
+                                        child: Center(
+                                          child: Text(
+                                            data['fecha_creacion'] ?? '***',
+                                            style: const TextStyle(fontFamily: 'Roboto', fontSize: 18),
+                                          ),
+                                        ),
+                                      ),
                                     ],
-                                  );
-                                }).toList(),
-                              ),
-
+                                  ),
+                              ],
                             );
                           }
                         },
@@ -728,27 +822,62 @@ class _DetalleVidaState extends State<DetalleVida> {
                 else if (dataForThirdTable!.isEmpty)
                   const Text('No hay datos disponibles en el historial.')
                 else
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: DataTable(
-                      columns: const [
-                        DataColumn(label: Text('Usuario')),
-                        DataColumn(label: Text('Observaciones')),
-                        DataColumn(label: Text('Estado')),
-                        DataColumn(label: Text('Fecha')),
-                      ],
-                      rows: dataForThirdTable!.map((data) {
-                        return DataRow(
-                          cells: [
-                            DataCell(Text(data['usuario'] ?? '***')),
-                            DataCell(Text(data['comentario'] ?? '***')),
-                            DataCell(Text(data['estado1'] ?? '***')),
-                            DataCell(Text(data['fecha_comentario'] ?? '***')),
+                  Table(
+                    border: TableBorder.all(),
+                    children: [
+                      const TableRow(
+                        decoration: BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)),
+                        children: [
+                          TableCell(
+                            child: Center(
+                              child: Text('Usuario'),
+                            ),
+                          ),
+                          TableCell(
+                            child: Center(
+                              child: Text('Observaciones'),
+                            ),
+                          ),
+                          TableCell(
+                            child: Center(
+                              child: Text('Estado'),
+                            ),
+                          ),
+                          TableCell(
+                            child: Center(
+                              child: Text('Fecha'),
+                            ),
+                          ),
+                        ],
+                      ),
+                      for (var data in dataForThirdTable!)
+                        TableRow(
+                          children: [
+                            TableCell(
+                              child: Center(
+                                child: Text(data['usuario'] ?? '***'),
+                              ),
+                            ),
+                            TableCell(
+                              child: Center(
+                                child: Text(data['comentario'] ?? '***'),
+                              ),
+                            ),
+                            TableCell(
+                              child: Center(
+                                child: Text(data['estado1'] ?? '***'),
+                              ),
+                            ),
+                            TableCell(
+                              child: Center(
+                                child: Text(data['fecha_comentario'] ?? '***'),
+                              ),
+                            ),
                           ],
-                        );
-                      }).toList(),
-                    ),
-                  ),
+                        ),
+                    ],
+                  )
+,
                 const SizedBox(height: 32),
                 const Center(
                   child: Text(
