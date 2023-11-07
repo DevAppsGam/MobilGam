@@ -280,8 +280,8 @@ class _DetalleVidaState extends State<DetalleVida> {
         text,
         style: TextStyle(
           fontFamily: 'Roboto',
-          fontSize: 18,
-          color: isHeader ? const Color.fromRGBO(15, 132, 194, 1) : Colors.black,
+          fontSize: 20,
+          color: isHeader ? Colors.white : Colors.black,
           // Aquí, si es un encabezado, se usa el color azul; de lo contrario, se usa el color negro.
         ),
       ),
@@ -330,19 +330,13 @@ class _DetalleVidaState extends State<DetalleVida> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
                 const SizedBox(height: 32,),
                 Table(
-                  border: const TableBorder(
-                    horizontalInside: BorderSide(
-                      width: 1,
-                      color: Color.fromRGBO(73, 78, 84, .5),
-                      style: BorderStyle.solid,
-                    ),
-                  ),
+
                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   children: [
                     TableRow(
+                        decoration: const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)),
                         children: [
                           buildTableCell('Folio GAM', isHeader: true),
                           buildTableCell('Línea de Negocio', isHeader: true),
@@ -355,7 +349,9 @@ class _DetalleVidaState extends State<DetalleVida> {
                       buildTableCell(data['fecha'] ?? '***'),
                       buildTableCell(data['estado'] ?? '***'),
                     ]),
-                    TableRow(children: [
+                    TableRow(
+                        decoration: const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)),
+                        children: [
                       buildTableCell('Contratante', isHeader: true),
                       buildTableCell('Póliza', isHeader: true),
                       buildTableCell('Tipo de Solicitud', isHeader: true),
@@ -373,35 +369,60 @@ class _DetalleVidaState extends State<DetalleVida> {
                       buildTableCell(data['t_solicitud'] ?? '***'),
                       buildTableCell(data['comentarios'] ?? '***'),
                     ]),
-                    TableRow(children: [
-                      buildTableCell('Prioridad', isHeader: true),
-                      buildTableCell(
-                          data['t_solicitud'] == 'MOVIMIENTOS'
-                              ? 'Tipo de Movimiento'
-                              : data['t_solicitud'] == 'PAGOS'
-                              ? 'Moneda'
-                              : 'Moneda',
-                          isHeader: true
-                      ),
-                      buildTableCell(
-                          data['t_solicitud'] == 'MOVIMIENTOS'
-                              ? ''
-                              : data['t_solicitud'] == 'PAGOS'
-                              ? 'Monto'
-                              : 'Producto',
-                          isHeader: true
-                      ),
-                      buildTableCell(
-                          data['t_solicitud'] == 'MOVIMIENTOS'
-                              ? ''
-                              : data['t_solicitud'] == 'PAGOS'
-                              ? 'Folio GNP'
-                              : 'Folio GNP',
-                          isHeader: true
-                      ),
+                    TableRow(
+                        children: [
+                          Container(
+                            decoration: const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)), // Aplica la decoración si el tipo de solicitud es 'MOVIMIENTOS'
+                            child: buildTableCell(
+                              'Prioridad',
+                              isHeader: true,
+                            ),
+                          ),
+                          Container(
+                            decoration:  const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)),
+                            child: buildTableCell(
+                                data['t_solicitud'] == 'MOVIMIENTOS'
+                                    ? 'Tipo de Movimiento'
+                                    : data['t_solicitud'] == 'PAGOS'
+                                    ? 'Moneda'
+                                    : 'Moneda',
+                                isHeader: true
+                            ),
+                          ),
+                          Container(
+                            decoration: data['t_solicitud'] == 'PAGOS'
+                                ? const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)) // Aplica la decoración si el tipo de solicitud es 'MOVIMIENTOS
+                                : data['t_solicitud'] == 'ALTA DE POLIZA'
+                                ? const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1))
+                                : null,
+                            child: buildTableCell(
+                                data['t_solicitud'] == 'MOVIMIENTOS'
+                                    ? ''
+                                    : data['t_solicitud'] == 'PAGOS'
+                                    ? 'Monto'
+                                    : 'Producto',
+                                isHeader: true
+                            ),
+                          ),
+                          Container(
+                            decoration: data['t_solicitud'] == 'PAGOS'
+                                ? const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)) // Aplica la decoración si el tipo de solicitud es 'MOVIMIENTOS
+                                : data['t_solicitud'] == 'ALTA DE POLIZA'
+                                ? const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1))
+                                : null,
+                            child: buildTableCell(
+                                data['t_solicitud'] == 'MOVIMIENTOS'
+                                    ? ''
+                                    : data['t_solicitud'] == 'PAGOS'
+                                    ? 'Folio GNP'
+                                    : 'Folio GNP',
+                                isHeader: true
+                            ),
+                          ),
                     ]),
-                    TableRow(children: [
-                      buildTableCell(data['prioridad'] ?? '***'),
+                    TableRow(
+                        children: [
+                        buildTableCell(data['prioridad'] ?? '***'),
                       buildTableCell(
                         data['t_solicitud'] == 'MOVIMIENTOS'
                             ?  data['movimiento'] ?? '***'
@@ -426,24 +447,35 @@ class _DetalleVidaState extends State<DetalleVida> {
                             : data['fgnp'] ?? '',
                       ),
                     ]),
-                    TableRow(children: [
-                      buildTableCell(
-                          data['t_solicitud'] == 'MOVIMIENTOS'
-                              ? ''
-                              : data['t_solicitud'] == 'PAGOS'
-                              ? ''
-                              : 'Rango',
-                          isHeader: true
-                      ),
-                      buildTableCell(
-                          data['t_solicitud'] == 'MOVIMIENTOS'
-                              ?  ''
-                              : data['t_solicitud'] == 'PAGOS'
-                              ? ''
-                              : data['t_solicitud'] == 'ALTA DE POLIZA'
-                              ? 'Prima'
-                              : '',
-                          isHeader: true
+                    TableRow(
+                        children: [
+                          Container(
+                            decoration: data['t_solicitud'] == 'ALTA DE POLIZA'
+                                ? const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)) // Aplica la decoración si el tipo de solicitud es 'MOVIMIENTOS
+                                : null,
+                            child: buildTableCell(
+                                data['t_solicitud'] == 'MOVIMIENTOS'
+                                    ? ''
+                                    : data['t_solicitud'] == 'PAGOS'
+                                    ? ''
+                                    : 'Rango',
+                                isHeader: true
+                            ),
+                          ),
+                      Container(
+                        decoration: data['t_solicitud'] == 'ALTA DE POLIZA'
+                            ? const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)) // Aplica la decoración si el tipo de solicitud es 'MOVIMIENTOS
+                            : null,
+                        child: buildTableCell(
+                            data['t_solicitud'] == 'MOVIMIENTOS'
+                                ?  ''
+                                : data['t_solicitud'] == 'PAGOS'
+                                ? ''
+                                : data['t_solicitud'] == 'ALTA DE POLIZA'
+                                ? 'Prima'
+                                : '',
+                            isHeader: true
+                        ),
                       ),
                       buildTableCell('', isHeader: true),
                       buildTableCell('', isHeader: true),
@@ -830,22 +862,40 @@ class _DetalleVidaState extends State<DetalleVida> {
                         children: [
                           TableCell(
                             child: Center(
-                              child: Text('Usuario'),
+                              child: Text('Usuario',
+                                style: TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                ),),
                             ),
                           ),
                           TableCell(
                             child: Center(
-                              child: Text('Observaciones'),
+                              child: Text('Observaciones',style: TextStyle(
+                                fontFamily: 'Roboto',
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),),
                             ),
                           ),
                           TableCell(
                             child: Center(
-                              child: Text('Estado'),
+                              child: Text('Estado',
+                                style: TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                ),),
                             ),
                           ),
                           TableCell(
                             child: Center(
-                              child: Text('Fecha'),
+                              child: Text('Fecha',style: TextStyle(
+                                fontFamily: 'Roboto',
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),),
                             ),
                           ),
                         ],
@@ -855,22 +905,39 @@ class _DetalleVidaState extends State<DetalleVida> {
                           children: [
                             TableCell(
                               child: Center(
-                                child: Text(data['usuario'] ?? '***'),
+                                child: Text(data['usuario'] ?? '***',
+                                style: const TextStyle(
+                                  fontFamily: 'roboto',
+                                  fontSize: 18,
+                                ),),
                               ),
                             ),
                             TableCell(
                               child: Center(
-                                child: Text(data['comentario'] ?? '***'),
+                                child: Text(data['comentario'] ?? '***',
+                                style: const TextStyle(
+                                  fontFamily: 'roboto',
+                                  fontSize: 18,
+                                ),
+                                ),
                               ),
                             ),
                             TableCell(
                               child: Center(
-                                child: Text(data['estado1'] ?? '***'),
+                                child: Text(data['estado1'] ?? '***',
+                                  style: const TextStyle(
+                                    fontFamily: 'roboto',
+                                    fontSize: 18,
+                                  ),),
                               ),
                             ),
                             TableCell(
                               child: Center(
-                                child: Text(data['fecha_comentario'] ?? '***'),
+                                child: Text(data['fecha_comentario'] ?? '***',
+                                  style: const TextStyle(
+                                    fontFamily: 'roboto',
+                                    fontSize: 18,
+                                  ),),
                               ),
                             ),
                           ],
@@ -895,7 +962,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                     columnSpacing: 20,
                     columns: const [
                       DataColumn(
-                        label: Text('Observación'),
+                        label: Text('Observación',style: TextStyle(fontFamily: 'Roboto',fontSize: 24),),
                         numeric: false,
                       ),
                       DataColumn(
@@ -925,7 +992,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                             style: ElevatedButton.styleFrom(
                               primary: Colors.blue,
                             ),
-                            child: const Text('Enviar'),
+                            child: const Text('Enviar',style: TextStyle(fontFamily: 'Roboto',fontSize: 20),),
                           ),
                         ),
                       ]),
