@@ -220,23 +220,33 @@ class _VidaState extends State<Vida> {
 
   TableCell _buildTableHeaderCell(String text) {
     return TableCell(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 15.0,
-          horizontal: 13.0,
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Color.fromRGBO(15, 132, 194, 1),
         ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontFamily: 'Roboto',
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Color.fromRGBO(31, 123, 206, 1),
+        constraints: const BoxConstraints.expand(height: 50.0), // Establecer un alto específico para la celda
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 0.0,
+            horizontal: 13.0,
+          ),
+          child: Center(
+            child: Text(
+              text,
+              style: const TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
           ),
         ),
       ),
     );
   }
+
+
 
   TableRow _buildTableRow(Map<String, String> datos) {
     return TableRow(
@@ -503,10 +513,13 @@ class _VidaState extends State<Vida> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(
+                    vertical: 16.0,
+                    horizontal: 16.0),
                 child: Table(
+                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   border: TableBorder.all(
-                    color: const Color.fromRGBO(91, 112, 124, 0),
+                    color: const Color.fromRGBO(91, 112, 124, .5),
                     width: 2.0,
                   ),
                   children: [
@@ -516,7 +529,7 @@ class _VidaState extends State<Vida> {
                 ),
               ),
               const SizedBox(
-                width: 30,
+                width: 16,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

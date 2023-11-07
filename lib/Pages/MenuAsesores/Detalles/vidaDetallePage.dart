@@ -330,9 +330,8 @@ class _DetalleVidaState extends State<DetalleVida> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 32,),
+                const SizedBox(height: 16,),
                 Table(
-
                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   children: [
                     TableRow(
@@ -508,8 +507,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                     ]),
                   ],
                 ),
-
-                const SizedBox(height: 32),
+                const SizedBox(height: 16),
                 const Center(
                   child: Text(
                     'Documentos Relacionados',
@@ -521,7 +519,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 16),
                 if (isLoading)
                   const CircularProgressIndicator()
                   else
@@ -539,6 +537,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                             final List<Map<String, dynamic>> secondTableData = snapshot.data!;
 
                             return Table(
+                              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                               border: TableBorder.all(),
                               children: [
                                 const TableRow(
@@ -552,6 +551,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                                             fontFamily: 'Roboto',
                                             fontSize: 18,
                                             color: Colors.white,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                       ),
@@ -564,6 +564,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                                             fontFamily: 'Roboto',
                                             fontSize: 18,
                                             color: Colors.white,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                       ),
@@ -576,6 +577,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                                             fontFamily: 'Roboto',
                                             fontSize: 18,
                                             color: Colors.white,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                       ),
@@ -600,6 +602,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                                             fontFamily: 'Roboto',
                                             fontSize: 18,
                                             color: Colors.white,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                       ),
@@ -612,6 +615,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                                             fontFamily: 'Roboto',
                                             fontSize: 18,
                                             color: Colors.white,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                       ),
@@ -630,10 +634,13 @@ class _DetalleVidaState extends State<DetalleVida> {
                                         ),
                                       ),
                                       TableCell(
-                                        child: Center(
-                                          child: Text(
-                                            data['nombre'] ?? '***',
-                                            style: const TextStyle(fontFamily: 'Roboto', fontSize: 16),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(9.5),
+                                          child: Center(
+                                            child: Text(
+                                              data['nombre'] ?? '***',
+                                              style: const TextStyle(fontFamily: 'Roboto', fontSize: 16),
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -836,7 +843,6 @@ class _DetalleVidaState extends State<DetalleVida> {
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 32),
                 const Center(
                   child: Text(
@@ -867,6 +873,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                                   fontFamily: 'Roboto',
                                   fontSize: 18,
                                   color: Colors.white,
+                                  fontWeight: FontWeight.bold,
                                 ),),
                             ),
                           ),
@@ -876,6 +883,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                                 fontFamily: 'Roboto',
                                 fontSize: 18,
                                 color: Colors.white,
+                                fontWeight: FontWeight.bold,
                               ),),
                             ),
                           ),
@@ -886,6 +894,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                                   fontFamily: 'Roboto',
                                   fontSize: 18,
                                   color: Colors.white,
+                                  fontWeight: FontWeight.bold,
                                 ),),
                             ),
                           ),
@@ -895,6 +904,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                                 fontFamily: 'Roboto',
                                 fontSize: 18,
                                 color: Colors.white,
+                                fontWeight: FontWeight.bold,
                               ),),
                             ),
                           ),
