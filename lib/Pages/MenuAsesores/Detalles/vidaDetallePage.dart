@@ -5,9 +5,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as path; // Importa la biblioteca path y dale un alias, como "path"
 import 'dart:io';
 
-import 'package:rflutter_alert/rflutter_alert.dart';
-
-
 class DetalleVida extends StatefulWidget {
   final String nombreUsuario;
   final String id;
@@ -25,8 +22,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   final TextEditingController _observationController = TextEditingController();
   String? _selectedFileName;
   String? _selectedOption;
-  String? _selectedFileType;
-
+  bool _isLoading = true;
 
   List<Map<String, dynamic>>? dataForFirstTable;
   final ScrollController _scrollController = ScrollController();
@@ -49,7 +45,6 @@ class _DetalleVidaState extends State<DetalleVida> {
       return const DataColumn(label: SizedBox.shrink());
     }
   }
-
 
   Future<void> fetchDataFromPHP() async {
     if (!mounted) return;
@@ -655,42 +650,6 @@ class _DetalleVidaState extends State<DetalleVida> {
                                         child: Center(
                                           child: IconButton(
                                             onPressed: () {
-                                              var alertStyle = AlertStyle(
-                                                animationType: AnimationType.fromTop,
-                                                isCloseButton: false,
-                                                isOverlayTapDismiss: false,
-                                                descStyle: const TextStyle(fontWeight: FontWeight.bold),
-                                                descTextAlign: TextAlign.start,
-                                                animationDuration: const Duration(milliseconds: 400),
-                                                alertBorder: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(0.0),
-                                                  side: const BorderSide(
-                                                    color: Colors.grey,
-                                                  ),
-                                                ),
-                                                titleStyle: const TextStyle(
-                                                  color: Colors.grey,
-                                                ),
-                                                alertAlignment: Alignment.topCenter,
-                                              );
-                                              Alert(
-                                                context: context,
-                                                style: alertStyle,
-                                                type: AlertType.info,
-                                                title: "Vista Previa",
-                                                desc: "Documento nom",
-                                                buttons: [
-                                                  DialogButton(
-                                                    onPressed: () => Navigator.pop(context),
-                                                    color: Colors.red,
-                                                    radius: BorderRadius.circular(0.0),
-                                                    child: const Text(
-                                                      "Salir",
-                                                      style: TextStyle(color: Colors.white, fontSize: 20),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ).show();
                                             },
                                             icon: const Icon(Icons.search), // Cambia el icono aquí
                                           ),
