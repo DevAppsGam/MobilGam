@@ -5,6 +5,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as path; // Importa la biblioteca path y dale un alias, como "path"
 import 'dart:io';
 
+import 'package:rflutter_alert/rflutter_alert.dart';
+
 
 class DetalleVida extends StatefulWidget {
   final String nombreUsuario;
@@ -282,6 +284,7 @@ class _DetalleVidaState extends State<DetalleVida> {
           fontFamily: 'Roboto',
           fontSize: 20,
           color: isHeader ? Colors.white : Colors.black,
+          fontWeight: isHeader ? FontWeight.bold : null,
           // Aquí, si es un encabezado, se usa el color azul; de lo contrario, se usa el color negro.
         ),
       ),
@@ -557,14 +560,17 @@ class _DetalleVidaState extends State<DetalleVida> {
                                       ),
                                     ),
                                     TableCell(
-                                      child: Center(
-                                        child: Text(
-                                          'Nombre del Archivo',
-                                          style: TextStyle(
-                                            fontFamily: 'Roboto',
-                                            fontSize: 18,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
+                                      child: Padding(
+                                        padding: EdgeInsets.all(9.5),
+                                        child: Center(
+                                          child: Text(
+                                            'Nombre del Archivo',
+                                            style: TextStyle(
+                                              fontFamily: 'Roboto',
+                                              fontSize: 18,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -590,6 +596,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                                             fontFamily: 'Roboto',
                                             fontSize: 18,
                                             color: Colors.white,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                       ),
@@ -648,8 +655,42 @@ class _DetalleVidaState extends State<DetalleVida> {
                                         child: Center(
                                           child: IconButton(
                                             onPressed: () {
-                                              // Lógica para abrir o ver el archivo aquí.
-                                              // Puedes usar navegación o mostrar un visor de archivos, según tus necesidades.
+                                              var alertStyle = AlertStyle(
+                                                animationType: AnimationType.fromTop,
+                                                isCloseButton: false,
+                                                isOverlayTapDismiss: false,
+                                                descStyle: const TextStyle(fontWeight: FontWeight.bold),
+                                                descTextAlign: TextAlign.start,
+                                                animationDuration: const Duration(milliseconds: 400),
+                                                alertBorder: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(0.0),
+                                                  side: const BorderSide(
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                                titleStyle: const TextStyle(
+                                                  color: Colors.grey,
+                                                ),
+                                                alertAlignment: Alignment.topCenter,
+                                              );
+                                              Alert(
+                                                context: context,
+                                                style: alertStyle,
+                                                type: AlertType.info,
+                                                title: "Vista Previa",
+                                                desc: "Documento nom",
+                                                buttons: [
+                                                  DialogButton(
+                                                    onPressed: () => Navigator.pop(context),
+                                                    color: Colors.red,
+                                                    radius: BorderRadius.circular(0.0),
+                                                    child: const Text(
+                                                      "Salir",
+                                                      style: TextStyle(color: Colors.white, fontSize: 20),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ).show();
                                             },
                                             icon: const Icon(Icons.search), // Cambia el icono aquí
                                           ),
@@ -851,7 +892,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                       fontFamily: 'Roboto',
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blueGrey,
+                      color: Color.fromRGBO(73, 78, 84, 1),
                     ),
                   ),
                 ),
@@ -861,21 +902,26 @@ class _DetalleVidaState extends State<DetalleVida> {
                   const Text('No hay datos disponibles en el historial.')
                 else
                   Table(
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                     border: TableBorder.all(),
                     children: [
                       const TableRow(
                         decoration: BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)),
                         children: [
                           TableCell(
-                            child: Center(
-                              child: Text('Usuario',
-                                style: TextStyle(
-                                  fontFamily: 'Roboto',
-                                  fontSize: 18,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),),
+                            child: Padding(
+                              padding: EdgeInsets.all(9.5),
+                              child: Center(
+                                child: Text('Usuario',
+                                  style: TextStyle(
+                                    fontFamily: 'Roboto',
+                                    fontSize: 18,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),),
+                              ),
                             ),
+
                           ),
                           TableCell(
                             child: Center(
@@ -923,12 +969,15 @@ class _DetalleVidaState extends State<DetalleVida> {
                               ),
                             ),
                             TableCell(
-                              child: Center(
-                                child: Text(data['comentario'] ?? '***',
-                                style: const TextStyle(
-                                  fontFamily: 'roboto',
-                                  fontSize: 18,
-                                ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(9.5),
+                                child: Center(
+                                  child: Text(data['comentario'] ?? '***',
+                                    style: const TextStyle(
+                                      fontFamily: 'roboto',
+                                      fontSize: 18,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -963,7 +1012,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                       fontFamily: 'Roboto',
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blueGrey,
+                      color: Color.fromRGBO(73, 78, 84, 1),
                     ),
                   ),
                 ),

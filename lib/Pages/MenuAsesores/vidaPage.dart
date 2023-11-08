@@ -534,6 +534,15 @@ class _VidaState extends State<Vida> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Text(
+                    'Página ${_currentPage + 1} de $totalPaginas',
+                    style: const TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(width: 30),
                   ElevatedButton(
                     onPressed: () {
                       setState(() {
@@ -542,7 +551,8 @@ class _VidaState extends State<Vida> {
                         }
                       });
                     },
-                    child: const Text('Anterior',
+                    child: const Text(
+                      'Anterior',
                       style: TextStyle(
                         fontFamily: 'Roboto',
                         fontSize: 18,
@@ -550,9 +560,7 @@ class _VidaState extends State<Vida> {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 30,
-                  ),
+                  const SizedBox(width: 30),
                   ElevatedButton(
                     onPressed: () {
                       setState(() {
@@ -561,12 +569,14 @@ class _VidaState extends State<Vida> {
                         }
                       });
                     },
-                    child: const Text('Siguiente',
+                    child: const Text(
+                      'Siguiente',
                       style: TextStyle(
                         fontFamily: 'Roboto',
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                      ),),
+                      ),
+                    ),
                   ),
                 ],
               ),
