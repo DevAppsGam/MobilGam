@@ -1,3 +1,4 @@
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -8,7 +9,15 @@ import 'Pages/gddsPage.dart';
 import 'Pages/powerPage.dart';
 import 'Pages/promocionesPage.dart';
 
-void main() => runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initDeviceInfo();
+  runApp(const MyApp());
+}
+
+Future<void> initDeviceInfo() async {
+  await DeviceInfoPlugin().androidInfo;
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -121,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     final response = await http.post(
-      Uri.parse("http://192.168.1.142/gam/login.php"),
+      Uri.parse("http://192.168.1.108/gam/login.php"),
       body: {
         "nomusuario": username,
         "password": password,

@@ -1,9 +1,14 @@
+import 'dart:async';
+import 'package:appgam/Pages/MenuAsesores/Detalles/VisualizarPDF.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as path; // Importa la biblioteca path y dale un alias, como "path"
 import 'dart:io';
+import 'package:flutter_file_downloader/flutter_file_downloader.dart';
+import 'package:open_file/open_file.dart';
+
 
 class DetalleVida extends StatefulWidget {
   final String nombreUsuario;
@@ -22,7 +27,6 @@ class _DetalleVidaState extends State<DetalleVida> {
   final TextEditingController _observationController = TextEditingController();
   String? _selectedFileName;
   String? _selectedOption;
-  bool _isLoading = true;
 
   List<Map<String, dynamic>>? dataForFirstTable;
   final ScrollController _scrollController = ScrollController();
@@ -54,7 +58,7 @@ class _DetalleVidaState extends State<DetalleVida> {
       errorMessage = '';
     });
 
-    final String url = 'http://192.168.1.142/gam/detallevida.php?id=${widget.id}';
+    final String url = 'http://192.168.1.108/gam/detallevida.php?id=${widget.id}';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -89,7 +93,7 @@ class _DetalleVidaState extends State<DetalleVida> {
 
   Future<void> fetchDataForThirdTable() async {
     final String thirdTableUrl =
-        'http://192.168.1.142/gam/detallevidaobservaciones.php?id=${widget.id}';
+        'http://192.168.1.108/gam/detallevidaobservaciones.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(thirdTableUrl));
 
@@ -133,7 +137,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   }
 
   Future<void> _sendObservation(String observation) async {
-    const String url = 'http://192.168.1.142/gam/detallevidacrearobservacion.php';
+    const String url = 'http://192.168.1.108/gam/detallevidacrearobservacion.php';
 
     try {
       final response = await http.get(
@@ -159,7 +163,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   }
 
   Future<List<Map<String, dynamic>>?> fetchDataForSecondTable() async {
-    final String secondTableUrl = 'http://192.168.1.142/gam/detallevidadocumentos.php?id=${widget.id}';
+    final String secondTableUrl = 'http://192.168.1.108/gam/detallevidadocumentos.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(secondTableUrl));
 
@@ -191,7 +195,7 @@ class _DetalleVidaState extends State<DetalleVida> {
     final escapedFileName = Uri.encodeComponent(fileName);
 
     // Crea la URL con los parámetros en la forma adecuada
-    final url = 'http://192.168.1.142/gam/detallevidasubirdoc.php?id=$id&archivo=$escapedFileName';
+    final url = 'http://192.168.1.108/gam/detallevidasubirdoc.php?id=$id&archivo=$escapedFileName';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -212,7 +216,7 @@ class _DetalleVidaState extends State<DetalleVida> {
 
   Future<void> uploadFile(String fileName, String id) async {
     final file = File(fileName); // Abre el archivo seleccionado
-    const url = 'http://192.168.1.142/gam/upload.php'; // URL del servicio de carga en el servidor
+    const url = 'http://192.168.1.108/gam/upload.php'; // URL del servicio de carga en el servidor
 
     final request = http.MultipartRequest('POST', Uri.parse(url));
     request.files.add(
@@ -650,6 +654,14 @@ class _DetalleVidaState extends State<DetalleVida> {
                                         child: Center(
                                           child: IconButton(
                                             onPressed: () {
+                                              String nombreSinPrefijo = data['nombre']?.replaceFirst('../', '') ?? '';
+                                              print(nombreSinPrefijo);
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => PdfViewer(pdfUrl: "https://www.asesoresgam.com.mx/sistemas/$nombreSinPrefijo"),
+                                                ),
+                                              );
                                             },
                                             icon: const Icon(Icons.search), // Cambia el icono aquí
                                           ),
@@ -658,11 +670,36 @@ class _DetalleVidaState extends State<DetalleVida> {
                                       TableCell(
                                         child: Center(
                                           child: IconButton(
-                                            onPressed: () {
-                                              // Lógica para descargar el archivo aquí.
-                                              // Puedes implementar la descarga del archivo en esta función.
+                                            onPressed: () async {
+                                              String nombreSinPrefijo = data['nombre']?.replaceFirst('../', '') ?? '';
+                                              String pdfUrl = "https://www.asesoresgam.com.mx/sistemas/$nombreSinPrefijo";
+
+                                              try {
+                                                File? downloadedFile = await FileDownloader.downloadFile(
+                                                  url: pdfUrl,
+                                                  name: nombreSinPrefijo,
+                                                  onProgress: (String? fileName, double progress) {
+                                                    print('FILE $fileName HAS PROGRESS $progress');
+                                                  },
+                                                  onDownloadCompleted: (String path) {
+                                                    print('FILE DOWNLOADED TO PATH: $path');
+
+                                                    // Abre el gestor de archivos
+                                                    OpenFile.open(path);
+                                                  },
+                                                  onDownloadError: (String error) {
+                                                    print('DOWNLOAD ERROR: $error');
+                                                  },
+                                                );
+
+                                                if (downloadedFile != null) {
+                                                  // El archivo se ha descargado y puedes realizar otras acciones según tus necesidades
+                                                }
+                                              } catch (e) {
+                                                print('ERROR DURING DOWNLOAD: $e');
+                                              }
                                             },
-                                            icon: const Icon(Icons.file_download), // Cambia el icono aquí
+                                            icon: const Icon(Icons.file_download),
                                           ),
                                         ),
                                       ),
@@ -1048,3 +1085,4 @@ class _DetalleVidaState extends State<DetalleVida> {
     );
   }
 }
+
