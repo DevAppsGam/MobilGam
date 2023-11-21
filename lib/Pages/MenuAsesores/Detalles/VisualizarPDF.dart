@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:internet_file/internet_file.dart';
 import 'package:pdfx/pdfx.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:flutter/services.dart'; // Importa el paquete services.dart
 
 class PdfViewer extends StatefulWidget {
   final String pdfUrl;
@@ -22,10 +23,24 @@ class _PdfViewerState extends State<PdfViewer> {
       document: PdfDocument.openData(InternetFile.get(widget.pdfUrl)),
     );
     super.initState();
+
+    // Establece la orientación de la pantalla a vertical cuando se abre el PdfViewer
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
   }
 
   @override
   void dispose() {
+    // Restaura las preferencias de orientación cuando se cierra el PdfViewer
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+
     _pdfController.dispose();
     super.dispose();
   }

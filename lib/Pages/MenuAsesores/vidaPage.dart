@@ -42,7 +42,7 @@ class _VidaState extends State<Vida> {
 
   Future<void> fetchData() async {
     try {
-      final response = await http.get(Uri.parse('http://192.168.1.108/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
+      final response = await http.get(Uri.parse('http://192.168.1.77/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
       if (response.statusCode == 200) {
         List<dynamic> jsonResponse = json.decode(response.body);
         setState(() {
@@ -66,7 +66,7 @@ class _VidaState extends State<Vida> {
   Future<void> fetchDataWithFilter(String? filterNames) async {
     if (filterNames != null) {
       final response = await http.get(Uri.parse(
-          'http://192.168.1.108/gam/tablafoliosvida.php?filter=$filterNames&username=${widget.nombreUsuario}'));
+          'http://192.168.1.77/gam/tablafoliosvida.php?filter=$filterNames&username=${widget.nombreUsuario}'));
 
       if (response.statusCode == 200) {
         List<dynamic> jsonResponse = json.decode(response.body);

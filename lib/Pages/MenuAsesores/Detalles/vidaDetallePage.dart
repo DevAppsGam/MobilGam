@@ -8,7 +8,7 @@ import 'package:open_filex/open_filex.dart';
 import 'package:path/path.dart' as path; // Importa la biblioteca path y dale un alias, como "path"
 import 'dart:io';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
-import 'package:open_file/open_file.dart';
+
 
 
 class DetalleVida extends StatefulWidget {
@@ -59,7 +59,7 @@ class _DetalleVidaState extends State<DetalleVida> {
       errorMessage = '';
     });
 
-    final String url = 'http://192.168.1.108/gam/detallevida.php?id=${widget.id}';
+    final String url = 'http://192.168.1.77/gam/detallevida.php?id=${widget.id}';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -94,7 +94,7 @@ class _DetalleVidaState extends State<DetalleVida> {
 
   Future<void> fetchDataForThirdTable() async {
     final String thirdTableUrl =
-        'http://192.168.1.108/gam/detallevidaobservaciones.php?id=${widget.id}';
+        'http://192.168.1.77/gam/detallevidaobservaciones.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(thirdTableUrl));
 
@@ -164,7 +164,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   }
 
   Future<List<Map<String, dynamic>>?> fetchDataForSecondTable() async {
-    final String secondTableUrl = 'http://192.168.1.108/gam/detallevidadocumentos.php?id=${widget.id}';
+    final String secondTableUrl = 'http://192.168.1.77/gam/detallevidadocumentos.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(secondTableUrl));
 
@@ -196,7 +196,7 @@ class _DetalleVidaState extends State<DetalleVida> {
     final escapedFileName = Uri.encodeComponent(fileName);
 
     // Crea la URL con los parámetros en la forma adecuada
-    final url = 'http://192.168.1.108/gam/detallevidasubirdoc.php?id=$id&archivo=$escapedFileName';
+    final url = 'http://192.168.1.77/gam/detallevidasubirdoc.php?id=$id&archivo=$escapedFileName';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -217,7 +217,7 @@ class _DetalleVidaState extends State<DetalleVida> {
 
   Future<void> uploadFile(String fileName, String id) async {
     final file = File(fileName); // Abre el archivo seleccionado
-    const url = 'http://192.168.1.108/gam/upload.php'; // URL del servicio de carga en el servidor
+    const url = 'http://192.168.1.77/gam/upload.php'; // URL del servicio de carga en el servidor
 
     final request = http.MultipartRequest('POST', Uri.parse(url));
     request.files.add(
@@ -655,19 +655,33 @@ class _DetalleVidaState extends State<DetalleVida> {
                                         child: Center(
                                           child: IconButton(
                                             onPressed: () {
-                                              String nombreSinPrefijo = data['nombre']?.replaceFirst('../', '') ?? '';
-                                              print(nombreSinPrefijo);
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) => PdfViewer(pdfUrl: "https://www.asesoresgam.com.mx/sistemas/$nombreSinPrefijo"),
-                                                ),
-                                              );
+                                              try {
+                                                String nombreSinPrefijo = data['nombre']?.replaceFirst('../', '') ?? '';
+                                                print(nombreSinPrefijo);
+
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) => PdfViewer(pdfUrl: "https://www.asesoresgam.com.mx/sistemas/$nombreSinPrefijo"),
+                                                  ),
+                                                );
+                                              } catch (error) {
+                                                // Manejo del error: Puedes imprimir un mensaje de error, mostrar un cuadro de diálogo, etc.
+                                                print("Error: $error");
+                                                // También puedes navegar a una pantalla de error si lo prefieres.
+                                                // Navigator.push(
+                                                //   context,
+                                                //   MaterialPageRoute(
+                                                //     builder: (context) => ErrorScreen(),
+                                                //   ),
+                                                // );
+                                              }
                                             },
-                                            icon: const Icon(Icons.search), // Cambia el icono aquí
+                                            icon: const Icon(Icons.search),
                                           ),
                                         ),
                                       ),
+
                                       TableCell(
                                         child: Center(
                                           child: IconButton(
