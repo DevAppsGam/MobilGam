@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:path/path.dart' as path; // Importa la biblioteca path y dale un alias, como "path"
 import 'dart:io';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
@@ -684,8 +685,25 @@ class _DetalleVidaState extends State<DetalleVida> {
                                                   onDownloadCompleted: (String path) {
                                                     print('FILE DOWNLOADED TO PATH: $path');
 
-                                                    // Abre el gestor de archivos
-                                                    OpenFile.open(path);
+                                                    // Mostrar una alerta indicando que el archivo se ha descargado
+                                                    showDialog(
+                                                      context: context,  // Asegúrate de tener acceso al contexto actual
+                                                      builder: (BuildContext context) {
+                                                        return AlertDialog(
+                                                          title: const Text('Descarga Completada'),
+                                                          content: const Text('Tu archivo se ha descargado. Ve al gestor de archivos de tu celular para abrirlo.'),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                Navigator.of(context).pop(); // Cierra la alerta
+                                                              },
+                                                              child: const Text('OK'),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+
                                                   },
                                                   onDownloadError: (String error) {
                                                     print('DOWNLOAD ERROR: $error');
@@ -694,6 +712,12 @@ class _DetalleVidaState extends State<DetalleVida> {
 
                                                 if (downloadedFile != null) {
                                                   // El archivo se ha descargado y puedes realizar otras acciones según tus necesidades
+                                                  try {
+                                                    print('ABRIENDO ARCHIVO');
+                                                    OpenFilex.open(downloadedFile.path);
+                                                  } catch (error) {
+                                                    print('ERROR OPENING FILE: $error');
+                                                  }
                                                 }
                                               } catch (e) {
                                                 print('ERROR DURING DOWNLOAD: $e');
