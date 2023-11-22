@@ -9,8 +9,6 @@ import 'package:path/path.dart' as path; // Importa la biblioteca path y dale un
 import 'dart:io';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 
-
-
 class DetalleVida extends StatefulWidget {
   final String nombreUsuario;
   final String id;
@@ -138,7 +136,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   }
 
   Future<void> _sendObservation(String observation) async {
-    const String url = 'http://192.168.1.108/gam/detallevidacrearobservacion.php';
+    const String url = 'http://192.168.1.77/gam/detallevidacrearobservacion.php';
 
     try {
       final response = await http.get(
@@ -655,92 +653,60 @@ class _DetalleVidaState extends State<DetalleVida> {
                                         child: Center(
                                           child: IconButton(
                                             onPressed: () {
-                                              try {
-                                                String nombreSinPrefijo = data['nombre']?.replaceFirst('../', '') ?? '';
-                                                print(nombreSinPrefijo);
-
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) => PdfViewer(pdfUrl: "https://www.asesoresgam.com.mx/sistemas/$nombreSinPrefijo"),
-                                                  ),
-                                                );
-                                              } catch (error) {
-                                                // Manejo del error: Puedes imprimir un mensaje de error, mostrar un cuadro de diálogo, etc.
-                                                print("Error: $error");
-                                                // También puedes navegar a una pantalla de error si lo prefieres.
-                                                // Navigator.push(
-                                                //   context,
-                                                //   MaterialPageRoute(
-                                                //     builder: (context) => ErrorScreen(),
-                                                //   ),
-                                                // );
-                                              }
+                                              String nombreSinPrefijo = data['nombre']?.replaceFirst('../', '') ?? '';
+                                              print(nombreSinPrefijo);
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => PdfViewer(pdfUrl: "https://www.asesoresgam.com.mx/sistemas/$nombreSinPrefijo"),
+                                                ),
+                                              );
                                             },
-                                            icon: const Icon(Icons.search),
+                                            icon: const Icon(Icons.search), // Cambia el icono aquí
                                           ),
                                         ),
                                       ),
-
                                       TableCell(
                                         child: Center(
                                           child: IconButton(
                                             onPressed: () async {
+                                              // Extrae el nombre del archivo eliminando el prefijo '../'
                                               String nombreSinPrefijo = data['nombre']?.replaceFirst('../', '') ?? '';
+
+                                              // Construye la URL del archivo PDF
                                               String pdfUrl = "https://www.asesoresgam.com.mx/sistemas/$nombreSinPrefijo";
 
                                               try {
+                                                // Utiliza la función downloadFile para descargar el archivo
                                                 File? downloadedFile = await FileDownloader.downloadFile(
                                                   url: pdfUrl,
                                                   name: nombreSinPrefijo,
                                                   onProgress: (String? fileName, double progress) {
-                                                    print('FILE $fileName HAS PROGRESS $progress');
+                                                    print('EL ARCHIVO $fileName TIENE UN PROGRESO DE $progress');
                                                   },
                                                   onDownloadCompleted: (String path) {
-                                                    print('FILE DOWNLOADED TO PATH: $path');
+                                                    print('ARCHIVO DESCARGADO EN LA RUTA: $path');
 
-                                                    // Mostrar una alerta indicando que el archivo se ha descargado
-                                                    showDialog(
-                                                      context: context,  // Asegúrate de tener acceso al contexto actual
-                                                      builder: (BuildContext context) {
-                                                        return AlertDialog(
-                                                          title: const Text('Descarga Completada'),
-                                                          content: const Text('Tu archivo se ha descargado. Ve al gestor de archivos de tu celular para abrirlo.'),
-                                                          actions: [
-                                                            TextButton(
-                                                              onPressed: () {
-                                                                Navigator.of(context).pop(); // Cierra la alerta
-                                                              },
-                                                              child: const Text('OK'),
-                                                            ),
-                                                          ],
-                                                        );
-                                                      },
-                                                    );
-
+                                                    // Abre el gestor de archivos después de la descarga
+                                                    OpenFilex.open(path);
                                                   },
                                                   onDownloadError: (String error) {
-                                                    print('DOWNLOAD ERROR: $error');
+                                                    print('ERROR DE DESCARGA: $error');
                                                   },
                                                 );
 
                                                 if (downloadedFile != null) {
                                                   // El archivo se ha descargado y puedes realizar otras acciones según tus necesidades
-                                                  try {
-                                                    print('ABRIENDO ARCHIVO');
-                                                    OpenFilex.open(downloadedFile.path);
-                                                  } catch (error) {
-                                                    print('ERROR OPENING FILE: $error');
-                                                  }
                                                 }
                                               } catch (e) {
-                                                print('ERROR DURING DOWNLOAD: $e');
+                                                print('ERROR DURANTE LA DESCARGA: $e');
                                               }
                                             },
                                             icon: const Icon(Icons.file_download),
                                           ),
                                         ),
                                       ),
+
                                       TableCell(
                                         child: Center(
                                           child: data['validado'] == true

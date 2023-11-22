@@ -1,5 +1,6 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
@@ -11,6 +12,7 @@ import 'Pages/promocionesPage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await FlutterDownloader.initialize();
   await initDeviceInfo();
   runApp(const MyApp());
 }
@@ -130,7 +132,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     final response = await http.post(
-      Uri.parse("http://192.168.1.77/gam/login.php"),
+      Uri.parse("http://192.168.1.101/gam/login.php"),
       body: {
         "nomusuario": username,
         "password": password,
