@@ -13,7 +13,7 @@ class DetalleVida extends StatefulWidget {
   final String nombreUsuario;
   final String id;
 
-  DetalleVida({required this.nombreUsuario, required this.id});
+  const DetalleVida({super.key, required this.nombreUsuario, required this.id});
 
   @override
   _DetalleVidaState createState() => _DetalleVidaState();
@@ -253,7 +253,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                   Navigator.of(context).pop(); // Cierra el cuadro de diálogo
                 },
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.green,
+                  backgroundColor: Colors.green,
                 ),
                 child: const Text('Acepto', style: TextStyle(fontFamily: 'Roboto', fontSize: 24),),
               ),
@@ -773,7 +773,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                                 _pickDocument();
                               },
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.blue,
+                                backgroundColor: Colors.blue,
                               ),
                               child: const Text('Seleccionar Archivo'),
                             )),
@@ -860,7 +860,7 @@ class _DetalleVidaState extends State<DetalleVida> {
 
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    primary: Colors.lightGreen,
+                                    backgroundColor: Colors.lightGreen,
                                   ),
                                   child: const Text('Confirmar'),
                                 )
@@ -876,7 +876,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                                 });
                               },
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.redAccent,
+                                backgroundColor: Colors.redAccent,
                               ),
                               child: const Text('Cancelar'),
                             )),
@@ -1049,7 +1049,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                               _sendObservation(observation);
                             },
                             style: ElevatedButton.styleFrom(
-                              primary: Colors.blue,
+                              backgroundColor: Colors.blue,
                             ),
                             child: const Text('Enviar',style: TextStyle(fontFamily: 'Roboto',fontSize: 20),),
                           ),
@@ -1076,7 +1076,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                         _mostrarDialogoCerrarFolio();
                       },
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.green,
+                      backgroundColor: Colors.green,
                     ),
                       child: const Text('¿Deseas cerrar el folio?',style: TextStyle(fontFamily: 'Roboto', fontSize: 30),),
                   ),

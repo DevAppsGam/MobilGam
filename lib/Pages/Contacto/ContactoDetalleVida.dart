@@ -8,7 +8,7 @@ class contactoDetalle extends StatelessWidget {
   final String mail;
   final String ext;
 
-  contactoDetalle({
+  const contactoDetalle({super.key, 
     required this.nombre,
     required this.rol,
     required this.TEL,

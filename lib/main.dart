@@ -34,9 +34,9 @@ class MyApp extends StatelessWidget {
         '/powerPage': (_) => const Power(),
         '/asesoresPage': (_) => const Asesores(nombreUsuario: ''),
         '/LoginPage': (_) => const LoginPage(),
-        '/promocionesPage': (_) =>  Promociones(),
-        '/gddsPage': (_) =>  Gdds(),
-        '/operacionesPage': (_) =>  Operaciones(),
+        '/promocionesPage': (_) =>  const Promociones(),
+        '/gddsPage': (_) =>  const Gdds(),
+        '/operacionesPage': (_) =>  const Operaciones(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/Power') {
@@ -132,7 +132,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     final response = await http.post(
-      Uri.parse("http://192.168.1.101/gam/login.php"),
+      Uri.parse("https://www.asesoresgam.com.mx/sistemas1/gam/login.php"),
       body: {
         "nomusuario": username,
         "password": password,

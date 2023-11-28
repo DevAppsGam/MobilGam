@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:internet_file/internet_file.dart';
 import 'package:pdfx/pdfx.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:flutter/services.dart'; // Importa el paquete services.dart
 
 class PdfViewer extends StatefulWidget {
   final String pdfUrl;
 
-  PdfViewer({required this.pdfUrl});
+  const PdfViewer({super.key, required this.pdfUrl});
 
   @override
   _PdfViewerState createState() => _PdfViewerState();

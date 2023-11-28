@@ -23,7 +23,7 @@ class _VidaState extends State<Vida> {
     'MOVIMIENTOS': 'MOVIMIENTOS',
   };
 
-  Set<String> activeFilters = Set<String>();
+  Set<String> activeFilters = <String>{};
   String searchTerm = ''; // Nuevo campo para el término de búsqueda
 
   bool isFilterActive(String filterName) {
@@ -42,7 +42,7 @@ class _VidaState extends State<Vida> {
 
   Future<void> fetchData() async {
     try {
-      final response = await http.get(Uri.parse('http://192.168.1.101/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
+      final response = await http.get(Uri.parse('https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
       if (response.statusCode == 200) {
         List<dynamic> jsonResponse = json.decode(response.body);
         setState(() {
@@ -66,7 +66,7 @@ class _VidaState extends State<Vida> {
   Future<void> fetchDataWithFilter(String? filterNames) async {
     if (filterNames != null) {
       final response = await http.get(Uri.parse(
-          'http://192.168.1.101/gam/tablafoliosvida.php?filter=$filterNames&username=${widget.nombreUsuario}'));
+          'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?filter=$filterNames&username=${widget.nombreUsuario}'));
 
       if (response.statusCode == 200) {
         List<dynamic> jsonResponse = json.decode(response.body);
@@ -434,7 +434,7 @@ class _VidaState extends State<Vida> {
                             child: ElevatedButton(
                               onPressed: () => toggleFiltro(filterName, filterButtonText[filterName]!),
                               style: ElevatedButton.styleFrom(
-                                primary: isFilterActive(filterName) ? Colors.grey : Colors.blue,
+                                backgroundColor: isFilterActive(filterName) ? Colors.grey : Colors.blue,
                               ),
                               child: Text(
                                 filterButtonText[filterName]!,
@@ -455,7 +455,7 @@ class _VidaState extends State<Vida> {
                           fetchDataWithFilter('A_TIEMPO');
                         },
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.lightGreen,
+                          backgroundColor: Colors.lightGreen,
                         ),
                         child: const Text(
                           'A TIEMPO',
@@ -472,7 +472,7 @@ class _VidaState extends State<Vida> {
 
                         },
                         style: ElevatedButton.styleFrom(
-                          primary: const Color.fromRGBO(241, 201, 132, 1.0),
+                          backgroundColor: const Color.fromRGBO(241, 201, 132, 1.0),
                         ),
                         child: const Text('POR VENCER',
                           style: TextStyle(
@@ -487,7 +487,7 @@ class _VidaState extends State<Vida> {
 
                         },
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.red  ,
+                          backgroundColor: Colors.red  ,
                         ),
                         child: const Text('VENCIDOS',
                           style: TextStyle(

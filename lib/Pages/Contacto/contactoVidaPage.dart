@@ -7,7 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 class contactoVida extends StatelessWidget {
   final String nombreUsuario;
 
-  const contactoVida({Key? key, required this.nombreUsuario});
+  const contactoVida({super.key, required this.nombreUsuario});
 
   @override
   Widget build(BuildContext context) {
@@ -187,27 +187,27 @@ class IconWithText extends StatelessWidget {
         if (title == 'Patricia Moctezuma') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => contactoDetalle(nombre: 'PATRICIA MOCTEZUMA', rol: 'GERNTE PROMOCIÓN VIDA', TEL: '5529417281', ext: '', mail: 'promocionvida@asesoresgam.com.mx',)),
+            MaterialPageRoute(builder: (context) => const contactoDetalle(nombre: 'PATRICIA MOCTEZUMA', rol: 'GERNTE PROMOCIÓN VIDA', TEL: '5529417281', ext: '', mail: 'promocionvida@asesoresgam.com.mx',)),
           );
         } else if (title == 'Diana Castro') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => contactoDetalle(nombre: 'DIANA CASTRO GARCIA', rol: 'CONSULTOR ESPECIALIZADO VIDA', TEL: '5536430812', ext: '127', mail: 'vida@asesoresgam.com.mx',)),
+            MaterialPageRoute(builder: (context) => const contactoDetalle(nombre: 'DIANA CASTRO GARCIA', rol: 'CONSULTOR ESPECIALIZADO VIDA', TEL: '5536430812', ext: '127', mail: 'vida@asesoresgam.com.mx',)),
           );
         } else if (title == 'Veronica Sanchez') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => contactoDetalle(nombre: 'VERONICA SANCHEZ MONTESINOS', rol: 'CONSULTOR INTEGRAL', TEL: '5585996060',ext:'0', mail: 'lomasverdes@asesoresgam.com.mx',)),
+            MaterialPageRoute(builder: (context) => const contactoDetalle(nombre: 'VERONICA SANCHEZ MONTESINOS', rol: 'CONSULTOR INTEGRAL', TEL: '5585996060',ext:'0', mail: 'lomasverdes@asesoresgam.com.mx',)),
           );
         } else if (title == 'Carolina Hernández') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => contactoDetalle(nombre: 'CAROLINA HERNANDEZ MORA', rol: 'GERENTE DE OPERACIÓN Y SERVICIO', TEL: '5521768838', ext: '106', mail: 'calidad@asesoresgam.com.mx',)),
+            MaterialPageRoute(builder: (context) => const contactoDetalle(nombre: 'CAROLINA HERNANDEZ MORA', rol: 'GERENTE DE OPERACIÓN Y SERVICIO', TEL: '5521768838', ext: '106', mail: 'calidad@asesoresgam.com.mx',)),
           );
         } else if (title == 'Manuel Ramírez') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => contactoDetalle(nombre: 'MANUEL RAMIREZ', rol: 'DIRECTOR DE SOPORTE, PROMOCIÓN Y VENTAS', TEL: '', ext: '', mail: 'm.ramirez@asesoresgam.com.mx',)),
+            MaterialPageRoute(builder: (context) => const contactoDetalle(nombre: 'MANUEL RAMIREZ', rol: 'DIRECTOR DE SOPORTE, PROMOCIÓN Y VENTAS', TEL: '', ext: '', mail: 'm.ramirez@asesoresgam.com.mx',)),
           );
         }
       },

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Gdds extends StatelessWidget {
+  const Gdds({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
