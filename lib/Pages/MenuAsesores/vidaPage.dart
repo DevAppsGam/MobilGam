@@ -44,22 +44,27 @@ class _VidaState extends State<Vida> {
     try {
       final response = await http.get(Uri.parse('https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
       if (response.statusCode == 200) {
-        List<dynamic> jsonResponse = json.decode(response.body);
-        setState(() {
-          datos = jsonResponse.map((dynamic item) {
-            Map<String, String> mappedItem = {};
-            for (var entry in item.entries) {
-              mappedItem[entry.key] = entry.value.toString();
-            }
-            return mappedItem;
-          }).toList();
-        });
+        print('Respuesta HTTP: ${response.body}');
+        if(response.body.isNotEmpty){
+          List<dynamic> jsonResponse = json.decode(response.body);
+          setState(() {
+            datos = jsonResponse.map((dynamic item) {
+              Map<String, String> mappedItem = {};
+              for (var entry in item.entries) {
+                mappedItem[entry.key] = entry.value.toString();
+              }
+              return mappedItem;
+            }).toList();
+          });
+        }else{
+          print('Error al con json.decoe');
+        }
       } else {
         _showErrorDialog('Hubo un problema al obtener los datos.');
       }
     } catch (e) {
-      print('Error al obtener los datos: $e');
-      _showErrorDialog('Hubo un problema al obtener los datos.');
+      print('Error al decodificar JSON: $e');
+      _showErrorDialog('Hubo un problema al decodificar los datos JSON.');
     }
   }
 
@@ -82,13 +87,12 @@ class _VidaState extends State<Vida> {
           filtroAplicado = filterButtonText[filterNames] ?? '';
         });
       } else {
-        _showErrorDialog('Hubo un problema al obtener los datos.');
+        _showErrorDialog('Hubo un problema al obtener los datos.Código de estado: ${response.statusCode}');
       }
     } else {
       // Manejar la lógica en caso de que filterNames sea nulo.
     }
   }
-
 
   void _showErrorDialog(String message) {
     showDialog(
@@ -132,8 +136,6 @@ class _VidaState extends State<Vida> {
     }
   }
 
-
-
   // Función para realizar la búsqueda
   void performSearch() {
     if (searchTerm.isNotEmpty) {
@@ -148,7 +150,6 @@ class _VidaState extends State<Vida> {
               return true;
             }
           }
-
           // También verifica si el término de búsqueda es un número y si coincide con algún valor numérico en la fila
           if (double.tryParse(searchTerm) != null) {
             for (var value in item.values) {
@@ -157,10 +158,8 @@ class _VidaState extends State<Vida> {
               }
             }
           }
-
           return false;
         }).toList();
-
         if (filteredData.isEmpty) {
           // Mostrar alerta si no se encontraron resultados
           _showNoResultsAlert();
@@ -286,7 +285,7 @@ class _VidaState extends State<Vida> {
     return TableCell(
       child: GestureDetector(
         onTap: () {
-          if (columna == 'id') {
+          if (columna == 'id' && text !=null) {
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -296,6 +295,8 @@ class _VidaState extends State<Vida> {
                 ),
               ),
             );
+          }else {
+            print('Columna no es "id" o el texto es nulo: columna=$columna, text=$text');
           }
         },
         child: Padding(

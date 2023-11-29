@@ -57,7 +57,7 @@ class _DetalleVidaState extends State<DetalleVida> {
       errorMessage = '';
     });
 
-    final String url = 'http://192.168.1.77/gam/detallevida.php?id=${widget.id}';
+    final String url = 'https://www.asesoresgam.com.mx/sistemas1/gam/detallevida.php?id=${widget.id}';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -531,7 +531,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                           if (isLoading) {
                             return const CircularProgressIndicator();
                           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                            return const Text('No hay docuemntos en esta póliza.',style: TextStyle(fontFamily: 'Roboto',fontSize: 20,color: Color.fromRGBO(15, 132, 194, 1),),);
+                            return const Text('No hay documentos en esta póliza.',style: TextStyle(fontFamily: 'Roboto',fontSize: 20,color: Color.fromRGBO(15, 132, 194, 1),),);
                           } else if (snapshot.hasError) {
                             return Text('Error al cargar los datos de la segunda tabla: ${snapshot.error}');
                           } else {
@@ -898,7 +898,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                 ),
                 if (isLoading)
                   const CircularProgressIndicator()
-                else if (dataForThirdTable!.isEmpty)
+                else if (dataForThirdTable?.isEmpty ?? true)
                   const Text('No hay datos disponibles en el historial.')
                 else
                   Table(
