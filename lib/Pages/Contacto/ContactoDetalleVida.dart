@@ -7,25 +7,30 @@ class contactoDetalle extends StatelessWidget {
   final String TEL;
   final String mail;
   final String ext;
+  final String rutaDeLaFoto;
 
-  const contactoDetalle({super.key, 
+  const contactoDetalle({
+    Key? key,
     required this.nombre,
     required this.rol,
     required this.TEL,
     required this.mail,
     required this.ext,
-  });
+    required this.rutaDeLaFoto,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detalles del Contacto',
+        title: const Text(
+          'Detalles del Contacto',
           style: TextStyle(
             fontFamily: 'Roboto',
             fontWeight: FontWeight.bold,
             fontSize: 24,
-          ),),
+          ),
+        ),
       ),
       body: Stack(
         children: [
@@ -61,9 +66,28 @@ class contactoDetalle extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 60),
-                      const CircleAvatar(
+                      CircleAvatar(
                         radius: 40,
                         backgroundColor: Colors.blue,
+                        child: Image.network(
+                          'http://www.asesoresgam.com.mx/sistemas1/' + rutaDeLaFoto,
+                          loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                            if (loadingProgress == null) {
+                              return child;
+                            } else {
+                              return CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                                    : null,
+                              );
+                            }
+                          },
+                          errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                            return Icon(Icons.error);
+                          },
+                          width: 64,
+                          height: 64,
+                        ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
@@ -102,7 +126,7 @@ class contactoDetalle extends StatelessWidget {
                       },
                       child: Text(
                         TEL,
-                        style: const TextStyle(fontSize: 16, color: Colors.blue,fontFamily: 'Roboto'),
+                        style: const TextStyle(fontSize: 16, color: Colors.blue, fontFamily: 'Roboto'),
                       ),
                     ),
                   ),
@@ -115,11 +139,10 @@ class contactoDetalle extends StatelessWidget {
                       },
                       child: Text(
                         mail,
-                        style: const TextStyle(fontSize: 16, color: Colors.blue,fontFamily: 'Roboto'),
+                        style: const TextStyle(fontSize: 16, color: Colors.blue, fontFamily: 'Roboto'),
                       ),
                     ),
                   ),
-
                 ],
               ),
             ),

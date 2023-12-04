@@ -3,6 +3,7 @@ import 'package:appgam/Pages/asesoresPage.dart';
 import 'package:appgam/main.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cached_network_image/cached_network_image.dart'; // Asegúrate de importar el paquete
 
 class contactoVida extends StatelessWidget {
   final String nombreUsuario;
@@ -117,30 +118,35 @@ class contactoVida extends StatelessWidget {
                     title: 'Patricia Moctezuma',
                     subtitle: 'Gerente de Promoción de Vida',
                     color: Colors.blueGrey,
+                    rutaDeLaFoto: 'fotosPerfil/usuario.png', // Reemplaza con el nombre de la imagen
                   ),
                   IconWithText(
                     icon: Icons.woman_2_outlined,
                     title: 'Diana Castro',
                     subtitle: 'Consultor Especializado Vida',
                     color: Colors.blueGrey,
+                    rutaDeLaFoto: 'fotosPerfil/usuario.png', // Reemplaza con el nombre de la imagen
                   ),
                   IconWithText(
                     icon: Icons.woman_2_outlined,
                     title: 'Veronica Sanchez',
-                    subtitle: 'Consulor Integral',
+                    subtitle: 'Consultor Integral',
                     color: Colors.blueGrey,
+                    rutaDeLaFoto: 'fotosPerfil/usuario.png', // Reemplaza con el nombre de la imagen
                   ),
                   IconWithText(
                     icon: Icons.woman_2_outlined,
                     title: 'Carolina Hernández',
-                    subtitle: 'Gerente de Operación',
+                    subtitle: 'GERENTE DE OPERACIÓN Y SERVICIO',
                     color: Colors.blueGrey,
+                    rutaDeLaFoto: 'fotosPerfil/usuario.png', // Reemplaza con el nombre de la imagen
                   ),
                   IconWithText(
                     icon: Icons.man_2_outlined,
                     title: 'Manuel Ramírez',
-                    subtitle: 'Director de Soporte, Promoción y Ventas',
+                    subtitle: 'DIRECTOR DE SOPORTE, PROMOCIÓN Y VENTAS',
                     color: Colors.blueGrey,
+                    rutaDeLaFoto: 'fotosPerfil/usuario.png', // Reemplaza con el nombre de la imagen
                   ),
                 ],
               ),
@@ -165,12 +171,12 @@ class contactoVida extends StatelessWidget {
     );
   }
 }
-
 class IconWithText extends StatelessWidget {
   final IconData icon;
   final String title;
   final Color? color;
   final String subtitle;
+  final String rutaDeLaFoto;
 
   const IconWithText({
     Key? key,
@@ -178,6 +184,7 @@ class IconWithText extends StatelessWidget {
     required this.title,
     this.color,
     required this.subtitle,
+    required this.rutaDeLaFoto,
   }) : super(key: key);
 
   @override
@@ -187,40 +194,87 @@ class IconWithText extends StatelessWidget {
         if (title == 'Patricia Moctezuma') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const contactoDetalle(nombre: 'PATRICIA MOCTEZUMA', rol: 'GERNTE PROMOCIÓN VIDA', TEL: '5529417281', ext: '', mail: 'promocionvida@asesoresgam.com.mx',)),
+            MaterialPageRoute(
+              builder: (context) => const contactoDetalle(
+                nombre: 'PATRICIA MOCTEZUMA',
+                rol: 'GERENTE PROMOCIÓN VIDA',
+                TEL: '5529417281',
+                ext: '',
+                mail: 'promocionvida@asesoresgam.com.mx',
+                rutaDeLaFoto: 'fotosPerfil/usuario.png',
+              ),
+            ),
           );
         } else if (title == 'Diana Castro') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const contactoDetalle(nombre: 'DIANA CASTRO GARCIA', rol: 'CONSULTOR ESPECIALIZADO VIDA', TEL: '5536430812', ext: '127', mail: 'vida@asesoresgam.com.mx',)),
+            MaterialPageRoute(
+              builder: (context) => const contactoDetalle(
+                nombre: 'DIANA CASTRO GARCIA',
+                rol: 'CONSULTOR ESPECIALIZADO VIDA',
+                TEL: '5530608727',
+                ext: '',
+                mail: 'vida@asesoresgam.com.mx',
+                rutaDeLaFoto: 'fotosPerfil/usuario.png',
+              ),
+            ),
           );
-        } else if (title == 'Veronica Sanchez') {
+        }else if (title == 'Veronica Sanchez') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const contactoDetalle(nombre: 'VERONICA SANCHEZ MONTESINOS', rol: 'CONSULTOR INTEGRAL', TEL: '5585996060',ext:'0', mail: 'lomasverdes@asesoresgam.com.mx',)),
+            MaterialPageRoute(
+              builder: (context) => const contactoDetalle(
+                nombre: 'VERONICA SANCHEZ MONTESINOS',
+                rol: 'CONSULTOR INTEGRAL',
+                TEL: '5532202334',
+                ext: '0',
+                mail: 'lomasverdes@asesoresgam.com.mx',
+                rutaDeLaFoto: 'fotosPerfil/usuario.png',
+              ),
+            ),
           );
-        } else if (title == 'Carolina Hernández') {
+        }  else if (title == 'Carolina Hernández') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const contactoDetalle(nombre: 'CAROLINA HERNANDEZ MORA', rol: 'GERENTE DE OPERACIÓN Y SERVICIO', TEL: '5521768838', ext: '106', mail: 'calidad@asesoresgam.com.mx',)),
+            MaterialPageRoute(
+              builder: (context) => const contactoDetalle(
+                nombre: 'CAROLINA HERNÁNDEZ',
+                rol: 'GERENTE DE OPERACIÓN',
+                TEL: '5532202334',
+                ext: '0',
+                mail: 'calidad@asesoresgam.com.mx',
+                rutaDeLaFoto: 'fotosPerfil/usuario.png',
+              ),
+            ),
           );
         } else if (title == 'Manuel Ramírez') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const contactoDetalle(nombre: 'MANUEL RAMIREZ', rol: 'DIRECTOR DE SOPORTE, PROMOCIÓN Y VENTAS', TEL: '', ext: '', mail: 'm.ramirez@asesoresgam.com.mx',)),
+            MaterialPageRoute(
+              builder: (context) => const contactoDetalle(
+                nombre: 'MANUEL RAMÍREZ',
+                rol: 'DIRECTOR DE SOPORTE, PROMOCIÓN Y VENTAS',
+                TEL: '5527586554',
+                ext: '0',
+                mail: 'm.ramirez@asesoresgam.com.mx',
+                rutaDeLaFoto: 'fotosPerfil/usuario.png',
+              ),
+            ),
           );
+        }  else {
+          // Repite para otros casos
         }
       },
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            IconTheme(
-              data: IconThemeData(color: color),
-              child: Icon(
-                icon,
-                size: 64,
-              ),
+            CachedNetworkImage(
+              imageUrl: 'http://www.asesoresgam.com.mx/sistemas1/' + rutaDeLaFoto,
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+              width: 64,
+              height: 64,
             ),
             const SizedBox(height: 8),
             Text(
