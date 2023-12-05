@@ -26,7 +26,7 @@ class Asesores extends StatelessWidget {
             "Bienvenido $nombreUsuario",
             style: const TextStyle(
               fontFamily: 'Roboto',
-              fontSize: 24,
+              fontSize: 17,
               color: Color.fromRGBO(246, 246, 246, 1),
             ),
           ),
@@ -280,7 +280,7 @@ class IconWithText extends StatelessWidget {
             title,
             style: TextStyle(
               fontFamily: 'Roboto',
-              fontSize: 24,
+              fontSize: 17.5,
               fontWeight: FontWeight.bold,
               color: color ?? Colors.black, // Color del texto (usará negro si no se proporciona un color específico)
             ),

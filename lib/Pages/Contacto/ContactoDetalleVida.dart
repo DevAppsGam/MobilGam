@@ -28,7 +28,7 @@ class contactoDetalle extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'Roboto',
             fontWeight: FontWeight.bold,
-            fontSize: 24,
+            fontSize: 17,
           ),
         ),
       ),
@@ -48,7 +48,7 @@ class contactoDetalle extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 60),
+                  const SizedBox(height: 10),
                   const Padding(
                     padding: EdgeInsets.all(16.0),
                     child: Text(
@@ -61,13 +61,13 @@ class contactoDetalle extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 14,),
+                  const SizedBox(height: 20,),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 60),
                       CircleAvatar(
-                        radius: 40,
+                        radius: 75,
                         backgroundColor: Colors.blue,
                         child: Image.network(
                           'http://www.asesoresgam.com.mx/sistemas1/$rutaDeLaFoto',
@@ -85,8 +85,8 @@ class contactoDetalle extends StatelessWidget {
                           errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
                             return const Icon(Icons.error);
                           },
-                          width: 64,
-                          height: 64,
+                          width: 140,
+                          height: 140,
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -97,7 +97,7 @@ class contactoDetalle extends StatelessWidget {
                             Text(
                               nombre,
                               style: const TextStyle(
-                                fontSize: 24,
+                                fontSize: 19,
                                 fontWeight: FontWeight.bold,
                                 fontFamily: 'Roboto',
                               ),
