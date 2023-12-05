@@ -70,7 +70,7 @@ class contactoDetalle extends StatelessWidget {
                         radius: 40,
                         backgroundColor: Colors.blue,
                         child: Image.network(
-                          'http://www.asesoresgam.com.mx/sistemas1/' + rutaDeLaFoto,
+                          'http://www.asesoresgam.com.mx/sistemas1/$rutaDeLaFoto',
                           loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                             if (loadingProgress == null) {
                               return child;
@@ -83,7 +83,7 @@ class contactoDetalle extends StatelessWidget {
                             }
                           },
                           errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                            return Icon(Icons.error);
+                            return const Icon(Icons.error);
                           },
                           width: 64,
                           height: 64,
