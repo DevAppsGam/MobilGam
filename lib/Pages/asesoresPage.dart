@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:appgam/Pages/Contacto/contactoVidaPage.dart';
@@ -9,9 +10,49 @@ import 'package:appgam/Pages/MenuAsesores/siniestrosPage.dart';
 import 'package:appgam/Pages/MenuAsesores/vidaPage.dart';
 import 'package:appgam/main.dart';
 
-class Asesores extends StatelessWidget {
+class Asesores extends StatefulWidget {
   final String nombreUsuario;
+
   const Asesores({Key? key, required this.nombreUsuario}) : super(key: key);
+
+  @override
+  _AsesoresState createState() => _AsesoresState();
+}
+
+class _AsesoresState extends State<Asesores> {
+  late Timer _inactivityTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    // Inicia el temporizador de inactividad al cargar la pantalla
+    _startInactivityTimer();
+  }
+
+  @override
+  void dispose() {
+    // Cancela el temporizador al salir de la pantalla
+    _inactivityTimer.cancel();
+    super.dispose();
+  }
+
+  void _startInactivityTimer() {
+    const inactivityDuration = Duration(seconds: 30); // 30 segundos de inactividad
+    _inactivityTimer = Timer(inactivityDuration, () {
+      // Maneja la inactividad (por ejemplo, cierra la sesión)
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) => const LoginPage()),
+            (Route<dynamic> route) => false,
+      );
+    });
+  }
+
+  void _resetInactivityTimer() {
+    // Reinicia el temporizador al detectar actividad
+    _inactivityTimer.cancel();
+    _startInactivityTimer();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +64,7 @@ class Asesores extends StatelessWidget {
             Scaffold.of(context).openDrawer();
           },
           child: Text(
-            "Bienvenido $nombreUsuario",
+            "Bienvenido ${widget.nombreUsuario}",
             style: const TextStyle(
               fontFamily: 'Roboto',
               fontSize: 17,
@@ -45,10 +86,10 @@ class Asesores extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                // Cerrar sesión y volver a cargar AsesoresPage
+                // Acción al hacer clic en "Inicio"
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) => Asesores(nombreUsuario: nombreUsuario)),
+                  MaterialPageRoute(builder: (BuildContext context) => Asesores(nombreUsuario: widget.nombreUsuario)),
                       (Route<dynamic> route) => false,
                 );
               },
@@ -63,10 +104,10 @@ class Asesores extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                // Cargar la página de contactoVida
+                // Acción al hacer clic en "Contactos"
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (BuildContext context) => contactoVida(nombreUsuario: nombreUsuario)),
+                  MaterialPageRoute(builder: (BuildContext context) => contactoVida(nombreUsuario: widget.nombreUsuario)),
                 );
               },
             ),
@@ -80,7 +121,7 @@ class Asesores extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                // Cerrar sesión y volver a cargar LoginPage
+                // Acción al hacer clic en "Cerrar sesión"
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (BuildContext context) => const LoginPage()),
@@ -88,93 +129,95 @@ class Asesores extends StatelessWidget {
                 );
               },
             ),
-            // Agrega más ListTile para cada opción del menú
+            // Puedes agregar más elementos ListTile según tus necesidades
           ],
         ),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/img/back.jpg'),
-            fit: BoxFit.cover,
 
+      body: GestureDetector(
+        onTap: _resetInactivityTimer,
+        child: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/img/back.jpg'),
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        child: Column(
-          children: <Widget>[
-            const SizedBox(height: 60),
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'Menú',
-                style: TextStyle(
-                  fontFamily: 'Roboto',
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromRGBO(73, 78, 84, 1),
+          child: Column(
+            children: <Widget>[
+              const SizedBox(height: 60),
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'Menú',
+                  style: TextStyle(
+                    fontFamily: 'Roboto',
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(73, 78, 84, 1),
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                padding: const EdgeInsets.all(16),
-                children: [
-                  IconWithText(
-                    icon: Icons.diversity_1_rounded,
-                    title: 'VIDA',
-                    color: const Color.fromRGBO(67, 198, 80, 1),
-                    nombreUsuario: nombreUsuario,
-                  ),
-                  IconWithText(
-                    icon: Icons.notification_important_rounded,
-                    title: 'SINIESTROS',
-                    color: const Color.fromRGBO(249, 224, 128, 1.0),
-                    nombreUsuario: nombreUsuario,
-                  ),
-                  IconWithText(
-                    icon: Icons.car_crash_rounded,
-                    title: 'AUTOS',
-                    color: const Color.fromRGBO(214, 117, 55, 1),
-                    nombreUsuario: nombreUsuario,
-                  ),
-                   IconWithText(
-                    icon: Icons.medical_information_rounded,
-                    title: 'GMM',
-                    color: const Color.fromRGBO(53, 162, 219, 1),
-                     nombreUsuario: nombreUsuario,
-                  ),
-                   IconWithText(
-                    icon: Icons.content_paste_search,
-                    title: 'RECURSOS',
-                    color: const Color.fromRGBO(115, 117, 121, 1),
-                     nombreUsuario: nombreUsuario,
-                  ),
-                   IconWithText(
-                    icon: Icons.graphic_eq_outlined,
-                    title: 'ESTADISTICAS',
-                    color: const Color.fromRGBO(65, 178, 182, 1),
-                     nombreUsuario: nombreUsuario,
-                  ),
-                ],
-              ),
-            ),
-
-            Align(
-              alignment: Alignment.bottomRight,
-              child: IconButton(
-                onPressed: () {
-                  const url = 'https://www.example.com';
-                  launch(url);
-                },
-                icon: const Icon(
-                  Icons.message_rounded,
-                  size: 42,
-                  color: Colors.blueAccent,
+              Expanded(
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    IconWithText(
+                      icon: Icons.diversity_1_rounded,
+                      title: 'VIDA',
+                      color: const Color.fromRGBO(67, 198, 80, 1),
+                      nombreUsuario: widget.nombreUsuario,
+                    ),
+                    IconWithText(
+                      icon: Icons.notification_important_rounded,
+                      title: 'SINIESTROS',
+                      color: const Color.fromRGBO(249, 224, 128, 1.0),
+                      nombreUsuario: widget.nombreUsuario,
+                    ),
+                    IconWithText(
+                      icon: Icons.car_crash_rounded,
+                      title: 'AUTOS',
+                      color: const Color.fromRGBO(214, 117, 55, 1),
+                      nombreUsuario: widget.nombreUsuario,
+                    ),
+                    IconWithText(
+                      icon: Icons.medical_information_rounded,
+                      title: 'GMM',
+                      color: const Color.fromRGBO(53, 162, 219, 1),
+                      nombreUsuario: widget.nombreUsuario,
+                    ),
+                    IconWithText(
+                      icon: Icons.content_paste_search,
+                      title: 'RECURSOS',
+                      color: const Color.fromRGBO(115, 117, 121, 1),
+                      nombreUsuario: widget.nombreUsuario,
+                    ),
+                    IconWithText(
+                      icon: Icons.graphic_eq_outlined,
+                      title: 'ESTADISTICAS',
+                      color: const Color.fromRGBO(65, 178, 182, 1),
+                      nombreUsuario: widget.nombreUsuario,
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
+              Align(
+                alignment: Alignment.bottomRight,
+                child: IconButton(
+                  onPressed: () {
+                    const url = 'https://www.example.com';
+                    launch(url);
+                  },
+                  icon: const Icon(
+                    Icons.message_rounded,
+                    size: 42,
+                    color: Colors.blueAccent,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -211,9 +254,8 @@ class IconWithText extends StatelessWidget {
       case 'ESTADISTICAS':
         imagePath = 'assets/img/Estadisticas_Blanco.png';
         break;
-    // Agrega más casos según sea necesario para cada título
       default:
-        imagePath = 'assets/img/GAM_TV.png'; // Imagen predeterminada en caso de que no haya coincidencia
+        imagePath = 'assets/img/GAM_TV.png';
     }
     return GestureDetector(
       onTap: () {
@@ -260,12 +302,12 @@ class IconWithText extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Container(
-            width: 100, // Ajusta el tamaño del círculo según tus preferencias
-            height: 100, // Ajusta el tamaño del círculo según tus preferencias
+            width: 100,
+            height: 100,
             decoration: BoxDecoration(
               shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.circular(20),// Forma circular del contenedor
-              color: color ?? Colors.white, // Color de fondo del círculo (usará blanco si no se proporciona un color específico)
+              borderRadius: BorderRadius.circular(20),
+              color: color ?? Colors.white,
             ),
             child: Center(
               child: Image.asset(
@@ -282,7 +324,7 @@ class IconWithText extends StatelessWidget {
               fontFamily: 'Roboto',
               fontSize: 17.5,
               fontWeight: FontWeight.bold,
-              color: color ?? Colors.black, // Color del texto (usará negro si no se proporciona un color específico)
+              color: color ?? Colors.black,
             ),
           ),
         ],

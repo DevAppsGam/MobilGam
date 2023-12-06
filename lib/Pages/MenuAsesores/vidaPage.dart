@@ -201,7 +201,7 @@ class _VidaState extends State<Vida> {
     return TableRow(
       children: [
         _buildTableHeaderCell(' Folio GAM'),
-        _buildTableHeaderCell(' Nombre del Contratante '),
+        _buildTableHeaderCell(' Contratante '),
         _buildTableHeaderCell(' N° Póliza'),
         _buildTableHeaderCell(' Folio GNP'),
         _buildTableHeaderCell(' Fecha Promesa '),
@@ -216,7 +216,7 @@ class _VidaState extends State<Vida> {
         decoration: const BoxDecoration(
           color: Color.fromRGBO(15, 132, 194, 1),
         ),
-        constraints: const BoxConstraints.expand(height: 50.0),
+        constraints: const BoxConstraints.expand(height: 70.0),
         child: Padding(
           padding: const EdgeInsets.symmetric(
             vertical: 0.0,
@@ -227,7 +227,7 @@ class _VidaState extends State<Vida> {
               text,
               style: const TextStyle(
                 fontFamily: 'Roboto',
-                fontSize: 20,
+                fontSize: 17,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -441,7 +441,7 @@ class _VidaState extends State<Vida> {
                                 style: const TextStyle(
                                   fontFamily: 'Roboto',
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 14,
+                                  fontSize: 10,
                                 ),
                               ),
                             ),
@@ -461,7 +461,7 @@ class _VidaState extends State<Vida> {
                           style: TextStyle(
                             fontFamily: 'Roboto',
                             fontWeight: FontWeight.bold,
-                            fontSize: 15,
+                            fontSize: 10,
                           ),
                         ),
                       ),
@@ -478,7 +478,7 @@ class _VidaState extends State<Vida> {
                           style: TextStyle(
                             fontFamily: 'Roboto',
                             fontWeight: FontWeight.bold,
-                            fontSize: 15,
+                            fontSize: 10,
                           ),),
                       ),
                       const SizedBox(width: 16),
@@ -493,7 +493,7 @@ class _VidaState extends State<Vida> {
                           style: TextStyle(
                             fontFamily: 'Roboto',
                             fontWeight: FontWeight.bold,
-                            fontSize: 15,
+                            fontSize: 10,
                           ),),
                       ),
                     ],
@@ -501,14 +501,14 @@ class _VidaState extends State<Vida> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(2.0),
                 child: Text(
                   filtroAplicado.isNotEmpty
                       ? 'Filtro Aplicado: $filtroAplicado'
                       : '',
                   style: const TextStyle(
                     fontFamily: 'Roboto',
-                    fontSize: 18,
+                    fontSize: 10,
                     fontWeight: FontWeight.bold,
                     color: Colors.blueAccent,
                   ),
