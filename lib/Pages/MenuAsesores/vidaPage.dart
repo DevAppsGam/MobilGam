@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'package:appgam/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:appgam/Pages/MenuAsesores/Detalles/vidaDetallePage.dart';
+import 'dart:async';
 
 class Vida extends StatefulWidget {
   final String nombreUsuario;
@@ -14,6 +16,8 @@ class Vida extends StatefulWidget {
 }
 
 class _VidaState extends State<Vida> {
+  late Timer _inactivityTimer;
+
   List<Map<String, String>> datos = [];
   final int _perPage = 4;
   int _currentPage = 0;
@@ -39,6 +43,7 @@ class _VidaState extends State<Vida> {
       DeviceOrientation.landscapeRight,
     ]);
     fetchData();
+    _startInactivityTimer();
   }
 
   Future<void> fetchData() async {
@@ -195,6 +200,25 @@ class _VidaState extends State<Vida> {
       DeviceOrientation.portraitDown,
     ]);
     super.dispose();
+    _inactivityTimer.cancel();
+  }
+
+  void _startInactivityTimer() {
+    const inactivityDuration = Duration(seconds: 60); // 30 segundos de inactividad
+    _inactivityTimer = Timer(inactivityDuration, () {
+      // Maneja la inactividad (por ejemplo, cierra la sesión)
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) => const LoginPage()),
+            (Route<dynamic> route) => false,
+      );
+    });
+  }
+
+  void _resetInactivityTimer() {
+    // Reinicia el temporizador al detectar actividad
+    _inactivityTimer.cancel();
+    _startInactivityTimer();
   }
 
   TableRow _buildTableHeaderRow() {

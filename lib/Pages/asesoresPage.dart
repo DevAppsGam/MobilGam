@@ -37,7 +37,7 @@ class _AsesoresState extends State<Asesores> {
   }
 
   void _startInactivityTimer() {
-    const inactivityDuration = Duration(seconds: 30); // 30 segundos de inactividad
+    const inactivityDuration = Duration(seconds: 60); // 30 segundos de inactividad
     _inactivityTimer = Timer(inactivityDuration, () {
       // Maneja la inactividad (por ejemplo, cierra la sesión)
       Navigator.pushAndRemoveUntil(
