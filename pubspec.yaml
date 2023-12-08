@@ -27,6 +27,9 @@ dependencies:
   open_filex: ^4.3.4
   flutter_downloader: ^1.11.5
   flutter_file_downloader: ^1.1.4
+  image_network: ^1.0.0
+  cached_network_image: ^3.3.0
+  auto_route: ^7.8.1
 
 dev_dependencies:
   flutter_test:

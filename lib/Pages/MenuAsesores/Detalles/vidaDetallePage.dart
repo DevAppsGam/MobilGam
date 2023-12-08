@@ -91,7 +91,7 @@ class _DetalleVidaState extends State<DetalleVida> {
 
   Future<void> fetchDataForThirdTable() async {
     final String thirdTableUrl =
-        'http://192.168.1.77/gam/detallevidaobservaciones.php?id=${widget.id}';
+        'https://www.asesoresgam.com.mx/sistemas1/gam/detallevidaobservaciones.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(thirdTableUrl));
 

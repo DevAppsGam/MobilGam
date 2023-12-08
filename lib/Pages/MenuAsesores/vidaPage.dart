@@ -1,11 +1,14 @@
 import 'dart:convert';
+import 'package:appgam/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:appgam/Pages/MenuAsesores/Detalles/vidaDetallePage.dart';
+import 'dart:async';
 
 class Vida extends StatefulWidget {
   final String nombreUsuario;
+
   const Vida({Key? key, required this.nombreUsuario}) : super(key: key);
 
   @override
@@ -13,6 +16,8 @@ class Vida extends StatefulWidget {
 }
 
 class _VidaState extends State<Vida> {
+  late Timer _inactivityTimer;
+
   List<Map<String, String>> datos = [];
   final int _perPage = 4;
   int _currentPage = 0;
@@ -24,7 +29,7 @@ class _VidaState extends State<Vida> {
   };
 
   Set<String> activeFilters = <String>{};
-  String searchTerm = ''; // Nuevo campo para el término de búsqueda
+  String searchTerm = '';
 
   bool isFilterActive(String filterName) {
     return activeFilters.contains(filterName);
@@ -38,14 +43,16 @@ class _VidaState extends State<Vida> {
       DeviceOrientation.landscapeRight,
     ]);
     fetchData();
+    _startInactivityTimer();
   }
 
   Future<void> fetchData() async {
     try {
-      final response = await http.get(Uri.parse('https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
+      final response = await http.get(Uri.parse(
+          'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?username=${widget
+              .nombreUsuario}'));
       if (response.statusCode == 200) {
-        print('Respuesta HTTP: ${response.body}');
-        if(response.body.isNotEmpty){
+        if (response.body.isNotEmpty) {
           List<dynamic> jsonResponse = json.decode(response.body);
           setState(() {
             datos = jsonResponse.map((dynamic item) {
@@ -56,8 +63,8 @@ class _VidaState extends State<Vida> {
               return mappedItem;
             }).toList();
           });
-        }else{
-          print('Error al con json.decoe');
+        } else {
+          print('Error al con json.decode');
         }
       } else {
         _showErrorDialog('Hubo un problema al obtener los datos.');
@@ -71,15 +78,14 @@ class _VidaState extends State<Vida> {
   Future<void> fetchDataWithFilter(String? filterNames) async {
     if (filterNames != null) {
       final response = await http.get(Uri.parse(
-          'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?filter=$filterNames&username=${widget.nombreUsuario}'));
-
+          'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?filter=$filterNames&username=${widget
+              .nombreUsuario}'));
       if (response.statusCode == 200) {
         List<dynamic> jsonResponse = json.decode(response.body);
         setState(() {
           datos = jsonResponse.map((dynamic item) {
             Map<String, String> mappedItem = {};
             for (var entry in item.entries) {
-              // Asegúrate de que el valor sea convertido a String antes de asignarlo
               mappedItem[entry.key] = entry.value.toString();
             }
             return mappedItem;
@@ -87,10 +93,10 @@ class _VidaState extends State<Vida> {
           filtroAplicado = filterButtonText[filterNames] ?? '';
         });
       } else {
-        _showErrorDialog('Hubo un problema al obtener los datos.Código de estado: ${response.statusCode}');
+        _showErrorDialog(
+            'Hubo un problema al obtener los datos.Código de estado: ${response
+                .statusCode}');
       }
-    } else {
-      // Manejar la lógica en caso de que filterNames sea nulo.
     }
   }
 
@@ -118,14 +124,12 @@ class _VidaState extends State<Vida> {
     setState(() {
       if (isFilterActive(filterName)) {
         activeFilters.remove(filterName);
-        filterButtonText[filterName] = buttonText;
       } else {
         activeFilters.add(filterName);
-        filterButtonText[filterName] = isFilterActive(filterName) ? buttonText : 'Quitar';
       }
-
-      // Actualiza el texto del filtro aplicado
-      filtroAplicado = activeFilters.isNotEmpty ? 'Filtro Aplicado' : '';
+      filtroAplicado =
+      activeFilters.isNotEmpty ? 'Filtros Aplicados: ${activeFilters.join(
+          ', ')}' : '';
     });
 
     if (activeFilters.isNotEmpty) {
@@ -136,21 +140,17 @@ class _VidaState extends State<Vida> {
     }
   }
 
-  // Función para realizar la búsqueda
   void performSearch() {
     if (searchTerm.isNotEmpty) {
       setState(() {
         final filteredData = datos.where((item) {
           final searchString = searchTerm.toLowerCase();
-
-          // Realizar la búsqueda en todos los campos de la fila
           for (var value in item.values) {
             final lowerValue = value.toLowerCase();
             if (lowerValue.contains(searchString)) {
               return true;
             }
           }
-          // También verifica si el término de búsqueda es un número y si coincide con algún valor numérico en la fila
           if (double.tryParse(searchTerm) != null) {
             for (var value in item.values) {
               if (double.tryParse(value) == double.tryParse(searchTerm)) {
@@ -161,14 +161,12 @@ class _VidaState extends State<Vida> {
           return false;
         }).toList();
         if (filteredData.isEmpty) {
-          // Mostrar alerta si no se encontraron resultados
           _showNoResultsAlert();
         } else {
           datos = filteredData;
         }
       });
     } else {
-      // Si el término de búsqueda está vacío, muestra todos los datos nuevamente.
       fetchData();
     }
   }
@@ -178,13 +176,13 @@ class _VidaState extends State<Vida> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Sin Resultados', style: TextStyle(fontFamily: 'Roboto'),),
+          title: const Text(
+            'Sin Resultados', style: TextStyle(fontFamily: 'Roboto'),),
           content: const Text('No se encontraron resultados.'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                // Recargar la tabla original
                 fetchData();
               },
               child: const Text('Cerrar'),
@@ -202,13 +200,32 @@ class _VidaState extends State<Vida> {
       DeviceOrientation.portraitDown,
     ]);
     super.dispose();
+    _inactivityTimer.cancel();
+  }
+
+  void _startInactivityTimer() {
+    const inactivityDuration = Duration(seconds: 60); // 30 segundos de inactividad
+    _inactivityTimer = Timer(inactivityDuration, () {
+      // Maneja la inactividad (por ejemplo, cierra la sesión)
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) => const LoginPage()),
+            (Route<dynamic> route) => false,
+      );
+    });
+  }
+
+  void _resetInactivityTimer() {
+    // Reinicia el temporizador al detectar actividad
+    _inactivityTimer.cancel();
+    _startInactivityTimer();
   }
 
   TableRow _buildTableHeaderRow() {
     return TableRow(
       children: [
         _buildTableHeaderCell(' Folio GAM'),
-        _buildTableHeaderCell(' Nombre del Contratante '),
+        _buildTableHeaderCell(' Contratante '),
         _buildTableHeaderCell(' N° Póliza'),
         _buildTableHeaderCell(' Folio GNP'),
         _buildTableHeaderCell(' Fecha Promesa '),
@@ -223,7 +240,7 @@ class _VidaState extends State<Vida> {
         decoration: const BoxDecoration(
           color: Color.fromRGBO(15, 132, 194, 1),
         ),
-        constraints: const BoxConstraints.expand(height: 50.0), // Establecer un alto específico para la celda
+        constraints: const BoxConstraints.expand(height: 70.0),
         child: Padding(
           padding: const EdgeInsets.symmetric(
             vertical: 0.0,
@@ -234,7 +251,7 @@ class _VidaState extends State<Vida> {
               text,
               style: const TextStyle(
                 fontFamily: 'Roboto',
-                fontSize: 20,
+                fontSize: 17,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -244,8 +261,6 @@ class _VidaState extends State<Vida> {
       ),
     );
   }
-
-
 
   TableRow _buildTableRow(Map<String, String> datos) {
     return TableRow(
@@ -260,43 +275,48 @@ class _VidaState extends State<Vida> {
     );
   }
 
-  Widget _buildTableCell(String text, Map<String, String> datos, String columna) {
-    Color textColor = columna == 'id' ? const Color.fromRGBO(15, 132, 194, 1) : Colors.black;
-    String nPolizaValue = datos['poliza'] ?? ''; // Usar el operador '!' para asegurarse de que 'datos['polizap']' no sea nulo
-    Color textColorf = columna == 'fecha_promesa' ? const Color.fromRGBO(15, 132, 194, 1) : Colors.black;
+  Widget _buildTableCell(String text, Map<String, String> datos,
+      String columna) {
+    Color textColor = columna == 'id'
+        ? const Color.fromRGBO(15, 132, 194, 1)
+        : Colors.black;
+    String nPolizaValue = datos['poliza'] ?? '';
+    Color textColorf = columna == 'fecha_promesa' ? const Color.fromRGBO(
+        15, 132, 194, 1) : Colors.black;
 
-    // Ajuste basado en el valor de 't_solicitud'
     if (datos['t_solicitud'] == 'PAGOS') {
-      nPolizaValue = datos['polizap'] ?? '';  // Aquí debes proporcionar el nombre correcto del campo que contiene el valor para 'N Poliza' cuando 't_solicitud' es 'PAGOS'.
-    }else if(datos['t_solicitud']=='ALTA DE POLIZA'){
-      nPolizaValue=datos['polizap'] ?? '';
+      nPolizaValue = datos['polizap'] ?? '';
+    } else if (datos['t_solicitud'] == 'ALTA DE POLIZA') {
+      nPolizaValue = datos['polizap'] ?? '';
     }
 
-    if(columna=='fecha_promesa'){
-      if(datos['semaforo']=='verde'){
+    if (columna == 'fecha_promesa') {
+      if (datos['semaforo'] == 'verde') {
         textColor = Colors.green;
-      } else if(datos['semaforo']=='rojo'){
-        textColor=Colors.red;
-      }else if(datos['semaforo']=='amarillo'){
-        textColor=Colors.yellow;
+      } else if (datos['semaforo'] == 'rojo') {
+        textColor = Colors.red;
+      } else if (datos['semaforo'] == 'amarillo') {
+        textColor = Colors.yellow;
       }
     }
 
     return TableCell(
       child: GestureDetector(
         onTap: () {
-          if (columna == 'id' && text !=null) {
+          if (columna == 'id') {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DetalleVida(
-                  nombreUsuario: widget.nombreUsuario,
-                  id: text,
-                ),
+                builder: (context) =>
+                    DetalleVida(
+                      nombreUsuario: widget.nombreUsuario,
+                      id: text,
+                    ),
               ),
             );
-          }else {
-            print('Columna no es "id" o el texto es nulo: columna=$columna, text=$text');
+          } else {
+            print(
+                'Columna no es "id" o el texto es nulo: columna=$columna, text=$text');
           }
         },
         child: Padding(
@@ -315,12 +335,10 @@ class _VidaState extends State<Vida> {
               ),
             ),
           ),
-
         ),
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -343,7 +361,8 @@ class _VidaState extends State<Vida> {
       fin = totalElementos;
     }
 
-    List<Map<String, String>> currentPageData = filteredData.sublist(inicio, fin);
+    List<Map<String, String>> currentPageData = filteredData.sublist(
+        inicio, fin);
 
     return Scaffold(
       appBar: AppBar(
@@ -409,7 +428,6 @@ class _VidaState extends State<Vida> {
                             );
                           },
                         );
-
                       },
                       icon: const Icon(
                         Icons.search,
@@ -431,28 +449,32 @@ class _VidaState extends State<Vida> {
                       Row(
                         children: filterButtonText.keys.map((filterName) {
                           return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0), // Ajusta el valor según sea necesario
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0),
                             child: ElevatedButton(
-                              onPressed: () => toggleFiltro(filterName, filterButtonText[filterName]!),
+                              onPressed: () =>
+                                  toggleFiltro(filterName,
+                                      filterButtonText[filterName]!),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: isFilterActive(filterName) ? Colors.grey : Colors.blue,
+                                backgroundColor: isFilterActive(filterName)
+                                    ? Colors.grey
+                                    : Colors.blue,
                               ),
                               child: Text(
                                 filterButtonText[filterName]!,
                                 style: const TextStyle(
                                   fontFamily: 'Roboto',
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 14,
+                                  fontSize: 10,
                                 ),
                               ),
                             ),
                           );
                         }).toList(),
                       ),
-
                       const SizedBox(width: 16),
                       ElevatedButton(
-                        onPressed: (){
+                        onPressed: () {
                           fetchDataWithFilter('A_TIEMPO');
                         },
                         style: ElevatedButton.styleFrom(
@@ -463,38 +485,39 @@ class _VidaState extends State<Vida> {
                           style: TextStyle(
                             fontFamily: 'Roboto',
                             fontWeight: FontWeight.bold,
-                            fontSize: 15,
+                            fontSize: 10,
                           ),
                         ),
                       ),
                       const SizedBox(width: 16),
                       ElevatedButton(
-                        onPressed: (){
+                        onPressed: () {
 
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromRGBO(241, 201, 132, 1.0),
+                          backgroundColor: const Color.fromRGBO(241, 201, 132,
+                              1.0),
                         ),
                         child: const Text('POR VENCER',
                           style: TextStyle(
                             fontFamily: 'Roboto',
                             fontWeight: FontWeight.bold,
-                            fontSize: 15,
+                            fontSize: 10,
                           ),),
                       ),
                       const SizedBox(width: 16),
                       ElevatedButton(
-                        onPressed: (){
+                        onPressed: () {
 
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red  ,
+                          backgroundColor: Colors.red,
                         ),
                         child: const Text('VENCIDOS',
                           style: TextStyle(
                             fontFamily: 'Roboto',
                             fontWeight: FontWeight.bold,
-                            fontSize: 15,
+                            fontSize: 10,
                           ),),
                       ),
                     ],
@@ -502,12 +525,14 @@ class _VidaState extends State<Vida> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(2.0),
                 child: Text(
-                  filtroAplicado.isNotEmpty ? 'Filtro Aplicado: $filtroAplicado' : '',
+                  filtroAplicado.isNotEmpty
+                      ? 'Filtro Aplicado: $filtroAplicado'
+                      : '',
                   style: const TextStyle(
                     fontFamily: 'Roboto',
-                    fontSize: 18,
+                    fontSize: 10,
                     fontWeight: FontWeight.bold,
                     color: Colors.blueAccent,
                   ),
@@ -515,8 +540,9 @@ class _VidaState extends State<Vida> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(
-                    vertical: 16.0,
-                    horizontal: 16.0),
+                  vertical: 16.0,
+                  horizontal: 16.0,
+                ),
                 child: Table(
                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   border: TableBorder.all(
@@ -597,8 +623,9 @@ class _VidaState extends State<Vida> {
             ],
           ),
         ),
-      ),
-    );
+      )
+    )
+    ;
   }
 }
 
