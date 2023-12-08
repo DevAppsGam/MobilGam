@@ -21,7 +21,6 @@ dependencies:
   async: ^2.11.0
   rflutter_alert: ^2.0.7
   advance_pdf_viewer: any
-  pdfx: ^2.5.0
   internet_file: ^1.2.0
   device_info_plus: ^9.1.0
   syncfusion_flutter_pdfviewer: ^19.3.59-beta

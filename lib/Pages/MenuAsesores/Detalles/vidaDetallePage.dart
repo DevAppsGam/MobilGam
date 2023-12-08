@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:appgam/Pages/MenuAsesores/Detalles/VisualizarPDF.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -653,14 +652,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                                         child: Center(
                                           child: IconButton(
                                             onPressed: () {
-                                              String nombreSinPrefijo = data['nombre']?.replaceFirst('../', '') ?? '';
-                                              print(nombreSinPrefijo);
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) => PdfViewer(pdfUrl: "https://www.asesoresgam.com.mx/sistemas/$nombreSinPrefijo"),
-                                                ),
-                                              );
+
                                             },
                                             icon: const Icon(Icons.search), // Cambia el icono aquí
                                           ),
