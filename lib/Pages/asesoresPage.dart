@@ -275,19 +275,19 @@ class IconWithText extends StatelessWidget {
           case 'AUTOS':
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const Auto()),
+              MaterialPageRoute(builder: (context) => Auto(nombreUsuario: nombreUsuario,)),
             );
             break;
           case 'GMM':
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const Gmm()),
+              MaterialPageRoute(builder: (context) => Gmm(nombreUsuario: nombreUsuario,)),
             );
             break;
           case 'RECURSOS':
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const Recurso()),
+              MaterialPageRoute(builder: (context) => Recurso(nombreUsuario: nombreUsuario,)),
             );
             break;
           case 'ESTADISTICAS':
