@@ -293,7 +293,7 @@ class IconWithText extends StatelessWidget {
           case 'ESTADISTICAS':
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const graficas()),
+              MaterialPageRoute(builder: (context) =>  Graficas(nombreUsuario: nombreUsuario,)),
             );
             break;
         }
