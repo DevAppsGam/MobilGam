@@ -37,7 +37,7 @@ class _AsesoresState extends State<Asesores> {
   }
 
   void _startInactivityTimer() {
-    const inactivityDuration = Duration(seconds: 60); // 30 segundos de inactividad
+    const inactivityDuration = Duration(seconds: 1200); // 30 segundos de inactividad
     _inactivityTimer = Timer(inactivityDuration, () {
       // Maneja la inactividad (por ejemplo, cierra la sesión)
       Navigator.pushAndRemoveUntil(
@@ -269,31 +269,31 @@ class IconWithText extends StatelessWidget {
           case 'SINIESTROS':
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const Siniestro()),
+              MaterialPageRoute(builder: (context) => Siniestro(nombreUsuario: nombreUsuario,)),
             );
             break;
           case 'AUTOS':
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const Auto()),
+              MaterialPageRoute(builder: (context) => Auto(nombreUsuario: nombreUsuario,)),
             );
             break;
           case 'GMM':
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const Gmm()),
+              MaterialPageRoute(builder: (context) => Gmm(nombreUsuario: nombreUsuario,)),
             );
             break;
           case 'RECURSOS':
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const Recurso()),
+              MaterialPageRoute(builder: (context) => Recurso(nombreUsuario: nombreUsuario,)),
             );
             break;
           case 'ESTADISTICAS':
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const graficas()),
+              MaterialPageRoute(builder: (context) =>  Graficas(nombreUsuario: nombreUsuario,)),
             );
             break;
         }

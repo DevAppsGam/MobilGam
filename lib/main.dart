@@ -218,10 +218,10 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 200),
             Image.asset(
               'assets/img/IntraGAM.png',
-              width: 100.0,
+              width: 75.0,
               height: 65.0,
             ),
-            const SizedBox(height: 50),
+            const SizedBox(height: 20),
             const Center(
               child: Text(
                 'Bienvenido',
@@ -294,6 +294,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: Icon(
                       obscurePassword ? Icons.visibility : Icons.visibility_off,
                       color: Colors.black,
+                      
                     ),
                   ),
                 ),
@@ -309,7 +310,7 @@ class _LoginPageState extends State<LoginPage> {
                 'Aviso de privacidad',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Color.fromRGBO(31, 123, 206, 1),
                   fontFamily: 'Roboto',
