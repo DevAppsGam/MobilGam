@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Power extends StatelessWidget {
-  const Power({Key? key}) : super(key: key);
+  const Power({super.key});
 
   @override
   Widget build(BuildContext context) {

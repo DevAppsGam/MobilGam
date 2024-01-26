@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Gmm extends StatefulWidget {
   final String nombreUsuario;
 
-  const Gmm({Key? key, required this.nombreUsuario}) : super(key: key);
+  const Gmm({super.key, required this.nombreUsuario});
 
   @override
   _GmmState createState() => _GmmState();

@@ -8,7 +8,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 class contactoVida extends StatelessWidget {
   final String nombreUsuario;
 
-  const contactoVida({Key? key, required this.nombreUsuario}) : super(key: key);
+  const contactoVida({super.key, required this.nombreUsuario});
 
   @override
   Widget build(BuildContext context) {
@@ -183,14 +183,14 @@ class IconWithText extends StatelessWidget {
   final double iconSize;
 
   const IconWithText({
-    Key? key,
+    super.key,
     required this.icon,
     required this.title,
     this.color,
     required this.subtitle,
     required this.rutaDeLaFoto,
     this.iconSize = 24.0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

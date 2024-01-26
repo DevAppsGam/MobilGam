@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Siniestro extends StatefulWidget {
   final String nombreUsuario;
 
-  const Siniestro({Key? key, required this.nombreUsuario}) : super(key: key);
+  const Siniestro({super.key, required this.nombreUsuario});
 
   @override
   _SiniestroState createState() => _SiniestroState();

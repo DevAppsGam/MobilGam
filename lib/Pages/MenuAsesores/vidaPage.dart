@@ -9,7 +9,7 @@ import 'dart:async';
 class Vida extends StatefulWidget {
   final String nombreUsuario;
 
-  const Vida({Key? key, required this.nombreUsuario}) : super(key: key);
+  const Vida({super.key, required this.nombreUsuario});
 
   @override
   _VidaState createState() => _VidaState();
@@ -49,20 +49,24 @@ class _VidaState extends State<Vida> {
   Future<void> fetchData() async {
     try {
       final response = await http.get(Uri.parse(
-          'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?username=${widget
-              .nombreUsuario}'));
+          'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
       if (response.statusCode == 200) {
         if (response.body.isNotEmpty) {
-          List<dynamic> jsonResponse = json.decode(response.body);
-          setState(() {
-            datos = jsonResponse.map((dynamic item) {
-              Map<String, String> mappedItem = {};
-              for (var entry in item.entries) {
-                mappedItem[entry.key] = entry.value.toString();
-              }
-              return mappedItem;
-            }).toList();
-          });
+          final jsonResponse = json.decode(response.body);
+          if (jsonResponse['data'] != null) {
+            List<dynamic> data = jsonResponse['data'];
+            setState(() {
+              datos = data.map((dynamic item) {
+                Map<String, String> mappedItem = {};
+                for (var entry in item.entries) {
+                  mappedItem[entry.key] = entry.value.toString();
+                }
+                return mappedItem;
+              }).toList();
+            });
+          } else {
+            print('Error al obtener los datos desde PHP.');
+          }
         } else {
           print('Error al con json.decode');
         }
@@ -74,6 +78,7 @@ class _VidaState extends State<Vida> {
       _showErrorDialog('Hubo un problema al decodificar los datos JSON.');
     }
   }
+
 
   Future<void> fetchDataWithFilter(String? filterNames) async {
     if (filterNames != null) {
@@ -365,265 +370,265 @@ class _VidaState extends State<Vida> {
         inicio, fin);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Bienvenido ${widget.nombreUsuario}',
-          style: const TextStyle(
-            fontFamily: 'Roboto',
-            fontSize: 24,
+        appBar: AppBar(
+          title: Text(
+            'Bienvenido ${widget.nombreUsuario}',
+            style: const TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: 24,
+            ),
           ),
         ),
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/img/back.jpg'),
-            fit: BoxFit.cover,
+        body: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/img/back.jpg'),
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Center(
-                      child: Text(
-                        'Mis Trámites de Vida',
-                        style: TextStyle(
-                          fontFamily: 'Roboto',
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromRGBO(73, 78, 84, 1),
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Búsqueda'),
-                              content: SingleChildScrollView(
-                                child: TextField(
-                                  onChanged: (value) {
-                                    setState(() {
-                                      searchTerm = value;
-                                    });
-                                  },
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    performSearch();
-                                  },
-                                  child: const Text('Buscar'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      icon: const Icon(
-                        Icons.search,
-                        color: Colors.blueAccent,
-                        size: 28,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const SizedBox(width: 16),
-                      Row(
-                        children: filterButtonText.keys.map((filterName) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8.0),
-                            child: ElevatedButton(
-                              onPressed: () =>
-                                  toggleFiltro(filterName,
-                                      filterButtonText[filterName]!),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: isFilterActive(filterName)
-                                    ? Colors.grey
-                                    : Colors.blue,
-                              ),
-                              child: Text(
-                                filterButtonText[filterName]!,
-                                style: const TextStyle(
-                                  fontFamily: 'Roboto',
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                      const SizedBox(width: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          fetchDataWithFilter('A_TIEMPO');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.lightGreen,
-                        ),
-                        child: const Text(
-                          'A TIEMPO',
+                      const Center(
+                        child: Text(
+                          'Mis Trámites de Vida',
                           style: TextStyle(
                             fontFamily: 'Roboto',
+                            fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            fontSize: 10,
+                            color: Color.fromRGBO(73, 78, 84, 1),
                           ),
                         ),
                       ),
-                      const SizedBox(width: 16),
-                      ElevatedButton(
+                      IconButton(
                         onPressed: () {
-
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Búsqueda'),
+                                content: SingleChildScrollView(
+                                  child: TextField(
+                                    onChanged: (value) {
+                                      setState(() {
+                                        searchTerm = value;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      performSearch();
+                                    },
+                                    child: const Text('Buscar'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromRGBO(241, 201, 132,
-                              1.0),
+                        icon: const Icon(
+                          Icons.search,
+                          color: Colors.blueAccent,
+                          size: 28,
                         ),
-                        child: const Text('POR VENCER',
-                          style: TextStyle(
-                            fontFamily: 'Roboto',
-                            fontWeight: FontWeight.bold,
-                            fontSize: 10,
-                          ),),
-                      ),
-                      const SizedBox(width: 16),
-                      ElevatedButton(
-                        onPressed: () {
-
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                        ),
-                        child: const Text('VENCIDOS',
-                          style: TextStyle(
-                            fontFamily: 'Roboto',
-                            fontWeight: FontWeight.bold,
-                            fontSize: 10,
-                          ),),
                       ),
                     ],
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: Text(
-                  filtroAplicado.isNotEmpty
-                      ? 'Filtro Aplicado: $filtroAplicado'
-                      : '',
-                  style: const TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blueAccent,
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(width: 16),
+                        Row(
+                          children: filterButtonText.keys.map((filterName) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0),
+                              child: ElevatedButton(
+                                onPressed: () =>
+                                    toggleFiltro(filterName,
+                                        filterButtonText[filterName]!),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: isFilterActive(filterName)
+                                      ? Colors.grey
+                                      : Colors.blue,
+                                ),
+                                child: Text(
+                                  filterButtonText[filterName]!,
+                                  style: const TextStyle(
+                                    fontFamily: 'Roboto',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                        const SizedBox(width: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            fetchDataWithFilter('A_TIEMPO');
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.lightGreen,
+                          ),
+                          child: const Text(
+                            'A TIEMPO',
+                            style: TextStyle(
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        ElevatedButton(
+                          onPressed: () {
+
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromRGBO(241, 201, 132,
+                                1.0),
+                          ),
+                          child: const Text('POR VENCER',
+                            style: TextStyle(
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10,
+                            ),),
+                        ),
+                        const SizedBox(width: 16),
+                        ElevatedButton(
+                          onPressed: () {
+
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                          ),
+                          child: const Text('VENCIDOS',
+                            style: TextStyle(
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10,
+                            ),),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 16.0,
-                  horizontal: 16.0,
-                ),
-                child: Table(
-                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                  border: TableBorder.all(
-                    color: const Color.fromRGBO(91, 112, 124, .5),
-                    width: 2.0,
-                  ),
-                  children: [
-                    _buildTableHeaderRow(),
-                    for (var dato in currentPageData) _buildTableRow(dato),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                width: 16,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Página ${_currentPage + 1} de $totalPaginas',
+                Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Text(
+                    filtroAplicado.isNotEmpty
+                        ? 'Filtro Aplicado: $filtroAplicado'
+                        : '',
                     style: const TextStyle(
                       fontFamily: 'Roboto',
-                      fontSize: 18,
+                      fontSize: 10,
                       fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent,
                     ),
-                  ),
-                  const SizedBox(width: 30),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        if (_currentPage > 0) {
-                          _currentPage--;
-                        }
-                      });
-                    },
-                    child: const Text(
-                      'Anterior',
-                      style: TextStyle(
-                        fontFamily: 'Roboto',
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 30),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        if ((_currentPage + 1) * _perPage < datos.length) {
-                          _currentPage++;
-                        }
-                      });
-                    },
-                    child: const Text(
-                      'Siguiente',
-                      style: TextStyle(
-                        fontFamily: 'Roboto',
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: IconButton(
-                  onPressed: () {
-                    // Lógica para manejar la acción del ícono
-                  },
-                  icon: const Icon(
-                    Icons.message_rounded,
-                    size: 42,
-                    color: Colors.blueAccent,
                   ),
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16.0,
+                    horizontal: 16.0,
+                  ),
+                  child: Table(
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    border: TableBorder.all(
+                      color: const Color.fromRGBO(91, 112, 124, .5),
+                      width: 2.0,
+                    ),
+                    children: [
+                      _buildTableHeaderRow(),
+                      for (var dato in currentPageData) _buildTableRow(dato),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  width: 16,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Página ${_currentPage + 1} de $totalPaginas',
+                      style: const TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 30),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          if (_currentPage > 0) {
+                            _currentPage--;
+                          }
+                        });
+                      },
+                      child: const Text(
+                        'Anterior',
+                        style: TextStyle(
+                          fontFamily: 'Roboto',
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 30),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          if ((_currentPage + 1) * _perPage < datos.length) {
+                            _currentPage++;
+                          }
+                        });
+                      },
+                      child: const Text(
+                        'Siguiente',
+                        style: TextStyle(
+                          fontFamily: 'Roboto',
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: IconButton(
+                    onPressed: () {
+                      // Lógica para manejar la acción del ícono
+                    },
+                    icon: const Icon(
+                      Icons.message_rounded,
+                      size: 42,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      )
+        )
     )
     ;
   }
