@@ -1,14 +1,15 @@
 <?php
 // Conexión a la base de datos
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "gamse627_ventanasis";
+header("Access-Control-Allow-Origin: *");
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
-}
+//OBTENGO LA VARIABLE $conn
+include_once 'conexion.php';
+
+// Iniciar la sesión
+session_start();
+
+// Obtener la conexión
+$conn = obtenerConexion();
 
 $d_promesar=0;
 
@@ -51,8 +52,6 @@ function calcularFechaVencimiento($fecha, $dias, $feriadosAlta){
     }
     return $fechaVencimiento;
 }
-
-
 
 $nombreUsuario = isset($_GET['username']) ? $_GET['username'] : '';
 

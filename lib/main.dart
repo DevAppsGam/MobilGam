@@ -304,7 +304,7 @@ class _LoginPageState extends State<LoginPage> {
             GestureDetector(
               onTap: () {
                 const url = 'https://asesoresgam.com.mx/aviso-de-privacidad.php';
-                launchUrl(url as Uri);
+                launchUrl(Uri.parse(url));
               },
               child: const Text(
                 'Aviso de privacidad',
