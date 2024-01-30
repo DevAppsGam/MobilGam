@@ -10,14 +10,14 @@ class contactoDetalle extends StatelessWidget {
   final String rutaDeLaFoto;
 
   const contactoDetalle({
-    Key? key,
+    super.key,
     required this.nombre,
     required this.rol,
     required this.TEL,
     required this.mail,
     required this.ext,
     required this.rutaDeLaFoto,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

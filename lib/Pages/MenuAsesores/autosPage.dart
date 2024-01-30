@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Auto extends StatefulWidget {
   final String nombreUsuario;
 
-  const Auto({Key? key, required this.nombreUsuario}) : super(key: key);
+  const Auto({super.key, required this.nombreUsuario});
 
   @override
   _AutoState createState() => _AutoState();

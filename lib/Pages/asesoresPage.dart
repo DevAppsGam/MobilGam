@@ -13,7 +13,7 @@ import 'package:appgam/main.dart';
 class Asesores extends StatefulWidget {
   final String nombreUsuario;
 
-  const Asesores({Key? key, required this.nombreUsuario}) : super(key: key);
+  const Asesores({super.key, required this.nombreUsuario});
 
   @override
   _AsesoresState createState() => _AsesoresState();
@@ -145,7 +145,7 @@ class _AsesoresState extends State<Asesores> {
           ),
           child: Column(
             children: <Widget>[
-              const SizedBox(height: 60),
+              const SizedBox(height: 30),
               const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
@@ -230,7 +230,7 @@ class IconWithText extends StatelessWidget {
   final Color? color;
   final String nombreUsuario;
 
-  const IconWithText({Key? key, required this.icon, required this.title, this.color, required this.nombreUsuario}) : super(key: key);
+  const IconWithText({super.key, required this.icon, required this.title, this.color, required this.nombreUsuario});
 
   @override
   Widget build(BuildContext context) {

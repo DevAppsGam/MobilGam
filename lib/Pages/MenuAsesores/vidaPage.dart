@@ -9,7 +9,7 @@ import 'dart:async';
 class Vida extends StatefulWidget {
   final String nombreUsuario;
 
-  const Vida({Key? key, required this.nombreUsuario}) : super(key: key);
+  const Vida({super.key, required this.nombreUsuario});
 
   @override
   _VidaState createState() => _VidaState();

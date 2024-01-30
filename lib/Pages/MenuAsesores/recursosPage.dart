@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Recurso extends StatefulWidget {
   final String nombreUsuario;
 
-  const Recurso({Key? key, required this.nombreUsuario}) : super(key: key);
+  const Recurso({super.key, required this.nombreUsuario});
 
   @override
   _RecursoState createState() => _RecursoState();

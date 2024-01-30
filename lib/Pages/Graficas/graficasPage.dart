@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class Graficas extends StatefulWidget {
   final String nombreUsuario;
 
-  const Graficas({Key? key, required this.nombreUsuario}) : super(key: key);
+  const Graficas({super.key, required this.nombreUsuario});
 
   @override
   _GraficasState createState() => _GraficasState();
