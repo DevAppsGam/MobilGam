@@ -53,20 +53,24 @@ class _VidaState extends State<Vida> {
       if (response.statusCode == 200) {
         if (response.body.isNotEmpty) {
           final jsonResponse = json.decode(response.body);
-          if (jsonResponse['data'] != null) {
-            List<dynamic> data = jsonResponse['data'];
-            setState(() {
-              datos = data.map((dynamic item) {
-                Map<String, String> mappedItem = {};
-                for (var entry in item.entries) {
-                  mappedItem[entry.key] = entry.value.toString();
+          print(jsonResponse); // Imprime el JSON para inspección
+          List<dynamic> data = jsonResponse;
+          setState(() {
+            datos = data.map((dynamic item) {
+              Map<String, String> mappedItem = {};
+              item.forEach((key, value) {
+                // Manejar campos numéricos vacíos
+                if (value is num || (value is String && value.isNotEmpty)) {
+                  // Convertir a cadena si es necesario
+                  mappedItem[key] = value.toString();
+                } else {
+                  // Mantener como está
+                  mappedItem[key] = value;
                 }
-                return mappedItem;
-              }).toList();
-            });
-          } else {
-            print('Error al obtener los datos desde PHP.');
-          }
+              });
+              return mappedItem;
+            }).toList();
+          });
         } else {
           print('Error al con json.decode');
         }
@@ -78,6 +82,8 @@ class _VidaState extends State<Vida> {
       _showErrorDialog('Hubo un problema al decodificar los datos JSON.');
     }
   }
+
+
 
 
   Future<void> fetchDataWithFilter(String? filterNames) async {
