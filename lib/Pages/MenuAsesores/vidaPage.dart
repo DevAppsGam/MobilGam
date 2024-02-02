@@ -83,9 +83,6 @@ class _VidaState extends State<Vida> {
     }
   }
 
-
-
-
   Future<void> fetchDataWithFilter(String? filterNames) async {
     if (filterNames != null) {
       final response = await http.get(Uri.parse(
@@ -381,7 +378,8 @@ class _VidaState extends State<Vida> {
             'Bienvenido ${widget.nombreUsuario}',
             style: const TextStyle(
               fontFamily: 'Roboto',
-              fontSize: 24,
+              fontSize: 17,
+              color: Color.fromRGBO(246, 246, 246, 1),
             ),
           ),
         ),

@@ -118,7 +118,10 @@ class _DetalleVidaState extends State<DetalleVida> {
 
 
   Future<void> _pickDocument() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
     if (result != null) {
       // El usuario seleccionó un archivo, puedes manejarlo aquí.
       final filePath = result.files.single.path;
@@ -162,7 +165,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   }
 
   Future<List<Map<String, dynamic>>?> fetchDataForSecondTable() async {
-    final String secondTableUrl = 'http://192.168.1.77/gam/detallevidadocumentos.php?id=${widget.id}';
+    final String secondTableUrl = 'https://asesoresgam.com.mx/sistemas1/gam/detallevidadocumentos.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(secondTableUrl));
 
@@ -298,8 +301,7 @@ class _DetalleVidaState extends State<DetalleVida> {
           'Detalles de la Solicitud de ${widget.nombreUsuario}',
           style: const TextStyle(
             fontFamily: 'Roboto',
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
+            fontSize: 17,
             color: Color.fromRGBO(246, 246, 246, 1),
           ),
         ),
@@ -1089,4 +1091,3 @@ class _DetalleVidaState extends State<DetalleVida> {
     );
   }
 }
-

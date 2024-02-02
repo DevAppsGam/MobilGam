@@ -4,7 +4,6 @@ import 'package:appgam/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:appgam/Pages/MenuAsesores/Detalles/vidaDetallePage.dart';
 import 'dart:async';
 
 class Siniestro extends StatefulWidget {
@@ -309,7 +308,8 @@ class _SiniestroState extends State<Siniestro> {
             'Bienvenido ${widget.nombreUsuario}',
             style: const TextStyle(
               fontFamily: 'Roboto',
-              fontSize: 24,
+              fontSize: 17,
+              color: Color.fromRGBO(246, 246, 246, 1),
             ),
           ),
         ),
