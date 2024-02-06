@@ -383,8 +383,6 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
                           Container(
                             decoration:  data['linea_s'] == 'GMM'
                                 ? const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)) // Aplica la decoración si el tipo de solicitud es 'MOVIMIENTOS
-                                : data['linea_s'] == 'AUTOS'
-                                ? const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1))
                                 : null,
                             child: buildTableCell(
                                 data['linea_s'] == 'GMM'
@@ -424,21 +422,35 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
                             data['linea_s'] == 'GMM'
                                 ?  data['afectado'] ?? '***'
                                 : data['linea_s'] == 'AUTOS'
-                                ? data['n_siniestro'] ?? ''
+                                ? data['n_siniestro'] ?? '***'
                                 : '',
                           ),
                           buildTableCell(
-                              '\$${data['linea_s'] == 'GMM' ? data['total'] ?? '***' : '***'}'
+                              data['linea_s'] == 'GMM'
+                              ? '\$${
+                                  data['linea_s'] == 'GMM'
+                                      ? data['total'] ?? '***'
+                                      : ''
+                              }'
+                                  :''
                           ),
                           buildTableCell(
-                            '\$${data['linea_s'] == 'GMM'
-                                ?  data['gastos_no'] ?? '***'
-                                : ''}'
+                              data['linea_s'] == 'GMM'
+                                  ? '\$${
+                                  data['linea_s'] == 'GMM'
+                                      ? data['gastos_no'] ?? '***'
+                                      : ''
+                              }'
+                                  :''
                           ),
                           buildTableCell(
-                            '\$${data['linea_s'] == 'GMM'
-                                ? data['monto_pro'] ?? '***'
-                                : data['fgnp'] ?? ''}'
+                              data['linea_s'] == 'GMM'
+                                  ? '\$${
+                                  data['linea_s'] == 'GMM'
+                                      ? data['monto_pro'] ?? '***'
+                                      : ''
+                              }'
+                                  :''
                           ),
                         ]),
                     TableRow(
@@ -480,13 +492,31 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
                         ]),
                     TableRow(children: [
                       buildTableCell(
-                          data['linea_s'] == 'GMM' ? data['n_qr'] ?? '***' : '***'
+                          data['linea_s'] == 'GMM'
+                              ? '\$${
+                              data['linea_s'] == 'GMM'
+                                  ? data['n_qr'] ?? '***'
+                                  : ''
+                          }'
+                              :''
                       ),
                       buildTableCell(
-                          data['linea_s'] == 'GMM' ? data['n_reclamacion'] ?? '***' : '***'
+                          data['linea_s'] == 'GMM'
+                              ? '\$${
+                              data['linea_s'] == 'GMM'
+                                  ? data['n_reclamacion'] ?? '***'
+                                  : ''
+                          }'
+                              :''
                       ),
                       buildTableCell(
-                          data['linea_s'] == 'GMM' ? data['n_folio'] ?? '***' : '***'
+                          data['linea_s'] == 'GMM'
+                              ? '\$${
+                              data['linea_s'] == 'GMM'
+                                  ? data['n_folio'] ?? '***'
+                                  : ''
+                          }'
+                              :''
                       ),
                       buildTableCell(
                           ''
