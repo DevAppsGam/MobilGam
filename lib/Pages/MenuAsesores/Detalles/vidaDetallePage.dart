@@ -139,7 +139,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   }
 
   Future<void> _sendObservation(String observation) async {
-    const String url = 'http://192.168.1.77/gam/detallevidacrearobservacion.php';
+    const String url = 'https://www.asesoresgam.com.mx/sistemas1/gam/detallevidacrearobservacion.php';
 
     try {
       final response = await http.get(
