@@ -49,24 +49,20 @@ class _VidaState extends State<Vida> {
   Future<void> fetchData() async {
     try {
       final response = await http.get(Uri.parse(
-          'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
+          'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?username=${widget
+              .nombreUsuario}'));
       if (response.statusCode == 200) {
         if (response.body.isNotEmpty) {
-          final jsonResponse = json.decode(response.body);
-          if (jsonResponse['data'] != null) {
-            List<dynamic> data = jsonResponse['data'];
-            setState(() {
-              datos = data.map((dynamic item) {
-                Map<String, String> mappedItem = {};
-                for (var entry in item.entries) {
-                  mappedItem[entry.key] = entry.value.toString();
-                }
-                return mappedItem;
-              }).toList();
-            });
-          } else {
-            print('Error al obtener los datos desde PHP.');
-          }
+          List<dynamic> jsonResponse = json.decode(response.body);
+          setState(() {
+            datos = jsonResponse.map((dynamic item) {
+              Map<String, String> mappedItem = {};
+              for (var entry in item.entries) {
+                mappedItem[entry.key] = entry.value.toString();
+              }
+              return mappedItem;
+            }).toList();
+          });
         } else {
           print('Error al con json.decode');
         }
@@ -78,7 +74,6 @@ class _VidaState extends State<Vida> {
       _showErrorDialog('Hubo un problema al decodificar los datos JSON.');
     }
   }
-
 
   Future<void> fetchDataWithFilter(String? filterNames) async {
     if (filterNames != null) {
@@ -125,25 +120,18 @@ class _VidaState extends State<Vida> {
     );
   }
 
-  void toggleFiltro(String filterName, String buttonText) {
+  void toggleFiltro(String semaforo, String filtroTexto) {
     setState(() {
-      if (isFilterActive(filterName)) {
-        activeFilters.remove(filterName);
-      } else {
-        activeFilters.add(filterName);
-      }
-      filtroAplicado =
-      activeFilters.isNotEmpty ? 'Filtros Aplicados: ${activeFilters.join(
-          ', ')}' : '';
+      filtroAplicado = 'Filtro Aplicado: $filtroTexto';
     });
 
-    if (activeFilters.isNotEmpty) {
-      String filters = activeFilters.join(',');
-      fetchDataWithFilter(filters);
+    if (semaforo.isNotEmpty) {
+      fetchDataWithFilter(semaforo);
     } else {
       fetchData();
     }
   }
+
 
   void performSearch() {
     if (searchTerm.isNotEmpty) {
@@ -225,6 +213,7 @@ class _VidaState extends State<Vida> {
     _inactivityTimer.cancel();
     _startInactivityTimer();
   }
+
 
   TableRow _buildTableHeaderRow() {
     return TableRow(
@@ -477,54 +466,56 @@ class _VidaState extends State<Vida> {
                             );
                           }).toList(),
                         ),
-                        const SizedBox(width: 16),
-                        ElevatedButton(
-                          onPressed: () {
-                            fetchDataWithFilter('A_TIEMPO');
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.lightGreen,
-                          ),
-                          child: const Text(
-                            'A TIEMPO',
-                            style: TextStyle(
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 10,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                // Lógica para filtrar por semáforo verde (A TIEMPO)
+                                toggleFiltro('verde', 'A TIEMPO');
+                              },
+                              child: const Text(
+                                'A TIEMPO',
+                                style: TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 10,
+                                ),
+                              ),
                             ),
-                          ),
+                            const SizedBox(width: 16),
+                            ElevatedButton(
+                              onPressed: () {
+                                // Lógica para filtrar por semáforo amarillo (POR VENCERSE)
+                                toggleFiltro('amarillo', 'POR VENCERSE');
+                              },
+                              child: const Text(
+                                'POR VENCERSE',
+                                style: TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            ElevatedButton(
+                              onPressed: () {
+                                // Lógica para filtrar por semáforo rojo (VENCIDOS)
+                                toggleFiltro('rojo', 'VENCIDOS');
+                              },
+                              child: const Text(
+                                'VENCIDOS',
+                                style: TextStyle(
+                                  fontFamily: 'Roboto',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 16),
-                        ElevatedButton(
-                          onPressed: () {
 
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromRGBO(241, 201, 132,
-                                1.0),
-                          ),
-                          child: const Text('POR VENCER',
-                            style: TextStyle(
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 10,
-                            ),),
-                        ),
-                        const SizedBox(width: 16),
-                        ElevatedButton(
-                          onPressed: () {
-
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                          ),
-                          child: const Text('VENCIDOS',
-                            style: TextStyle(
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 10,
-                            ),),
-                        ),
                       ],
                     ),
                   ),
@@ -639,3 +630,4 @@ void main() {
     home: Vida(nombreUsuario: ''),
   ));
 }
+
