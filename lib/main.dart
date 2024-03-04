@@ -10,6 +10,27 @@ import 'Pages/gddsPage.dart';
 import 'Pages/powerPage.dart';
 import 'Pages/promocionesPage.dart';
 
+// Esta función muestra un alerta con el mensaje de error
+void showErrorDialog(BuildContext context, String errorMessage) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Error'),
+        content: Text(errorMessage),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Aceptar'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterDownloader.initialize();
@@ -148,9 +169,7 @@ class _LoginPageState extends State<LoginPage> {
 
       if (responseData is Map<String, dynamic>) {
         if (responseData.containsKey("error")) {
-          setState(() {
-            errorMessage = responseData["error"];
-          });
+          showErrorDialog(context, responseData["error"]);
         } else {
           final int userType = responseData['tipo'];
           final String nombreUsuario = responseData['nomusuario'];
@@ -180,20 +199,14 @@ class _LoginPageState extends State<LoginPage> {
               Navigator.pushReplacementNamed(context, '/operacionesPage');
               break;
             default:
-              setState(() {
-                errorMessage = 'Tipo de usuario desconocido';
-              });
+              showErrorDialog(context, 'Tipo de usuario desconocido');
           }
         }
       } else {
-        setState(() {
-          errorMessage = 'Usuario o contraseña incorrecta';
-        });
+        showErrorDialog(context, 'Usuario o contraseña incorrecta');
       }
     } else {
-      setState(() {
-        errorMessage = 'Error de conexión';
-      });
+      showErrorDialog(context, 'Error de conexión');
     }
   }
 
@@ -294,7 +307,6 @@ class _LoginPageState extends State<LoginPage> {
                     child: Icon(
                       obscurePassword ? Icons.visibility : Icons.visibility_off,
                       color: Colors.black,
-                      
                     ),
                   ),
                 ),
@@ -336,13 +348,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            if (errorMessage.isNotEmpty)
-              Text(
-                errorMessage,
-                style: const TextStyle(
-                  color: Colors.red,
-                ),
-              ),
             const SizedBox(height: 50),
             const Text(
               '© 2019 Grupo Administrativo Mexicano S.A de C.V | Todos los derechos reservados',
