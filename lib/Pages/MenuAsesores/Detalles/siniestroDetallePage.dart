@@ -162,7 +162,7 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
   }
 
   Future<List<Map<String, dynamic>>?> fetchDataForSecondTable() async {
-    final String secondTableUrl = 'http://192.168.1.77/gam/detallevidadocumentos.php?id=${widget.id}';
+    final String secondTableUrl = 'https://www.asesoresgam.com.mx/sistemas1/gam/detallesiniestrosdocumentos.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(secondTableUrl));
 
@@ -493,30 +493,18 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
                     TableRow(children: [
                       buildTableCell(
                           data['linea_s'] == 'GMM'
-                              ? '\$${
-                              data['linea_s'] == 'GMM'
-                                  ? data['n_qr'] ?? '***'
-                                  : ''
-                          }'
-                              :''
+                              ? (data['n_qr'] ?? '***')
+                              : ''
                       ),
                       buildTableCell(
                           data['linea_s'] == 'GMM'
-                              ? '\$${
-                              data['linea_s'] == 'GMM'
-                                  ? data['n_reclamacion'] ?? '***'
-                                  : ''
-                          }'
-                              :''
+                              ? (data['n_reclamacion'] ?? '***')
+                              : ''
                       ),
                       buildTableCell(
                           data['linea_s'] == 'GMM'
-                              ? '\$${
-                              data['linea_s'] == 'GMM'
-                                  ? data['n_folio'] ?? '***'
-                                  : ''
-                          }'
-                              :''
+                              ? (data['n_folio'] ?? '***')
+                              : ''
                       ),
                       buildTableCell(
                           ''
@@ -770,7 +758,6 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
                     columns: const [
                       DataColumn(label: Text('Archivo',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
                       DataColumn(label: Text('')),
-                      DataColumn(label: SizedBox(width: 175, child: Text('Tipo de Documento',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),))),
                       DataColumn(label: Text('')),
                       DataColumn(label: Text('')),
                     ],
@@ -793,71 +780,6 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
                               ),
                               child: const Text('Seleccionar Archivo'),
                             )),
-                            DataCell(
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: DropdownButton<String>(
-                                  items: const [
-                                    DropdownMenuItem<String>(
-                                      value: 'Seleccionar', // Valor para la opción predeterminada
-                                      child: Text('Seleccionar',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                    DropdownMenuItem<String>(
-                                      value: 'Solicitud',
-                                      child: Text('Solicitud',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                    DropdownMenuItem<String>(
-                                      value: 'Identificacion',
-                                      child: Text('Identificación',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                    DropdownMenuItem<String>(
-                                      value: 'Comprobante_domicilio',
-                                      child: Text('Comprobante de Domicilio',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                    DropdownMenuItem<String>(
-                                      value: 'Cartas_Extraprima',
-                                      child: Text('Cartas de Extraprima',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                    DropdownMenuItem<String>(
-                                      value: 'Cartas_Rechazo',
-                                      child: Text('Cartas de Rechazo',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                    DropdownMenuItem<String>(
-                                      value: 'Cartas_Adicionales',
-                                      child: Text('Cartas Adicionales',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                    DropdownMenuItem<String>(
-                                      value: 'Cuestionario_Adicional_Suscripción',
-                                      child: Text('Cuestionario Adicional de Suscripción',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                    DropdownMenuItem<String>(
-                                      value: 'Formato_Cobranza_Electrónica',
-                                      child: Text('Formato de Cobranza Electrónica',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                    DropdownMenuItem<String>(
-                                      value: 'Hoja_H107',
-                                      child: Text('Hoja H107',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                    DropdownMenuItem<String>(
-                                      value: 'Solicitudes_Adicionales',
-                                      child: Text('Solicitudes Adicionales',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                  ],
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _selectedOption = value;
-                                      // Actualizar el nombre del archivo según el tipo de documento
-                                      if (value != 'Seleccionar') {
-                                        _selectedFileName = '$value${widget.id}.pdf';
-                                      } else {
-                                        _selectedFileName = null; // No se seleccionó un tipo de documento
-                                      }
-                                    });
-                                  },
-                                  value: _selectedOption ?? 'Seleccionar',
-                                ),
-                              ),
-                            ),
                             DataCell(
                                 ElevatedButton(
                                   onPressed: () {

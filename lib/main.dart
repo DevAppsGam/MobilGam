@@ -263,6 +263,7 @@ class _LoginPageState extends State<LoginPage> {
               child: TextFormField(
                 style: const TextStyle(fontFamily: 'Roboto', fontSize: 20),
                 controller: controllerUser,
+                autofocus: true,
                 decoration: const InputDecoration(
                   hintText: 'USUARIO',
                   icon: Icon(
