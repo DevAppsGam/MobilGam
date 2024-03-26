@@ -92,7 +92,7 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
 
   Future<void> fetchDataForThirdTable() async {
     final String thirdTableUrl =
-        'https://www.asesoresgam.com.mx/sistemas1/gam/detallevidaobservaciones.php?id=${widget.id}';
+        'https://www.asesoresgam.com.mx/sistemas1/gam/detallesiniestroobvservacion.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(thirdTableUrl));
 
@@ -136,7 +136,8 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
   }
 
   Future<void> _sendObservation(String observation) async {
-    const String url = 'http://192.168.1.77/gam/detallevidacrearobservacion.php';
+    const String url = 'http://192.168.1.77/gam/detalle'
+        'vidacrearobservacion.php';
 
     try {
       final response = await http.get(
