@@ -1,4 +1,4 @@
-package com.appgam.appgam
+package com.appgam.MobilGAM
 
 import io.flutter.embedding.android.FlutterActivity
 

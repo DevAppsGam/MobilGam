@@ -14,8 +14,8 @@ dependencies:
   http: any
   url_launcher: ^6.0.3
   flutter_screenutil: any
-  flutter_launcher_icons: ^0.11.0
-  fl_chart: ^0.65.0
+  flutter_launcher_icons: ^0.13.1
+  fl_chart: ^0.66.2
   file_picker: ^6.1.1
   permission_handler: ^11.0.1
   async: ^2.11.0
@@ -23,11 +23,11 @@ dependencies:
   advance_pdf_viewer: any
   internet_file: ^1.2.0
   device_info_plus: ^9.1.0
-  syncfusion_flutter_pdfviewer: ^19.3.59-beta
+  syncfusion_flutter_pdfviewer: ^20.4.54
   open_filex: ^4.3.4
   flutter_downloader: ^1.11.5
   flutter_file_downloader: ^1.1.4
-  image_network: ^1.0.0
+  image_network: ^2.5.4+1
   cached_network_image: ^3.3.0
   auto_route: ^7.8.1
 

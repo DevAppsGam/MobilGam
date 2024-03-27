@@ -1,13 +1,10 @@
 import 'dart:async';
-import 'package:appgam/Pages/MenuAsesores/Detalles/VisualizarPDF.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
-import 'package:open_filex/open_filex.dart';
 import "package:path/path.dart" as path; // Importa la biblioteca path y dale un alias, como "path"
 import 'dart:io';
-import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 
 class DetalleSiniestro extends StatefulWidget {
   final String nombreUsuario;
@@ -671,58 +668,11 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
                                           onPressed: () {
                                             String nombreSinPrefijo = data['nombre']?.replaceFirst('../', '') ?? '';
                                             print(nombreSinPrefijo);
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => PdfViewer(pdfUrl: "https://www.asesoresgam.com.mx/sistemas/$nombreSinPrefijo"),
-                                              ),
-                                            );
                                           },
                                           icon: const Icon(Icons.search), // Cambia el icono aquí
                                         ),
                                       ),
                                     ),
-                                    TableCell(
-                                      child: Center(
-                                        child: IconButton(
-                                          onPressed: () async {
-                                            // Extrae el nombre del archivo eliminando el prefijo '../'
-                                            String nombreSinPrefijo = data['nombre']?.replaceFirst('../', '') ?? '';
-
-                                            // Construye la URL del archivo PDF
-                                            String pdfUrl = "https://www.asesoresgam.com.mx/sistemas/$nombreSinPrefijo";
-
-                                            try {
-                                              // Utiliza la función downloadFile para descargar el archivo
-                                              File? downloadedFile = await FileDownloader.downloadFile(
-                                                url: pdfUrl,
-                                                name: nombreSinPrefijo,
-                                                onProgress: (String? fileName, double progress) {
-                                                  print('EL ARCHIVO $fileName TIENE UN PROGRESO DE $progress');
-                                                },
-                                                onDownloadCompleted: (String path) {
-                                                  print('ARCHIVO DESCARGADO EN LA RUTA: $path');
-
-                                                  // Abre el gestor de archivos después de la descarga
-                                                  OpenFilex.open(path);
-                                                },
-                                                onDownloadError: (String error) {
-                                                  print('ERROR DE DESCARGA: $error');
-                                                },
-                                              );
-
-                                              if (downloadedFile != null) {
-                                                // El archivo se ha descargado y puedes realizar otras acciones según tus necesidades
-                                              }
-                                            } catch (e) {
-                                              print('ERROR DURANTE LA DESCARGA: $e');
-                                            }
-                                          },
-                                          icon: const Icon(Icons.file_download),
-                                        ),
-                                      ),
-                                    ),
-
                                     TableCell(
                                       child: Center(
                                         child: data['validado'] == true
