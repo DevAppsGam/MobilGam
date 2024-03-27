@@ -1,10 +1,13 @@
 import 'dart:async';
+//import 'package:appgam/Pages/MenuAsesores/Detalles/VisualizarPDF.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
+import 'package:open_filex/open_filex.dart';
 import "package:path/path.dart" as path; // Importa la biblioteca path y dale un alias, como "path"
 import 'dart:io';
+import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 
 class DetalleSiniestro extends StatefulWidget {
   final String nombreUsuario;
@@ -89,7 +92,7 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
 
   Future<void> fetchDataForThirdTable() async {
     final String thirdTableUrl =
-        'https://www.asesoresgam.com.mx/sistemas1/gam/detallevidaobservaciones.php?id=${widget.id}';
+        'https://www.asesoresgam.com.mx/sistemas1/gam/detallesiniestroobvservacion.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(thirdTableUrl));
 
@@ -133,7 +136,8 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
   }
 
   Future<void> _sendObservation(String observation) async {
-    const String url = 'http://192.168.1.77/gam/detallevidacrearobservacion.php';
+    const String url = 'http://192.168.1.77/gam/detalle'
+        'vidacrearobservacion.php';
 
     try {
       final response = await http.get(
@@ -159,7 +163,7 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
   }
 
   Future<List<Map<String, dynamic>>?> fetchDataForSecondTable() async {
-    final String secondTableUrl = 'http://192.168.1.77/gam/detallevidadocumentos.php?id=${widget.id}';
+    final String secondTableUrl = 'https://www.asesoresgam.com.mx/sistemas1/gam/detallesiniestrosdocumentos.php?id=${widget.id}';
     try {
       final response = await http.get(Uri.parse(secondTableUrl));
 
@@ -364,10 +368,10 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
                         children: [
                           Container(
                             decoration: data['linea_s'] == 'GMM'
-                                        ? const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)) // Aplica la decoración si el tipo de solicitud es 'MOVIMIENTOS
-                                        : data['linea_s'] == 'AUTOS'
-    ?                                   const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1))
-                                        : null,// Aplica la decoración si el tipo de solicitud es 'MOVIMIENTOS'
+                                ? const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)) // Aplica la decoración si el tipo de solicitud es 'MOVIMIENTOS
+                                : data['linea_s'] == 'AUTOS'
+                                ?                                   const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1))
+                                : null,// Aplica la decoración si el tipo de solicitud es 'MOVIMIENTOS'
                             child: buildTableCell(
                                 data['linea_s'] == 'GMM'
                                     ? 'Afectado'
@@ -424,7 +428,7 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
                           ),
                           buildTableCell(
                               data['linea_s'] == 'GMM'
-                              ? '\$${
+                                  ? '\$${
                                   data['linea_s'] == 'GMM'
                                       ? data['total'] ?? '***'
                                       : ''
@@ -490,30 +494,18 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
                     TableRow(children: [
                       buildTableCell(
                           data['linea_s'] == 'GMM'
-                              ? '\$${
-                              data['linea_s'] == 'GMM'
-                                  ? data['n_qr'] ?? '***'
-                                  : ''
-                          }'
-                              :''
+                              ? (data['n_qr'] ?? '***')
+                              : ''
                       ),
                       buildTableCell(
                           data['linea_s'] == 'GMM'
-                              ? '\$${
-                              data['linea_s'] == 'GMM'
-                                  ? data['n_reclamacion'] ?? '***'
-                                  : ''
-                          }'
-                              :''
+                              ? (data['n_reclamacion'] ?? '***')
+                              : ''
                       ),
                       buildTableCell(
                           data['linea_s'] == 'GMM'
-                              ? '\$${
-                              data['linea_s'] == 'GMM'
-                                  ? data['n_folio'] ?? '***'
-                                  : ''
-                          }'
-                              :''
+                              ? (data['n_folio'] ?? '***')
+                              : ''
                       ),
                       buildTableCell(
                           ''
@@ -675,6 +667,47 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
                                     ),
                                     TableCell(
                                       child: Center(
+                                        child: IconButton(
+                                          onPressed: () async {
+                                            // Extrae el nombre del archivo eliminando el prefijo '../'
+                                            String nombreSinPrefijo = data['nombre']?.replaceFirst('../', '') ?? '';
+
+                                            // Construye la URL del archivo PDF
+                                            String pdfUrl = "https://www.asesoresgam.com.mx/sistemas/$nombreSinPrefijo";
+
+                                            try {
+                                              // Utiliza la función downloadFile para descargar el archivo
+                                              File? downloadedFile = await FileDownloader.downloadFile(
+                                                url: pdfUrl,
+                                                name: nombreSinPrefijo,
+                                                onProgress: (String? fileName, double progress) {
+                                                  print('EL ARCHIVO $fileName TIENE UN PROGRESO DE $progress');
+                                                },
+                                                onDownloadCompleted: (String path) {
+                                                  print('ARCHIVO DESCARGADO EN LA RUTA: $path');
+
+                                                  // Abre el gestor de archivos después de la descarga
+                                                  OpenFilex.open(path);
+                                                },
+                                                onDownloadError: (String error) {
+                                                  print('ERROR DE DESCARGA: $error');
+                                                },
+                                              );
+
+                                              if (downloadedFile != null) {
+                                                // El archivo se ha descargado y puedes realizar otras acciones según tus necesidades
+                                              }
+                                            } catch (e) {
+                                              print('ERROR DURANTE LA DESCARGA: $e');
+                                            }
+                                          },
+                                          icon: const Icon(Icons.file_download),
+                                        ),
+                                      ),
+                                    ),
+
+                                    TableCell(
+                                      child: Center(
                                         child: data['validado'] == true
                                             ? const Icon(
                                           Icons.check,
@@ -720,7 +753,6 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
                     columns: const [
                       DataColumn(label: Text('Archivo',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),)),
                       DataColumn(label: Text('')),
-                      DataColumn(label: SizedBox(width: 175, child: Text('Tipo de Documento',style: TextStyle(fontFamily: 'Roboto',fontSize: 18,color: Color.fromRGBO(15, 132, 194, 1),),))),
                       DataColumn(label: Text('')),
                       DataColumn(label: Text('')),
                     ],
@@ -743,71 +775,6 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
                               ),
                               child: const Text('Seleccionar Archivo'),
                             )),
-                            DataCell(
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: DropdownButton<String>(
-                                  items: const [
-                                    DropdownMenuItem<String>(
-                                      value: 'Seleccionar', // Valor para la opción predeterminada
-                                      child: Text('Seleccionar',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                    DropdownMenuItem<String>(
-                                      value: 'Solicitud',
-                                      child: Text('Solicitud',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                    DropdownMenuItem<String>(
-                                      value: 'Identificacion',
-                                      child: Text('Identificación',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                    DropdownMenuItem<String>(
-                                      value: 'Comprobante_domicilio',
-                                      child: Text('Comprobante de Domicilio',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                    DropdownMenuItem<String>(
-                                      value: 'Cartas_Extraprima',
-                                      child: Text('Cartas de Extraprima',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                    DropdownMenuItem<String>(
-                                      value: 'Cartas_Rechazo',
-                                      child: Text('Cartas de Rechazo',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                    DropdownMenuItem<String>(
-                                      value: 'Cartas_Adicionales',
-                                      child: Text('Cartas Adicionales',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                    DropdownMenuItem<String>(
-                                      value: 'Cuestionario_Adicional_Suscripción',
-                                      child: Text('Cuestionario Adicional de Suscripción',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                    DropdownMenuItem<String>(
-                                      value: 'Formato_Cobranza_Electrónica',
-                                      child: Text('Formato de Cobranza Electrónica',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                    DropdownMenuItem<String>(
-                                      value: 'Hoja_H107',
-                                      child: Text('Hoja H107',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                    DropdownMenuItem<String>(
-                                      value: 'Solicitudes_Adicionales',
-                                      child: Text('Solicitudes Adicionales',style: TextStyle(fontFamily: 'Roboto',fontSize: 16),),
-                                    ),
-                                  ],
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _selectedOption = value;
-                                      // Actualizar el nombre del archivo según el tipo de documento
-                                      if (value != 'Seleccionar') {
-                                        _selectedFileName = '$value${widget.id}.pdf';
-                                      } else {
-                                        _selectedFileName = null; // No se seleccionó un tipo de documento
-                                      }
-                                    });
-                                  },
-                                  value: _selectedOption ?? 'Seleccionar',
-                                ),
-                              ),
-                            ),
                             DataCell(
                                 ElevatedButton(
                                   onPressed: () {
@@ -1055,4 +1022,3 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
     );
   }
 }
-

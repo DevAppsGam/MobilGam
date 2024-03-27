@@ -138,7 +138,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   }
 
   Future<void> _sendObservation(String observation) async {
-    const String url = 'http://192.168.1.77/gam/detallevidacrearobservacion.php';
+    const String url = 'https://www.asesoresgam.com.mx/sistemas1/gam/detallevidacrearobservacion.php';
 
     try {
       final response = await http.get(
@@ -217,27 +217,36 @@ class _DetalleVidaState extends State<DetalleVida> {
 
   Future<void> uploadFile(String fileName, String id) async {
     final file = File(fileName); // Abre el archivo seleccionado
-    const url = 'http://192.168.1.77/gam/upload.php'; // URL del servicio de carga en el servidor
+    const url = 'https://asesoresgam.com.mx/sistemas1/gam/uploaddocumentovida.php'; // URL del servicio de carga en el servidor
 
-    final request = http.MultipartRequest('POST', Uri.parse(url));
-    request.files.add(
-      http.MultipartFile(
-        'file', // Nombre del campo en el formulario
-        file.readAsBytes().asStream(),
-        file.lengthSync(),
+    try {
+      final request = http.MultipartRequest('POST', Uri.parse(url));
+      request.files.add(
+        http.MultipartFile(
+          'file', // Nombre del campo en el formulario
+          file.readAsBytes().asStream(),
+          file.lengthSync(),
           filename: path.basename(file.path), // Nombre del archivo
-      ),
-    );
-    request.fields['id'] = id; // Puedes enviar otros datos junto con el archivo, como el ID
+        ),
+      );
+      request.fields['id'] = id; // Puedes enviar otros datos junto con el archivo, como el ID
 
-    final response = await request.send();
+      final response = await request.send();
 
-    if (response.statusCode == 200) {
-      print('Documento enviado con éxito');
-    } else {
-      print('Error al enviar el archivo al servidor: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        print('Documento enviado con éxito');
+      } else {
+        print('Error al enviar el archivo al servidor: ${response.statusCode}');
+        print(await response.stream.bytesToString());
+      }
+    } catch (e) {
+      print('Error al enviar el archivo al servidor: $e');
+    } finally {
+      //file.close(); // Cierra el archivo después de enviarlo
     }
   }
+
+
 
   Future<void> _mostrarDialogoCerrarFolio() async {
     return showDialog<void>(
@@ -851,7 +860,6 @@ class _DetalleVidaState extends State<DetalleVida> {
                                       // Muestra un mensaje de error si no se seleccionó un archivo o una opción
                                       print('Por favor, selecciona un archivo y una opción antes de confirmar.');
                                     }
-
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.lightGreen,
