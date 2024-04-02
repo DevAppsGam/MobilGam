@@ -9,6 +9,8 @@ import 'package:appgam/Pages/MenuAsesores/recursosPage.dart';
 import 'package:appgam/Pages/MenuAsesores/siniestrosPage.dart';
 import 'package:appgam/Pages/MenuAsesores/vidaPage.dart';
 import 'package:appgam/main.dart';
+import 'package:flutter/services.dart';
+
 
 class Asesores extends StatefulWidget {
   final String nombreUsuario;
@@ -27,17 +29,21 @@ class _AsesoresState extends State<Asesores> {
     super.initState();
     // Inicia el temporizador de inactividad al cargar la pantalla
     _startInactivityTimer();
+    // Bloquea la orientación de la pantalla en modo vertical al cargar la pantalla
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   }
 
   @override
   void dispose() {
     // Cancela el temporizador al salir de la pantalla
     _inactivityTimer.cancel();
+    // Restaura la orientación predeterminada de la pantalla al salir de la pantalla
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown, DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
     super.dispose();
   }
 
   void _startInactivityTimer() {
-    const inactivityDuration = Duration(seconds: 1200); // 30 segundos de inactividad
+    const inactivityDuration = Duration(seconds: 300); // 30 segundos de inactividad
     _inactivityTimer = Timer(inactivityDuration, () {
       // Maneja la inactividad (por ejemplo, cierra la sesión)
       Navigator.pushAndRemoveUntil(
