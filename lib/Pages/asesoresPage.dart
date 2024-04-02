@@ -64,6 +64,7 @@ class _AsesoresState extends State<Asesores> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
         title: GestureDetector(
           onTap: () {
             // Abrir el menú de navegación
@@ -313,7 +314,7 @@ class IconWithText extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(20),
-              color: color ?? Colors.white,
+              color: color ?? const Color.fromRGBO(33, 0, 0, 1),
             ),
             child: Center(
               child: Image.asset(

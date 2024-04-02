@@ -311,6 +311,7 @@ class _SiniestroState extends State<Siniestro> {
 
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
           title: Text(
             'Bienvenido ${widget.nombreUsuario}',
             style: const TextStyle(
