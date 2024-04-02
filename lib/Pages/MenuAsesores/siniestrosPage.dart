@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:appgam/Pages/MenuAsesores/Detalles/siniestroDetallePage.dart';
 import 'package:appgam/main.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -190,6 +191,7 @@ class _SiniestroState extends State<Siniestro> {
   }
 
   TableCell _buildTableHeaderCell(String text) {
+
     return TableCell(
       child: Container(
         decoration: const BoxDecoration(
@@ -202,7 +204,7 @@ class _SiniestroState extends State<Siniestro> {
             horizontal: 13.0,
           ),
           child: Center(
-            child: Text(
+            child: AutoSizeText(
               text,
               style: const TextStyle(
                 fontFamily: 'Roboto',
@@ -210,6 +212,11 @@ class _SiniestroState extends State<Siniestro> {
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
+              textAlign: TextAlign.justify,
+              maxLines: 2, // Ajusta el número máximo de líneas permitidas
+              overflow: TextOverflow.ellipsis, // Añade puntos suspensivos al final si el texto se corta
+              minFontSize: 9, // Tamaño mínimo del texto
+              stepGranularity: 1, // Granularidad del tamaño del texto
             ),
           ),
         ),
