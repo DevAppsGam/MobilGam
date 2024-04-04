@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:appgam/Pages/MenuAsesores/Detalles/VisualizarPDF.dart';
+//import 'package:appgam/Pages/MenuAsesores/Detalles/VisualizarPDF.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -398,10 +398,10 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
                         children: [
                           Container(
                             decoration: data['linea_s'] == 'GMM'
-                                        ? const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)) // Aplica la decoración si el tipo de solicitud es 'MOVIMIENTOS
-                                        : data['linea_s'] == 'AUTOS'
-    ?                                   const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1))
-                                        : null,// Aplica la decoración si el tipo de solicitud es 'MOVIMIENTOS'
+                                ? const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)) // Aplica la decoración si el tipo de solicitud es 'MOVIMIENTOS
+                                : data['linea_s'] == 'AUTOS'
+                                ?                                   const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1))
+                                : null,// Aplica la decoración si el tipo de solicitud es 'MOVIMIENTOS'
                             child: buildTableCell(
                                 data['linea_s'] == 'GMM'
                                     ? 'Afectado'
@@ -458,7 +458,7 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
                           ),
                           buildTableCell(
                               data['linea_s'] == 'GMM'
-                              ? '\$${
+                                  ? '\$${
                                   data['linea_s'] == 'GMM'
                                       ? data['total'] ?? '***'
                                       : ''
@@ -690,12 +690,6 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
                                           onPressed: () {
                                             String nombreSinPrefijo = data['nombre']?.replaceFirst('../', '') ?? '';
                                             print(nombreSinPrefijo);
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => PdfViewer(pdfUrl: "https://www.asesoresgam.com.mx/sistemas/$nombreSinPrefijo"),
-                                              ),
-                                            );
                                           },
                                           icon: const Icon(Icons.search), // Cambia el icono aquí
                                         ),
@@ -1060,4 +1054,3 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
     );
   }
 }
-

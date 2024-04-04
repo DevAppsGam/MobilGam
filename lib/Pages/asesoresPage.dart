@@ -9,6 +9,8 @@ import 'package:appgam/Pages/MenuAsesores/recursosPage.dart';
 import 'package:appgam/Pages/MenuAsesores/siniestrosPage.dart';
 import 'package:appgam/Pages/MenuAsesores/vidaPage.dart';
 import 'package:appgam/main.dart';
+import 'package:flutter/services.dart';
+
 
 class Asesores extends StatefulWidget {
   final String nombreUsuario;
@@ -27,17 +29,21 @@ class _AsesoresState extends State<Asesores> {
     super.initState();
     // Inicia el temporizador de inactividad al cargar la pantalla
     _startInactivityTimer();
+    // Bloquea la orientación de la pantalla en modo vertical al cargar la pantalla
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   }
 
   @override
   void dispose() {
     // Cancela el temporizador al salir de la pantalla
     _inactivityTimer.cancel();
+    // Restaura la orientación predeterminada de la pantalla al salir de la pantalla
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown, DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
     super.dispose();
   }
 
   void _startInactivityTimer() {
-    const inactivityDuration = Duration(seconds: 1200); // 30 segundos de inactividad
+    const inactivityDuration = Duration(seconds: 300); // 30 segundos de inactividad
     _inactivityTimer = Timer(inactivityDuration, () {
       // Maneja la inactividad (por ejemplo, cierra la sesión)
       Navigator.pushAndRemoveUntil(
@@ -58,6 +64,7 @@ class _AsesoresState extends State<Asesores> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
         title: GestureDetector(
           onTap: () {
             // Abrir el menú de navegación
@@ -145,7 +152,7 @@ class _AsesoresState extends State<Asesores> {
           ),
           child: Column(
             children: <Widget>[
-              const SizedBox(height: 60),
+              const SizedBox(height: 30),
               const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
@@ -307,7 +314,7 @@ class IconWithText extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(20),
-              color: color ?? Colors.white,
+              color: color ?? const Color.fromRGBO(33, 0, 0, 1),
             ),
             child: Center(
               child: Image.asset(

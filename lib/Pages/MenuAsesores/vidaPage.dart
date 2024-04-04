@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:appgam/main.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -212,7 +213,7 @@ class _VidaState extends State<Vida> {
   }
 
   void _startInactivityTimer() {
-    const inactivityDuration = Duration(seconds: 60); // 30 segundos de inactividad
+    const inactivityDuration = Duration(seconds: 300); // se maneja en segundos 5min=300seg de inactividad
     _inactivityTimer = Timer(inactivityDuration, () {
       // Maneja la inactividad (por ejemplo, cierra la sesión)
       Navigator.pushAndRemoveUntil(
@@ -242,7 +243,7 @@ class _VidaState extends State<Vida> {
     );
   }
 
-  TableCell _buildTableHeaderCell(String text) {
+  Widget _buildTableHeaderCell(String text) {
     return TableCell(
       child: Container(
         decoration: const BoxDecoration(
@@ -251,11 +252,11 @@ class _VidaState extends State<Vida> {
         constraints: const BoxConstraints.expand(height: 70.0),
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            vertical: 0.0,
+            vertical: 8.0,
             horizontal: 13.0,
           ),
           child: Center(
-            child: Text(
+            child: AutoSizeText(
               text,
               style: const TextStyle(
                 fontFamily: 'Roboto',
@@ -263,6 +264,11 @@ class _VidaState extends State<Vida> {
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
+              textAlign: TextAlign.center,
+              maxLines: 1, // Ajusta el número máximo de líneas permitidas
+              overflow: TextOverflow.ellipsis, // Añade puntos suspensivos al final si el texto se corta
+              minFontSize: 10, // Tamaño mínimo del texto
+              stepGranularity: 1, // Granularidad del tamaño del texto
             ),
           ),
         ),
@@ -283,21 +289,16 @@ class _VidaState extends State<Vida> {
     );
   }
 
-  Widget _buildTableCell(String text, Map<String, String> datos,
-      String columna) {
-    Color textColor = columna == 'id'
-        ? const Color.fromRGBO(15, 132, 194, 1)
-        : Colors.black;
+  Widget _buildTableCell(String text, Map<String, String> datos, String columna) {
+    Color textColor = columna == 'id' ? const Color.fromRGBO(15, 132, 194, 1) : Colors.black;
     String nPolizaValue = datos['poliza'] ?? '';
-    Color textColorf = columna == 'fecha_promesa' ? const Color.fromRGBO(
-        15, 132, 194, 1) : Colors.black;
+    Color textColorf = columna == 'fecha_promesa' ? const Color.fromRGBO(15, 132, 194, 1) : Colors.black;
 
     if (datos['t_solicitud'] == 'PAGOS') {
       nPolizaValue = datos['polizap'] ?? '';
     } else if (datos['t_solicitud'] == 'ALTA DE POLIZA') {
       nPolizaValue = datos['polizap'] ?? '';
     }
-
     if (columna == 'fecha_promesa') {
       if (datos['semaforo'] == 'verde') {
         textColor = Colors.green;
@@ -307,7 +308,11 @@ class _VidaState extends State<Vida> {
         textColor = Colors.yellow;
       }
     }
-
+    int maxLines = 1; // Número máximo de líneas predeterminado
+    // Ajustar el número máximo de líneas para cada columna según tus requisitos
+    if (columna == 'contratante') {
+      maxLines = 4;
+    }
     return TableCell(
       child: GestureDetector(
         onTap: () {
@@ -315,38 +320,41 @@ class _VidaState extends State<Vida> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    DetalleVida(
-                      nombreUsuario: widget.nombreUsuario,
-                      id: text,
-                    ),
+                builder: (context) => DetalleVida(
+                  nombreUsuario: widget.nombreUsuario,
+                  id: text,
+                ),
               ),
             );
           } else {
-            print(
-                'Columna no es "id" o el texto es nulo: columna=$columna, text=$text');
+            print('Columna no es "id" o el texto es nulo: columna=$columna, text=$text');
           }
         },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: 5.0,
-            horizontal: 13.0,
-          ),
+
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 70.0), // Establece el alto mínimo de la celda
+          padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 13.0),
           child: Center(
-            child: Text(
-              columna == 'poliza' ? nPolizaValue : text,
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: 16,
-                color: textColor,
-                fontWeight: FontWeight.bold,
+              child: AutoSizeText(
+                columna == 'poliza' ? nPolizaValue : text,
+                style: TextStyle(
+                  fontFamily: 'Roboto',
+                  fontSize: 16,
+                  color: textColor,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: maxLines, // Ajusta el número máximo de líneas permitidas
+                overflow: TextOverflow.ellipsis, // Añade puntos suspensivos al final si el texto se corta
+                minFontSize: 10, // Tamaño mínimo del texto
+                stepGranularity: 1, // Granularidad del tamaño del texto
               ),
-            ),
           ),
         ),
-      ),
-    );
+        ),
+      );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -374,6 +382,7 @@ class _VidaState extends State<Vida> {
 
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
           title: Text(
             'Bienvenido ${widget.nombreUsuario}',
             style: const TextStyle(
@@ -447,92 +456,82 @@ class _VidaState extends State<Vida> {
                     ],
                   ),
                 ),
+
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(width: 16),
-                        Row(
-                          children: filterButtonText.keys.map((filterName) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0),
-                              child: ElevatedButton(
-                                onPressed: () =>
-                                    toggleFiltro(filterName,
-                                        filterButtonText[filterName]!),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: isFilterActive(filterName)
-                                      ? Colors.grey
-                                      : Colors.blue,
-                                ),
-                                child: Text(
-                                  filterButtonText[filterName]!,
-                                  style: const TextStyle(
-                                    fontFamily: 'Roboto',
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                        const SizedBox(width: 16),
-                        ElevatedButton(
-                          onPressed: () {
-                            fetchDataWithFilter('A_TIEMPO');
-                          },
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 11.0, // Espacio entre los botones
+                    children: [
+                      ...filterButtonText.keys.map((filterName) {
+                        return ElevatedButton(
+                          onPressed: () => toggleFiltro(filterName, filterButtonText[filterName]!),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.lightGreen,
+                            backgroundColor: isFilterActive(filterName) ? Colors.grey : Colors.blue,
                           ),
-                          child: const Text(
-                            'A TIEMPO',
-                            style: TextStyle(
+                          child: Text(
+                            filterButtonText[filterName]!,
+                            style: const TextStyle(
                               fontFamily: 'Roboto',
                               fontWeight: FontWeight.bold,
                               fontSize: 10,
                             ),
                           ),
+                        );
+                      }).toList(),
+                      ElevatedButton(
+                        onPressed: () {
+                          fetchDataWithFilter('A_TIEMPO');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.lightGreen,
                         ),
-                        const SizedBox(width: 16),
-                        ElevatedButton(
-                          onPressed: () {
-
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromRGBO(241, 201, 132,
-                                1.0),
+                        child: const Text(
+                          'A TIEMPO',
+                          style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 10,
                           ),
-                          child: const Text('POR VENCER',
-                            style: TextStyle(
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 10,
-                            ),),
                         ),
-                        const SizedBox(width: 16),
-                        ElevatedButton(
-                          onPressed: () {
-
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Lógica para el botón "POR VENCER"
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromRGBO(241, 201, 132, 1.0),
+                        ),
+                        child: const Text(
+                          'POR VENCER',
+                          style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 10,
                           ),
-                          child: const Text('VENCIDOS',
-                            style: TextStyle(
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 10,
-                            ),),
                         ),
-                      ],
-                    ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Lógica para el botón "VENCIDOS"
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                        ),
+                        child: const Text(
+                          'VENCIDOS',
+                          style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 10,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+
+
                 Padding(
                   padding: const EdgeInsets.all(2.0),
                   child: Text(
@@ -567,54 +566,57 @@ class _VidaState extends State<Vida> {
                 const SizedBox(
                   width: 16,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Página ${_currentPage + 1} de $totalPaginas',
-                      style: const TextStyle(
-                        fontFamily: 'Roboto',
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(width: 30),
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          if (_currentPage > 0) {
-                            _currentPage--;
-                          }
-                        });
-                      },
-                      child: const Text(
-                        'Anterior',
-                        style: TextStyle(
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Página ${_currentPage + 1} de $totalPaginas',
+                        style: const TextStyle(
                           fontFamily: 'Roboto',
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 30),
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          if ((_currentPage + 1) * _perPage < datos.length) {
-                            _currentPage++;
-                          }
-                        });
-                      },
-                      child: const Text(
-                        'Siguiente',
-                        style: TextStyle(
-                          fontFamily: 'Roboto',
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                      const SizedBox(width: 30),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            if (_currentPage > 0) {
+                              _currentPage--;
+                            }
+                          });
+                        },
+                        child: const Text(
+                          'Anterior',
+                          style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 30),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            if ((_currentPage + 1) * _perPage < datos.length) {
+                              _currentPage++;
+                            }
+                          });
+                        },
+                        child: const Text(
+                          'Siguiente',
+                          style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 Align(
                   alignment: Alignment.bottomRight,

@@ -36,7 +36,8 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     namespace "com.appgam.MobilGAM"
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdkVersion 34
+    //RHcompileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
     compileOptions {
