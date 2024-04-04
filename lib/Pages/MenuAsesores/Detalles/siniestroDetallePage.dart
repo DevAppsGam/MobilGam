@@ -273,6 +273,36 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
     );
   }
 
+  String estado = '';
+  Color colorBoton = Colors.greenAccent; // Color por defecto
+  bool activo = true; // Interacción por defecto
+  Future<void> _obtenerEstadoFolio() async {
+    final response = await http.get(Uri.parse('https://www.asesoresgam.com.mx/sistemas1/gam/detallesiniestrosdocumentos.php?id=${widget.id}'));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data.isNotEmpty) {
+        setState(() {
+          estado = ['estado_s'] as String;
+          if (estado == 'FINALIZADO') {
+            colorBoton = Colors.red;
+            activo = false;
+            print("ESTADO FINALIZADO");
+          } else if (estado == 'EN PROCESO') {
+            colorBoton = Colors.green;
+            activo = true;
+          }
+        });
+      } else{
+        print("error al llamar al boton");
+      }
+    }
+  }
+  // Función para manejar la acción al presionar el botón
+  void fotonfinalizar() {
+    // Lógica a ejecutar al presionar el botón
+    print('Botón presionado');
+  }
+
   Widget buildTableCell(String text, {bool isHeader = false}) {
     return Container(
       padding: const EdgeInsets.all(8.0),
@@ -922,7 +952,7 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
                             ),
                             TableCell(
                               child: Center(
-                                child: Text(data['estado1'] ?? '***',
+                                child: Text(data['estado'] ?? '***',
                                   style: const TextStyle(
                                     fontFamily: 'roboto',
                                     fontSize: 18,
@@ -1011,15 +1041,17 @@ class _DetalleSiniestroState extends State<DetalleSiniestro> {
                 ),
                 Center(
                   child: ElevatedButton(
-                    onPressed: () {
-                      _mostrarDialogoCerrarFolio();
-                    },
+                    onPressed: activo ? fotonfinalizar : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: colorBoton, // Asigna el color del botón dinámicamente
                     ),
-                    child: const Text('¿Deseas cerrar el folio?',style: TextStyle(fontFamily: 'Roboto', fontSize: 30),),
+                    child: const Text(
+                      '¿Deseas cerrar el folio?',
+                      style: TextStyle(fontFamily: 'Roboto', fontSize: 30),
+                    ),
                   ),
                 ),
+
               ],
             ),
           ),
