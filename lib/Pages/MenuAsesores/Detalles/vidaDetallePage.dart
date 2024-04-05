@@ -966,7 +966,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                                 child: Text(data['usuario'] ?? '***',
                                 style: const TextStyle(
                                   fontFamily: 'roboto',
-                                  fontSize: 18,
+                                  fontSize: 17,
                                 ),),
                               ),
                             ),
@@ -1004,8 +1004,7 @@ class _DetalleVidaState extends State<DetalleVida> {
                           ],
                         ),
                     ],
-                  )
-,
+                  ),
                 const SizedBox(height: 32),
                 const Center(
                   child: Text(
