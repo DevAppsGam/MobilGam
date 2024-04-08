@@ -179,13 +179,13 @@ class _SiniestroState extends State<Siniestro> {
   TableRow _buildTableHeaderRow() {
     return TableRow(
       children: [
-        _buildTableHeaderCell(' Folio GAM'),
-        _buildTableHeaderCell(' RAMO '),
-        _buildTableHeaderCell(' Contratante'),
-        _buildTableHeaderCell(' Nombre del Afectado'),
-        _buildTableHeaderCell(' N Póliza'),
-        _buildTableHeaderCell(' Fecha solicitud'),
-        _buildTableHeaderCell(' Estatus Trámite'),
+        _buildTableHeaderCell('Folio GAM'),
+        _buildTableHeaderCell('RAMO '),
+        _buildTableHeaderCell('Contratante'),
+        _buildTableHeaderCell('Nombre del Afectado'),
+        _buildTableHeaderCell('N Póliza'),
+        _buildTableHeaderCell('Fecha solicitud'),
+        _buildTableHeaderCell('Estatus Trámite'),
       ],
     );
   }
