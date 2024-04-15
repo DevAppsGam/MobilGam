@@ -32,6 +32,9 @@ class _VidaState extends State<Vida> {
   Set<String> activeFilters = <String>{};
   String searchTerm = '';
 
+  String filtroAplicadoSemaforo = '';
+
+
   bool isFilterActive(String filterName) {
     return activeFilters.contains(filterName);
   }
@@ -84,10 +87,18 @@ class _VidaState extends State<Vida> {
     }
   }
 
+
   Future<void> fetchDataWithFilter(String? filterNames) async {
     if (filterNames != null) {
+      String combinedFilters = filterNames;
+
+      // Si hay filtros activos, se combinan con el filtro actual
+      if (activeFilters.isNotEmpty) {
+        combinedFilters += ',' + activeFilters.join(',');
+      }
+
       final response = await http.get(Uri.parse(
-          'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?filter=$filterNames&username=${widget
+          'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?filter=$combinedFilters&username=${widget
               .nombreUsuario}'));
       if (response.statusCode == 200) {
         List<dynamic> jsonResponse = json.decode(response.body);
@@ -108,6 +119,7 @@ class _VidaState extends State<Vida> {
       }
     }
   }
+
 
   void _showErrorDialog(String message) {
     showDialog(
@@ -134,20 +146,37 @@ class _VidaState extends State<Vida> {
       if (isFilterActive(filterName)) {
         activeFilters.remove(filterName);
       } else {
+        activeFilters.clear();
         activeFilters.add(filterName);
       }
-      filtroAplicado =
-      activeFilters.isNotEmpty ? 'Filtros Aplicados: ${activeFilters.join(
-          ', ')}' : '';
+      filtroAplicado = activeFilters.isNotEmpty ? 'Filtros Aplicados: ${activeFilters.join(', ')}' : '';
     });
 
-    if (activeFilters.isNotEmpty) {
-      String filters = activeFilters.join(',');
-      fetchDataWithFilter(filters);
+    if (['ALTA DE POLIZA', 'PAGOS', 'MOVIMIENTOS'].contains(filterName)) {
+      fetchDataWithFilter(filterName);
     } else {
-      fetchData();
+      applySecondFilter(filterName);
     }
   }
+
+  void applySecondFilter(String filterName) {
+    // Obtener el primer filtro activo
+    String primaryFilter = activeFilters.first;
+
+    // Aplicar el segundo filtro a la información filtrada por el primer filtro
+    String combinedFilters = '$primaryFilter,$filterName';
+    fetchDataWithFilter(combinedFilters);
+  }
+
+
+  void applyFilters() {
+    // Construir el parámetro de filtros para la URL
+    String filters = activeFilters.join(',');
+
+    // Llamar a la función fetchDataWithFilter con los filtros aplicados
+    fetchDataWithFilter(filters);
+  }
+
 
   void performSearch() {
     if (searchTerm.isNotEmpty) {
@@ -202,6 +231,34 @@ class _VidaState extends State<Vida> {
     );
   }
 
+  Future<void> fetchDataWithGreenSemaforo() async {
+    try {
+      final response = await http.get(Uri.parse(
+          'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?filter=A_TIEMPO&username=${widget.nombreUsuario}'));
+      if (response.statusCode == 200) {
+        List<dynamic> jsonResponse = json.decode(response.body);
+        setState(() {
+          datos = jsonResponse.map((dynamic item) {
+            Map<String, String> mappedItem = {};
+            for (var entry in item.entries) {
+              mappedItem[entry.key] = entry.value.toString();
+            }
+            return mappedItem;
+          }).toList();
+          filtroAplicado = 'A TIEMPO';
+        });
+      } else {
+        _showErrorDialog(
+            'Hubo un problema al obtener los datos.Código de estado: ${response
+                .statusCode}');
+      }
+    } catch (e) {
+      print('Error al decodificar JSON: $e');
+      _showErrorDialog('Hubo un problema al decodificar los datos JSON.');
+    }
+  }
+
+
   @override
   void dispose() {
     SystemChrome.setPreferredOrientations([
@@ -213,7 +270,7 @@ class _VidaState extends State<Vida> {
   }
 
   void _startInactivityTimer() {
-    const inactivityDuration = Duration(seconds: 300); // se maneja en segundos 5min=300seg de inactividad
+    const inactivityDuration = Duration(seconds: 420); // se maneja en segundos 5min=300seg de inactividad
     _inactivityTimer = Timer(inactivityDuration, () {
       // Maneja la inactividad (por ejemplo, cierra la sesión)
       Navigator.pushAndRemoveUntil(
@@ -481,7 +538,7 @@ class _VidaState extends State<Vida> {
                       }).toList(),
                       ElevatedButton(
                         onPressed: () {
-                          fetchDataWithFilter('A_TIEMPO');
+                          fetchDataWithGreenSemaforo();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.lightGreen,
@@ -617,8 +674,7 @@ class _VidaState extends State<Vida> {
                       ),
                     ],
                   ),
-                ),
-                Align(
+                ),Align(
                   alignment: Alignment.bottomRight,
                   child: IconButton(
                     onPressed: () {
