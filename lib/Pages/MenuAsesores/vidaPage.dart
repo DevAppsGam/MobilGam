@@ -94,7 +94,7 @@ class _VidaState extends State<Vida> {
 
       // Si hay filtros activos, se combinan con el filtro actual
       if (activeFilters.isNotEmpty) {
-        combinedFilters += ',' + activeFilters.join(',');
+        combinedFilters += ',${activeFilters.join(',')}';
       }
 
       final response = await http.get(Uri.parse(
@@ -149,10 +149,21 @@ class _VidaState extends State<Vida> {
         activeFilters.clear();
         activeFilters.add(filterName);
       }
-      filtroAplicado = activeFilters.isNotEmpty ? 'Filtros Aplicados: ${activeFilters.join(', ')}' : '';
+
+      // Actualizar el mensaje de filtro aplicado
+      if (['A TIEMPO', 'POR VENCER', 'VENCIDOS'].contains(filterName)) {
+        filtroAplicado = buttonText;
+      } else {
+        if (activeFilters.isNotEmpty) {
+          filtroAplicado =activeFilters.join(', ');
+        } else {
+          filtroAplicado = ''; // Si no hay filtros activos, vacía el mensaje
+        }
+      }
     });
 
-    if (['ALTA DE POLIZA', 'PAGOS', 'MOVIMIENTOS'].contains(filterName)) {
+    // Llamar a la función correspondiente según el filtro seleccionado
+    if (['A TIEMPO', 'POR VENCER', 'VENCIDOS'].contains(filterName)) {
       fetchDataWithFilter(filterName);
     } else {
       applySecondFilter(filterName);
@@ -160,13 +171,19 @@ class _VidaState extends State<Vida> {
   }
 
   void applySecondFilter(String filterName) {
-    // Obtener el primer filtro activo
-    String primaryFilter = activeFilters.first;
+    if (activeFilters.isNotEmpty) {
+      // Obtener el primer filtro activo
+      String primaryFilter = activeFilters.first;
 
-    // Aplicar el segundo filtro a la información filtrada por el primer filtro
-    String combinedFilters = '$primaryFilter,$filterName';
-    fetchDataWithFilter(combinedFilters);
+      // Aplicar el segundo filtro a la información filtrada por el primer filtro
+      String combinedFilters = '$primaryFilter,$filterName';
+      fetchDataWithFilter(combinedFilters);
+    } else {
+      // Si no hay filtros activos, aplicar solo el filtro seleccionado
+      fetchDataWithFilter(filterName);
+    }
   }
+
 
 
   void applyFilters() {
@@ -233,8 +250,47 @@ class _VidaState extends State<Vida> {
 
   Future<void> fetchDataWithGreenSemaforo() async {
     try {
+      print('Iniciando consulta con filtro de semáforo en verde (A TIEMPO)...');
+
+      // Imprimir la URL de la consulta HTTP
+      final url = 'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?filter=A_TIEMPO&username=${widget.nombreUsuario}';
+      print('URL de consulta: $url');
+
+      final response = await http.get(Uri.parse(url));
+
+      // Imprimir la respuesta de la consulta HTTP
+      print('Respuesta de la consulta HTTP: ${response.body}');
+
+      if (response.statusCode == 200) {
+        print('Consulta exitosa. Procesando datos...');
+        List<dynamic> jsonResponse = json.decode(response.body);
+        setState(() {
+          datos = jsonResponse.map((dynamic item) {
+            Map<String, String> mappedItem = {};
+            for (var entry in item.entries) {
+              mappedItem[entry.key] = entry.value.toString();
+            }
+            return mappedItem;
+          }).toList();
+          filtroAplicado = 'A TIEMPO'; // Actualiza el mensaje del filtro aplicado
+        });
+      } else {
+        print('Error en la consulta. Código de estado: ${response.statusCode}');
+        _showErrorDialog(
+            'Hubo un problema al obtener los datos. Código de estado: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error en la consulta: $e');
+      print('Hubo un problema al decodificar los datos JSON.');
+      _showErrorDialog('Hubo un problema al decodificar los datos JSON.');
+    }
+  }
+
+
+  void fetchDataWithYellowSemaforo() async {
+    try {
       final response = await http.get(Uri.parse(
-          'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?filter=A_TIEMPO&username=${widget.nombreUsuario}'));
+          'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?filter=POR_VENCER&username=${widget.nombreUsuario}'));
       if (response.statusCode == 200) {
         List<dynamic> jsonResponse = json.decode(response.body);
         setState(() {
@@ -245,7 +301,7 @@ class _VidaState extends State<Vida> {
             }
             return mappedItem;
           }).toList();
-          filtroAplicado = 'A TIEMPO';
+          filtroAplicado = 'POR VENCER';
         });
       } else {
         _showErrorDialog(
@@ -258,6 +314,32 @@ class _VidaState extends State<Vida> {
     }
   }
 
+  void fetchDataWithRedSemaforo() async {
+    try {
+      final response = await http.get(Uri.parse(
+          'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?filter=VENCIDOS&username=${widget.nombreUsuario}'));
+      if (response.statusCode == 200) {
+        List<dynamic> jsonResponse = json.decode(response.body);
+        setState(() {
+          datos = jsonResponse.map((dynamic item) {
+            Map<String, String> mappedItem = {};
+            for (var entry in item.entries) {
+              mappedItem[entry.key] = entry.value.toString();
+            }
+            return mappedItem;
+          }).toList();
+          filtroAplicado = 'VENCIDOS';
+        });
+      } else {
+        _showErrorDialog(
+            'Hubo un problema al obtener los datos.Código de estado: ${response
+                .statusCode}');
+      }
+    } catch (e) {
+      print('Error al decodificar JSON: $e');
+      _showErrorDialog('Hubo un problema al decodificar los datos JSON.');
+    }
+  }
 
   @override
   void dispose() {
@@ -363,6 +445,8 @@ class _VidaState extends State<Vida> {
         textColor = Colors.red;
       } else if (datos['semaforo'] == 'amarillo') {
         textColor = Colors.yellow;
+      } else if (datos['semaforo'] == 'sin_asignar') {
+        textColor = Colors.grey;
       }
     }
     int maxLines = 1; // Número máximo de líneas predeterminado
@@ -535,7 +619,7 @@ class _VidaState extends State<Vida> {
                             ),
                           ),
                         );
-                      }).toList(),
+                      }),
                       ElevatedButton(
                         onPressed: () {
                           fetchDataWithGreenSemaforo();
