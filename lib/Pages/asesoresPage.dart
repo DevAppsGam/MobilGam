@@ -11,7 +11,6 @@ import 'package:appgam/Pages/MenuAsesores/vidaPage.dart';
 import 'package:appgam/main.dart';
 import 'package:flutter/services.dart';
 
-
 class Asesores extends StatefulWidget {
   final String nombreUsuario;
 
@@ -27,25 +26,25 @@ class _AsesoresState extends State<Asesores> {
   @override
   void initState() {
     super.initState();
-    // Inicia el temporizador de inactividad al cargar la pantalla
     _startInactivityTimer();
-    // Bloquea la orientación de la pantalla en modo vertical al cargar la pantalla
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   }
 
   @override
   void dispose() {
-    // Cancela el temporizador al salir de la pantalla
     _inactivityTimer.cancel();
-    // Restaura la orientación predeterminada de la pantalla al salir de la pantalla
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown, DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight
+    ]);
     super.dispose();
   }
 
   void _startInactivityTimer() {
-    const inactivityDuration = Duration(seconds: 300); // 30 segundos de inactividad
+    const inactivityDuration = Duration(seconds: 300); // 5 minutos de inactividad
     _inactivityTimer = Timer(inactivityDuration, () {
-      // Maneja la inactividad (por ejemplo, cierra la sesión)
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (BuildContext context) => const LoginPage()),
@@ -55,7 +54,6 @@ class _AsesoresState extends State<Asesores> {
   }
 
   void _resetInactivityTimer() {
-    // Reinicia el temporizador al detectar actividad
     _inactivityTimer.cancel();
     _startInactivityTimer();
   }
@@ -67,7 +65,6 @@ class _AsesoresState extends State<Asesores> {
         backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
         title: GestureDetector(
           onTap: () {
-            // Abrir el menú de navegación
             Scaffold.of(context).openDrawer();
           },
           child: Text(
@@ -93,7 +90,6 @@ class _AsesoresState extends State<Asesores> {
                 ),
               ),
               onTap: () {
-                // Acción al hacer clic en "Inicio"
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (BuildContext context) => Asesores(nombreUsuario: widget.nombreUsuario)),
@@ -111,7 +107,6 @@ class _AsesoresState extends State<Asesores> {
                 ),
               ),
               onTap: () {
-                // Acción al hacer clic en "Contactos"
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (BuildContext context) => contactoVida(nombreUsuario: widget.nombreUsuario)),
@@ -128,7 +123,6 @@ class _AsesoresState extends State<Asesores> {
                 ),
               ),
               onTap: () {
-                // Acción al hacer clic en "Cerrar sesión"
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (BuildContext context) => const LoginPage()),
@@ -136,11 +130,9 @@ class _AsesoresState extends State<Asesores> {
                 );
               },
             ),
-            // Puedes agregar más elementos ListTile según tus necesidades
           ],
         ),
       ),
-
       body: GestureDetector(
         onTap: _resetInactivityTimer,
         child: Container(
@@ -171,37 +163,37 @@ class _AsesoresState extends State<Asesores> {
                   padding: const EdgeInsets.all(16),
                   children: [
                     IconWithText(
-                      icon: Icons.diversity_1_rounded,
+                      imagePath: 'assets/img/Vida_Blanco.png',
                       title: 'VIDA',
                       color: const Color.fromRGBO(67, 198, 80, 1),
                       nombreUsuario: widget.nombreUsuario,
                     ),
                     IconWithText(
-                      icon: Icons.notification_important_rounded,
+                      imagePath: 'assets/img/Siniestros_Blanco.png',
                       title: 'SINIESTROS',
                       color: const Color.fromRGBO(249, 224, 128, 1.0),
                       nombreUsuario: widget.nombreUsuario,
                     ),
                     IconWithText(
-                      icon: Icons.car_crash_rounded,
+                      imagePath: 'assets/img/Autos_Blanco.png',
                       title: 'AUTOS',
                       color: const Color.fromRGBO(214, 117, 55, 1),
                       nombreUsuario: widget.nombreUsuario,
                     ),
                     IconWithText(
-                      icon: Icons.medical_information_rounded,
+                      imagePath: 'assets/img/GMM_Blanco.png',
                       title: 'GMM',
                       color: const Color.fromRGBO(53, 162, 219, 1),
                       nombreUsuario: widget.nombreUsuario,
                     ),
                     IconWithText(
-                      icon: Icons.content_paste_search,
+                      imagePath: 'assets/img/Recursos_Blanco.png',
                       title: 'RECURSOS',
                       color: const Color.fromRGBO(115, 117, 121, 1),
                       nombreUsuario: widget.nombreUsuario,
                     ),
                     IconWithText(
-                      icon: Icons.graphic_eq_outlined,
+                      imagePath: 'assets/img/Estadisticas_Blanco.png',
                       title: 'ESTADISTICAS',
                       color: const Color.fromRGBO(65, 178, 182, 1),
                       nombreUsuario: widget.nombreUsuario,
@@ -212,9 +204,13 @@ class _AsesoresState extends State<Asesores> {
               Align(
                 alignment: Alignment.bottomRight,
                 child: IconButton(
-                  onPressed: () {
+                  onPressed: () async {
                     const url = 'https://www.example.com';
-                    launch(url);
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      throw 'Could not launch $url';
+                    }
                   },
                   icon: const Icon(
                     Icons.message_rounded,
@@ -232,110 +228,105 @@ class _AsesoresState extends State<Asesores> {
 }
 
 class IconWithText extends StatelessWidget {
-  final IconData icon;
+  final String imagePath;
   final String title;
   final Color? color;
   final String nombreUsuario;
 
-  const IconWithText({super.key, required this.icon, required this.title, this.color, required this.nombreUsuario});
+  const IconWithText({
+    super.key,
+    required this.imagePath,
+    required this.title,
+    this.color,
+    required this.nombreUsuario,
+  });
 
   @override
   Widget build(BuildContext context) {
-    String imagePath = '';
-    switch (title) {
-      case 'VIDA':
-        imagePath = 'assets/img/Vida_Blanco.png';
-        break;
-      case 'GMM':
-        imagePath = 'assets/img/GMM_Blanco.png';
-        break;
-      case 'SINIESTROS':
-        imagePath = 'assets/img/Siniestros_Blanco.png';
-        break;
-      case 'AUTOS':
-        imagePath = 'assets/img/Autos_Blanco.png';
-        break;
-      case 'RECURSOS':
-        imagePath = 'assets/img/Recursos_Blanco.png';
-        break;
-      case 'ESTADISTICAS':
-        imagePath = 'assets/img/Estadisticas_Blanco.png';
-        break;
-      default:
-        imagePath = 'assets/img/GAM_TV.png';
-    }
-    return GestureDetector(
-      onTap: () {
+    return LayoutBuilder(
+        builder: (context, constraints) {
+      double iconSize = constraints.maxWidth * 0.6; // Ajusta el tamaño del ícono al 60% del ancho del contenedor
+      double fontSize = constraints.maxWidth * 0.1; // Ajusta el tamaño del texto al 10% del ancho del contenedor
+      return GestureDetector(
+          onTap: () {
         switch (title) {
           case 'VIDA':
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Vida(nombreUsuario: nombreUsuario,)),
+              MaterialPageRoute(builder: (context) => Vida(nombreUsuario: nombreUsuario)),
             );
             break;
           case 'SINIESTROS':
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Siniestro(nombreUsuario: nombreUsuario,)),
+              MaterialPageRoute(builder: (context) => Siniestro(nombreUsuario: nombreUsuario)),
             );
             break;
           case 'AUTOS':
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Auto(nombreUsuario: nombreUsuario,)),
+              MaterialPageRoute(builder: (context) => Auto(nombreUsuario: nombreUsuario)),
             );
             break;
           case 'GMM':
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Gmm(nombreUsuario: nombreUsuario,)),
+              MaterialPageRoute(builder: (context) => Gmm(nombreUsuario: nombreUsuario)),
             );
             break;
           case 'RECURSOS':
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Recurso(nombreUsuario: nombreUsuario,)),
+              MaterialPageRoute(builder: (context) => Recurso(nombreUsuario: nombreUsuario)),
             );
             break;
           case 'ESTADISTICAS':
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) =>  Graficas(nombreUsuario: nombreUsuario,)),
+              MaterialPageRoute(builder: (context) => Graficas(nombreUsuario: nombreUsuario)),
             );
             break;
         }
       },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.circular(20),
-              color: color ?? const Color.fromRGBO(33, 0, 0, 1),
-            ),
-            child: Center(
-              child: Image.asset(
-                imagePath,
-                width: 64,
-                height: 64,
-              ),
-            ),
+    child: Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: <Widget>[
+    FractionallySizedBox(
+    widthFactor: 0.6, // Ajusta el tamaño del contenedor al 60% del ancho del contenedor padre
+    child: Container(
+    height: iconSize, // La altura será la misma que el tamaño del ícono
+    decoration: BoxDecoration(
+    shape: BoxShape.rectangle,
+    borderRadius: BorderRadius.circular(20),
+    color: color ?? const Color.fromRGBO(33, 0, 0, 1),
+    ),
+    child: Center(
+    child: Image.asset(
+    imagePath,
+    width: iconSize * 0.8, // Ajusta el tamaño de la imagen al 80% del tamaño del
+      height: iconSize * 0.8,
+    ),
+    ),
+    ),
+    ),
+      const SizedBox(height: 8),
+      FractionallySizedBox(
+        widthFactor: 0.6, // Ajusta el tamaño del contenedor al 60% del ancho del contenedor padre
+        child: Text(
+          title,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: 'Roboto',
+            fontSize: fontSize,
+            fontWeight: FontWeight.bold,
+            color: color ?? Colors.black,
           ),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            style: TextStyle(
-              fontFamily: 'Roboto',
-              fontSize: 17.5,
-              fontWeight: FontWeight.bold,
-              color: color ?? Colors.black,
-            ),
-          ),
-        ],
+        ),
       ),
+    ],
+    ),
+      );
+        },
     );
   }
 }
