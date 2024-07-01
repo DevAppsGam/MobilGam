@@ -30,6 +30,39 @@ void showErrorDialog(BuildContext context, String errorMessage) {
   );
 }
 
+void showLoadingDialog(BuildContext context) {
+  final screenWidth = MediaQuery.of(context).size.width;
+  final screenHeight = MediaQuery.of(context).size.height;
+  final imageWidth = screenWidth * 0.3; // Ajusta este valor según sea necesario
+  final imageHeight = screenHeight * 0.2; // Ajusta este valor según sea necesario
+
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return Dialog(
+        backgroundColor: Colors.transparent,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/img/LOGOGAM.png',
+              width: imageWidth,
+              height: imageHeight,
+            ),
+            const SizedBox(height: 20),
+            const CircularProgressIndicator(
+              color: Color.fromRGBO(250, 161, 103, 2),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterDownloader.initialize();
@@ -151,6 +184,8 @@ class _LoginPageState extends State<LoginPage> {
       errorMessage = '';
     });
 
+    showLoadingDialog(context);  // Mostrar el diálogo de carga
+
     try {
       final response = await http.post(
         Uri.parse("https://www.asesoresgam.com.mx/sistemas1/gam/login.php"),
@@ -160,23 +195,29 @@ class _LoginPageState extends State<LoginPage> {
         },
       );
 
+      setState(() {
+        isLoading = false;
+      });
+
       if (response.statusCode == 200) {
         final dynamic responseData = jsonDecode(response.body);
 
         if (responseData is Map<String, dynamic>) {
           if (responseData.containsKey("error")) {
+            Navigator.of(context).pop();  // Cerrar el diálogo de carga
             showErrorDialog(context, responseData["error"]);
           } else {
             final int userType = responseData['tipo'];
             final String nombreUsuario = responseData['nomusuario'];
+
+            Navigator.of(context).pop();  // Cerrar el diálogo de carga antes de la navegación
 
             switch (userType) {
               case 1:
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => Asesores(nombreUsuario: nombreUsuario),
-                  ),
+                      builder: (_) => Asesores(nombreUsuario: nombreUsuario)),
                       (Route<dynamic> route) => false,
                 );
                 break;
@@ -200,19 +241,19 @@ class _LoginPageState extends State<LoginPage> {
             }
           }
         } else {
+          Navigator.of(context).pop();  // Cerrar el diálogo de carga
           showErrorDialog(context, 'Usuario o contraseña incorrecta');
         }
       } else {
+        Navigator.of(context).pop();  // Cerrar el diálogo de carga
         showErrorDialog(context, 'Error de conexión');
       }
     } catch (e) {
+      Navigator.of(context).pop();  // Cerrar el diálogo de carga
       showErrorDialog(context, 'Error de conexión');
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
     }
   }
+
 
   void togglePasswordVisibility() {
     setState(() {
@@ -272,7 +313,10 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 child: TextFormField(
                   //textScaler: MediaQuery.textScalerOf(context),
-                  style: const TextStyle(fontFamily: 'Roboto', fontSize: 20),
+                  style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: MediaQuery.textScalerOf(context).scale(25),
+                  ),
                   controller: controllerUser,
                   autofocus: true,
                   decoration: const InputDecoration(
@@ -304,7 +348,10 @@ class _LoginPageState extends State<LoginPage> {
                 child: Center(
                   child: TextField(
                     //textScaler: MediaQuery.textScalerOf(context),
-                    style: const TextStyle(fontFamily: 'Roboto', fontSize: 20),
+                    style:  TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: MediaQuery.textScalerOf(context).scale(25),
+                    ),
                     controller: controllerPass,
                     obscureText: obscurePassword,
                     decoration: InputDecoration(
@@ -356,6 +403,7 @@ class _LoginPageState extends State<LoginPage> {
                 },
                 child: Text(
                   'Ingresar',
+                  textScaler: MediaQuery.textScalerOf(context),
                   style: TextStyle(
                     fontSize: MediaQuery.textScalerOf(context).scale(24),
                     fontFamily: 'Roboto',
