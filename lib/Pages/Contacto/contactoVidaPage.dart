@@ -14,16 +14,18 @@ class contactoVida extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
         title: GestureDetector(
           onTap: () {
             Scaffold.of(context).openDrawer();
           },
           child: Text(
             "Bienvenido $nombreUsuario",
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Roboto',
               fontWeight: FontWeight.bold,
-              fontSize: 17,
+              fontSize: MediaQuery.textScalerOf(context).scale(20),
+              color: const Color.fromRGBO(246, 246, 246, 1),
             ),
           ),
         ),
@@ -96,13 +98,13 @@ class contactoVida extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             const SizedBox(height: 20),
-            const Padding(
-              padding: EdgeInsets.all(16.0),
+             Padding(
+              padding: const EdgeInsets.all(16.0),
               child: Text(
                 'Contacto de VIDA',
                 style: TextStyle(
                   fontFamily: 'Roboto',
-                  fontSize: 24,
+                  fontSize: MediaQuery.textScalerOf(context).scale(25),
                   fontWeight: FontWeight.bold,
                   color: Colors.blueGrey,
                 ),
@@ -289,7 +291,7 @@ class IconWithText extends StatelessWidget {
               title,
               style: TextStyle(
                 fontFamily: 'Roboto',
-                fontSize: 14,
+                fontSize: MediaQuery.textScalerOf(context).scale(18),
                 fontWeight: FontWeight.bold,
                 color: color,
               ),
@@ -299,10 +301,12 @@ class IconWithText extends StatelessWidget {
               subtitle,
               style: TextStyle(
                 fontFamily: 'Roboto',
-                fontSize: 12,
+                fontSize: MediaQuery.textScalerOf(context).scale(16),
                 color: color,
               ),
               textAlign: TextAlign.center,
+              //maxLines: 1,
+              //overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
