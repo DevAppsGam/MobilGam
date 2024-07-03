@@ -397,9 +397,9 @@ class _VidaState extends State<Vida> {
           child: Center(
             child: AutoSizeText(
               text,
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'Roboto',
-                fontSize: 17,
+                fontSize: MediaQuery.textScalerOf(context).scale(18),
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -480,7 +480,7 @@ class _VidaState extends State<Vida> {
                 columna == 'poliza' ? nPolizaValue : text,
                 style: TextStyle(
                   fontFamily: 'Roboto',
-                  fontSize: 16,
+                  fontSize: MediaQuery.textScalerOf(context).scale(20),
                   color: textColor,
                   fontWeight: FontWeight.bold,
                 ),
@@ -526,10 +526,11 @@ class _VidaState extends State<Vida> {
           backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
           title: Text(
             'Bienvenido ${widget.nombreUsuario}',
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'Roboto',
-              fontSize: 17,
-              color: Color.fromRGBO(246, 246, 246, 1),
+              fontSize: MediaQuery.textScalerOf(context).scale(20),
+              color: const Color.fromRGBO(246, 246, 246, 1),
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
@@ -548,15 +549,16 @@ class _VidaState extends State<Vida> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Center(
+                      Center(
                         child: Text(
                           'Mis Trámites de Vida',
                           style: TextStyle(
                             fontFamily: 'Roboto',
-                            fontSize: 24,
+                            fontSize: MediaQuery.textScalerOf(context).scale(24),
                             fontWeight: FontWeight.bold,
-                            color: Color.fromRGBO(73, 78, 84, 1),
+                            color: const Color.fromRGBO(73, 78, 84, 1),
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                       IconButton(
@@ -588,10 +590,10 @@ class _VidaState extends State<Vida> {
                             },
                           );
                         },
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.search,
                           color: Colors.blueAccent,
-                          size: 28,
+                          size: MediaQuery.textScalerOf(context).scale(28),
                         ),
                       ),
                     ],
@@ -612,10 +614,10 @@ class _VidaState extends State<Vida> {
                           ),
                           child: Text(
                             filterButtonText[filterName]!,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontFamily: 'Roboto',
                               fontWeight: FontWeight.bold,
-                              fontSize: 10,
+                              fontSize: MediaQuery.textScalerOf(context).scale(15),
                             ),
                           ),
                         );
@@ -627,12 +629,12 @@ class _VidaState extends State<Vida> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.lightGreen,
                         ),
-                        child: const Text(
+                        child:  Text(
                           'A TIEMPO',
                           style: TextStyle(
                             fontFamily: 'Roboto',
                             fontWeight: FontWeight.bold,
-                            fontSize: 10,
+                            fontSize: MediaQuery.textScalerOf(context).scale(15),
                           ),
                         ),
                       ),
@@ -643,12 +645,12 @@ class _VidaState extends State<Vida> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromRGBO(241, 201, 132, 1.0),
                         ),
-                        child: const Text(
+                        child: Text(
                           'POR VENCER',
                           style: TextStyle(
                             fontFamily: 'Roboto',
                             fontWeight: FontWeight.bold,
-                            fontSize: 10,
+                            fontSize: MediaQuery.textScalerOf(context).scale(15),
                           ),
                         ),
                       ),
@@ -659,12 +661,12 @@ class _VidaState extends State<Vida> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
                         ),
-                        child: const Text(
+                        child: Text(
                           'VENCIDOS',
                           style: TextStyle(
                             fontFamily: 'Roboto',
                             fontWeight: FontWeight.bold,
-                            fontSize: 10,
+                            fontSize: MediaQuery.textScalerOf(context).scale(15),
                           ),
                         ),
                       ),
@@ -679,9 +681,9 @@ class _VidaState extends State<Vida> {
                     filtroAplicado.isNotEmpty
                         ? 'Filtro Aplicado: $filtroAplicado'
                         : '',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'Roboto',
-                      fontSize: 10,
+                      fontSize: MediaQuery.textScalerOf(context).scale(12),
                       fontWeight: FontWeight.bold,
                       color: Colors.blueAccent,
                     ),
@@ -714,9 +716,9 @@ class _VidaState extends State<Vida> {
                     children: [
                       Text(
                         'Página ${_currentPage + 1} de $totalPaginas',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'Roboto',
-                          fontSize: 18,
+                          fontSize: MediaQuery.textScalerOf(context).scale(20),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -729,11 +731,11 @@ class _VidaState extends State<Vida> {
                             }
                           });
                         },
-                        child: const Text(
+                        child: Text(
                           'Anterior',
                           style: TextStyle(
                             fontFamily: 'Roboto',
-                            fontSize: 18,
+                            fontSize: MediaQuery.textScalerOf(context).scale(20),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -747,11 +749,11 @@ class _VidaState extends State<Vida> {
                             }
                           });
                         },
-                        child: const Text(
+                        child: Text(
                           'Siguiente',
                           style: TextStyle(
                             fontFamily: 'Roboto',
-                            fontSize: 18,
+                            fontSize: MediaQuery.textScalerOf(context).scale(20),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
