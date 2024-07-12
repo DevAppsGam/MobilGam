@@ -45,10 +45,9 @@ class _AsesoresState extends State<Asesores> {
   void _startInactivityTimer() {
     const inactivityDuration = Duration(seconds: 600); // 10 minutos de inactividad
     _inactivityTimer = Timer(inactivityDuration, () {
-      Navigator.pushAndRemoveUntil(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (BuildContext context) => const LoginPage()),
-            (Route<dynamic> route) => false,
       );
     });
   }
@@ -59,16 +58,31 @@ class _AsesoresState extends State<Asesores> {
   }
 
   void showLoadingDialog(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final imageWidth = screenWidth * 0.3; // Ajusta este valor según sea necesario
+    final imageHeight = screenHeight * 0.2; // Ajusta este valor según sea necesario
+
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return const Dialog(
+        return Dialog(
           backgroundColor: Colors.transparent,
-          child: Center(
-            child: CircularProgressIndicator(
-              color: Color.fromRGBO(250, 161, 103, 2),
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/img/logoApp.png',
+                width: imageWidth,
+                height: imageHeight,
+              ),
+              const SizedBox(height: 20),
+              const CircularProgressIndicator(
+                color: Color.fromRGBO(250, 161, 103, 2),
+              ),
+            ],
           ),
         );
       },
@@ -78,8 +92,8 @@ class _AsesoresState extends State<Asesores> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    double drawerTextSize = width * 0.05; // 5% del ancho de la pantalla
-    double appBarTextSize = width * 0.04; // 4% del ancho de la pantalla
+    double drawerTextSize = MediaQuery.textScalerOf(context).scale(20); // Ajustado según TextScaler
+    double appBarTextSize = MediaQuery.textScalerOf(context).scale(16); // Ajustado según TextScaler
 
     return Scaffold(
       appBar: AppBar(
@@ -92,7 +106,7 @@ class _AsesoresState extends State<Asesores> {
             "Bienvenido ${widget.nombreUsuario}",
             style: TextStyle(
               fontFamily: 'Roboto',
-              fontSize: MediaQuery.textScalerOf(context).scale(20),
+              fontSize: appBarTextSize,
               color: const Color.fromRGBO(246, 246, 246, 1),
               fontWeight: FontWeight.bold,
             ),
@@ -143,48 +157,59 @@ class _AsesoresState extends State<Asesores> {
                   'Menú',
                   style: TextStyle(
                     fontFamily: 'Roboto',
-                    fontSize: width * 0.09, // 9% del ancho de la pantalla
+                    fontSize: MediaQuery.textScalerOf(context).scale(36), // Ajustado según TextScaler
                     fontWeight: FontWeight.bold,
                     color: const Color.fromRGBO(73, 78, 84, 1),
                   ),
                 ),
               ),
               Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  padding: const EdgeInsets.all(16),
-                  children: [
-                    IconWithText(
-                      imagePath: 'assets/img/Vida_Blanco.png',
-                      title: 'VIDA',
-                      color: const Color.fromRGBO(67, 198, 80, 1),
-                      nombreUsuario: widget.nombreUsuario,
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: GridView.builder(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
                     ),
-                    IconWithText(
-                      imagePath: 'assets/img/Siniestros_Blanco.png',
-                      title: 'SINIESTROS',
-                      color: const Color.fromRGBO(249, 224, 128, 1.0),
-                      nombreUsuario: widget.nombreUsuario,
-                    ),
-                    IconWithText(
-                      imagePath: 'assets/img/Autos_Blanco.png',
-                      title: 'AUTOS',
-                      color: const Color.fromRGBO(214, 117, 55, 1),
-                      nombreUsuario: widget.nombreUsuario,
-                    ),
-                    IconWithText(
-                      imagePath: 'assets/img/GMM_Blanco.png',
-                      title: 'GMM',
-                      color: const Color.fromRGBO(53, 162, 219, 1),
-                      nombreUsuario: widget.nombreUsuario,
-                    ),
-                    IconWithText(
-                      imagePath: 'assets/img/Recursos_Blanco.png',
-                      title: 'RECURSOS',
-                      color: const Color.fromRGBO(115, 117, 121, 1),
-                      nombreUsuario: widget.nombreUsuario,
-                    ),
-                  ],
+                    itemCount: 5,
+                    itemBuilder: (BuildContext context, int index) {
+                      final items = [
+                        {
+                          'imagePath': 'assets/img/Vida_Blanco.png',
+                          'title': 'VIDA',
+                          'color': const Color.fromRGBO(67, 198, 80, 1),
+                        },
+                        {
+                          'imagePath': 'assets/img/Siniestros_Blanco.png',
+                          'title': 'SINIESTROS',
+                          'color': const Color.fromRGBO(249, 224, 128, 1.0),
+                        },
+                        {
+                          'imagePath': 'assets/img/Autos_Blanco.png',
+                          'title': 'AUTOS',
+                          'color': const Color.fromRGBO(214, 117, 55, 1),
+                        },
+                        {
+                          'imagePath': 'assets/img/GMM_Blanco.png',
+                          'title': 'GMM',
+                          'color': const Color.fromRGBO(53, 162, 219, 1),
+                        },
+                        {
+                          'imagePath': 'assets/img/Recursos_Blanco.png',
+                          'title': 'RECURSOS',
+                          'colo!r': const Color.fromRGBO(115, 117, 121, 1),
+                        },
+                      ];
+
+                      return IconWithText(
+                        imagePath: items[index]['imagePath'] as String,
+                        title: items[index]['title'] as String,
+                        color: items[index]['color'] as Color,
+                        nombreUsuario: widget.nombreUsuario,
+                      );
+                    },
+                  ),
                 ),
               ),
               Align(
@@ -211,6 +236,7 @@ class _AsesoresState extends State<Asesores> {
       ),
     );
   }
+
   Widget _buildDrawerItem(String title, Color color, double textSize, IconData icon, VoidCallback onTap) {
     return ListTile(
       leading: Icon(
@@ -222,13 +248,12 @@ class _AsesoresState extends State<Asesores> {
         style: TextStyle(
           fontFamily: 'Roboto',
           color: color,
-          fontSize: MediaQuery.textScalerOf(context).scale(22),
+          fontSize: textSize,
         ),
       ),
       onTap: onTap,
     );
   }
-
 }
 
 class IconWithText extends StatelessWidget {
@@ -250,41 +275,54 @@ class IconWithText extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         double iconSize = constraints.maxWidth * 0.6; // Ajusta el tamaño del ícono al 60% del ancho del contenedor
-        double fontSize = constraints.maxWidth * 0.1; // Ajusta el tamaño del texto al 10% del ancho del contenedor
+        double fontSize = MediaQuery.textScalerOf(context).scale(16); // Ajustado según TextScaler
         return GestureDetector(
-          onTap: () {
+          onTap: () async {
+            showLoadingDialog(context);
             switch (title) {
               case 'VIDA':
+                await Future.delayed(const Duration(seconds: 2)); // Simula una operación de carga
+                Navigator.of(context).pop(); // Cierra el diálogo de carga
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Vida(nombreUsuario: nombreUsuario)),
                 );
                 break;
               case 'SINIESTROS':
+                await Future.delayed(const Duration(seconds: 2)); // Simula una operación de carga
+                Navigator.of(context).pop(); // Cierra el diálogo de carga
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Siniestro(nombreUsuario: nombreUsuario)),
                 );
                 break;
               case 'AUTOS':
+                await Future.delayed(const Duration(seconds: 2)); // Simula una operación de carga
+                Navigator.of(context).pop(); // Cierra el diálogo de carga
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Auto(nombreUsuario: nombreUsuario)),
                 );
                 break;
               case 'GMM':
+                await Future.delayed(const Duration(seconds: 2)); // Simula una operación de carga
+                Navigator.of(context).pop(); // Cierra el diálogo de carga
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Gmm(nombreUsuario: nombreUsuario)),
                 );
                 break;
               case 'RECURSOS':
+                await Future.delayed(const Duration(seconds: 2)); // Simula una operación de carga
+                Navigator.of(context).pop(); // Cierra el diálogo de carga
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Recurso(nombreUsuario: nombreUsuario)),
                 );
                 break;
               case 'ESTADISTICAS':
+                await Future.delayed(const Duration(seconds: 2)); // Simula una operación de carga
+                Navigator.of(context).pop(); // Cierra el diálogo de carga
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => Graficas(nombreUsuario: nombreUsuario)),

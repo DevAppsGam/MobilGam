@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:appgam/main.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -120,7 +121,6 @@ class _VidaState extends State<Vida> {
     }
   }
 
-
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
@@ -136,6 +136,38 @@ class _VidaState extends State<Vida> {
               child: const Text('OK'),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  void showLoadingDialog(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final imageWidth = screenWidth * 0.3; // Ajusta este valor según sea necesario
+    final imageHeight = screenHeight * 0.2; // Ajusta este valor según sea necesario
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/img/logoApp.png',
+                width: imageWidth,
+                height: imageHeight,
+              ),
+              const SizedBox(height: 20),
+              const CircularProgressIndicator(
+                color: Color.fromRGBO(250, 161, 103, 2),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -476,24 +508,24 @@ class _VidaState extends State<Vida> {
           constraints: const BoxConstraints(minHeight: 70.0), // Establece el alto mínimo de la celda
           padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 13.0),
           child: Center(
-              child: AutoSizeText(
-                columna == 'poliza' ? nPolizaValue : text,
-                style: TextStyle(
-                  fontFamily: 'Roboto',
-                  fontSize: MediaQuery.textScalerOf(context).scale(20),
-                  color: textColor,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: maxLines, // Ajusta el número máximo de líneas permitidas
-                overflow: TextOverflow.ellipsis, // Añade puntos suspensivos al final si el texto se corta
-                minFontSize: 10, // Tamaño mínimo del texto
-                stepGranularity: 1, // Granularidad del tamaño del texto
+            child: AutoSizeText(
+              columna == 'poliza' ? nPolizaValue : text,
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: MediaQuery.textScalerOf(context).scale(20),
+                color: textColor,
+                fontWeight: FontWeight.bold,
               ),
+              textAlign: TextAlign.center,
+              maxLines: maxLines, // Ajusta el número máximo de líneas permitidas
+              overflow: TextOverflow.ellipsis, // Añade puntos suspensivos al final si el texto se corta
+              minFontSize: 10, // Tamaño mínimo del texto
+              stepGranularity: 1, // Granularidad del tamaño del texto
+            ),
           ),
         ),
-        ),
-      );
+      ),
+    );
   }
 
 

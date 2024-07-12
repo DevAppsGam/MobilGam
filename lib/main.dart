@@ -34,8 +34,8 @@ void showErrorDialog(BuildContext context, String errorMessage) {
 void showLoadingDialog(BuildContext context) {
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
-  final imageWidth = screenWidth * 0.3; // Ajusta este valor según sea necesario
-  final imageHeight = screenHeight * 0.2; // Ajusta este valor según sea necesario
+  final imageWidth = screenWidth * 0.2; // Ajusta este valor según sea necesario
+  final imageHeight = screenHeight * 0.1; // Ajusta este valor según sea necesario
 
   showDialog(
     context: context,
@@ -48,7 +48,7 @@ void showLoadingDialog(BuildContext context) {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/img/LOGOGAM.png',
+              'assets/img/logoApp.png',
               width: imageWidth,
               height: imageHeight,
             ),
@@ -139,10 +139,10 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               Image.asset(
                 'assets/img/GAM_TV.png',
-                width: 200,
-                height: 200,
+                width: 180,
+                height: 150,
               ),
-              const SizedBox(height: 20),
+              //  const SizedBox(height: 20),
               const CircularProgressIndicator(
                 color: Color.fromRGBO(250, 161, 103, 2),
               ),
@@ -174,8 +174,16 @@ class _LoginPageState extends State<LoginPage> {
 
     if (username.isEmpty || password.isEmpty) {
       setState(() {
-        errorMessage = 'Por favor, complete todos los campos.';
+        isLoading = false;  // Asegurarse de que el estado de carga sea falso
       });
+
+      if (username.isEmpty && password.isEmpty) {
+        showErrorDialog(context, 'Por favor, ingrese el usuario y la contraseña.');
+      } else if (username.isEmpty) {
+        showErrorDialog(context, 'Por favor, ingrese el usuario.');
+      } else if (password.isEmpty) {
+        showErrorDialog(context, 'Por favor, ingrese la contraseña.');
+      }
       return;
     }
 
@@ -249,6 +257,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+
   void togglePasswordVisibility() {
     setState(() {
       obscurePassword = !obscurePassword;
@@ -274,7 +283,7 @@ class _LoginPageState extends State<LoginPage> {
           child: ListView(
             padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
             children: <Widget>[
-              SizedBox(height: screenHeight * 0.25),
+              SizedBox(height: screenHeight * 0.20),
               Image.asset(
                 'assets/img/IntraGAM.png',
                 width: screenWidth * 0.3,
@@ -345,7 +354,7 @@ class _LoginPageState extends State<LoginPage> {
                     //textScaler: MediaQuery.textScalerOf(context),
                     style:  TextStyle(
                       fontFamily: 'Roboto',
-                      fontSize: MediaQuery.textScalerOf(context).scale(25),
+                      fontSize: MediaQuery.textScalerOf(context).scale(15),
                     ),
                     controller: controllerPass,
                     obscureText: obscurePassword,
