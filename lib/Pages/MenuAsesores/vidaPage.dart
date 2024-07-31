@@ -476,24 +476,24 @@ class _VidaState extends State<Vida> {
           constraints: const BoxConstraints(minHeight: 70.0), // Establece el alto mínimo de la celda
           padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 13.0),
           child: Center(
-              child: AutoSizeText(
-                columna == 'poliza' ? nPolizaValue : text,
-                style: TextStyle(
-                  fontFamily: 'Roboto',
-                  fontSize: MediaQuery.textScalerOf(context).scale(20),
-                  color: textColor,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: maxLines, // Ajusta el número máximo de líneas permitidas
-                overflow: TextOverflow.ellipsis, // Añade puntos suspensivos al final si el texto se corta
-                minFontSize: 10, // Tamaño mínimo del texto
-                stepGranularity: 1, // Granularidad del tamaño del texto
+            child: AutoSizeText(
+              columna == 'poliza' ? nPolizaValue : text,
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: MediaQuery.textScalerOf(context).scale(20),
+                color: textColor,
+                fontWeight: FontWeight.bold,
               ),
+              textAlign: TextAlign.center,
+              maxLines: maxLines, // Ajusta el número máximo de líneas permitidas
+              overflow: TextOverflow.ellipsis, // Añade puntos suspensivos al final si el texto se corta
+              minFontSize: 10, // Tamaño mínimo del texto
+              stepGranularity: 1, // Granularidad del tamaño del texto
+            ),
           ),
         ),
-        ),
-      );
+      ),
+    );
   }
 
 
