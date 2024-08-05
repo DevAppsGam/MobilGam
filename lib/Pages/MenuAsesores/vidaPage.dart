@@ -18,7 +18,7 @@ class _VidaState extends State<Vida> {
   bool _isLoading = false;
   bool _isSearchVisible = false;
   late Timer _inactivityTimer;
-  List<Map<String, String>> datos = [];
+  List<Map<String, dynamic>> datos = [];
   final int _perPage = 4;
   int _currentPage = 0;
   String filtroAplicado = '';
@@ -51,12 +51,10 @@ class _VidaState extends State<Vida> {
       final response = await http.get(Uri.parse(
           'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
       if (response.statusCode == 200) {
-        final jsonResponse = json.decode(response.body);
+        final jsonResponse = json.decode(response.body) as List;
         if (jsonResponse.isNotEmpty) {
           setState(() {
-            datos = List<Map<String, String>>.from(
-              jsonResponse.map((item) => Map<String, String>.from(item)),
-            );
+            datos = jsonResponse.map((item) => Map<String, dynamic>.from(item)).toList();
           });
         }
       } else {
@@ -71,7 +69,6 @@ class _VidaState extends State<Vida> {
     }
   }
 
-
   Future<void> fetchDataWithFilter(String? filterNames) async {
     if (filterNames != null) {
       String combinedFilters = filterNames;
@@ -83,11 +80,9 @@ class _VidaState extends State<Vida> {
       final response = await http.get(Uri.parse(
           'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?filter=$combinedFilters&username=${widget.nombreUsuario}'));
       if (response.statusCode == 200) {
-        final jsonResponse = json.decode(response.body);
+        final jsonResponse = json.decode(response.body) as List;
         setState(() {
-          datos = List<Map<String, String>>.from(
-            jsonResponse.map((item) => Map<String, String>.from(item)),
-          );
+          datos = jsonResponse.map((item) => Map<String, dynamic>.from(item)).toList();
           filtroAplicado = filterButtonText[filterNames] ?? '';
         });
       } else {
@@ -119,14 +114,13 @@ class _VidaState extends State<Vida> {
   void toggleFiltro(String filterName, String buttonText) {
     setState(() {
       if (isFilterActive(filterName)) {
-        activeFilters.remove(filterName); // Desmarcar el filtro si ya está activo
+        activeFilters.remove(filterName);
       } else {
-        activeFilters.add(filterName); // Marcar el filtro si no está activo
+        activeFilters.add(filterName);
       }
       filtroAplicado = activeFilters.isNotEmpty ? activeFilters.join(', ') : '';
     });
 
-    // Aplicar los filtros seleccionados
     applyFilters();
   }
 
@@ -189,11 +183,9 @@ class _VidaState extends State<Vida> {
       final response = await http.get(Uri.parse(
           'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?filter=$semaforo&username=${widget.nombreUsuario}'));
       if (response.statusCode == 200) {
-        final jsonResponse = json.decode(response.body);
+        final jsonResponse = json.decode(response.body) as List;
         setState(() {
-          datos = List<Map<String, String>>.from(
-            jsonResponse.map((item) => Map<String, String>.from(item)),
-          );
+          datos = jsonResponse.map((item) => Map<String, dynamic>.from(item)).toList();
           filtroAplicado = semaforo.replaceAll('_', ' ');
         });
       } else {
@@ -233,12 +225,12 @@ class _VidaState extends State<Vida> {
   TableRow _buildTableHeaderRow() {
     return TableRow(
       children: [
-        _buildTableHeaderCell(' Folio GAM'),
-        _buildTableHeaderCell(' Contratante '),
-        _buildTableHeaderCell(' N° Póliza'),
-        _buildTableHeaderCell(' Folio GNP'),
-        _buildTableHeaderCell(' Fecha Promesa '),
-        _buildTableHeaderCell(' Estatus Trámite'),
+        _buildTableHeaderCell('Folio GAM'),
+        _buildTableHeaderCell('Contratante'),
+        _buildTableHeaderCell('N° Póliza'),
+        _buildTableHeaderCell('Folio GNP'),
+        _buildTableHeaderCell('Fecha Promesa'),
+        _buildTableHeaderCell('Estatus Trámite'),
       ],
     );
   }
@@ -269,19 +261,19 @@ class _VidaState extends State<Vida> {
   }
 
   List<TableRow> _buildTableRows() {
-    List<Map<String, String>> paginatedData = datos
+    List<Map<String, dynamic>> paginatedData = datos
         .skip(_currentPage * _perPage)
         .take(_perPage)
         .toList();
     return paginatedData.map((item) {
       return TableRow(
         children: [
-          _buildTableCell(item['FOLIO GAM']!),
-          _buildTableCell(item['CONTRATANTE']!),
-          _buildTableCell(item['N° POLIZA']!),
-          _buildTableCell(item['FOLIO GNP']!),
-          _buildTableCell(item['FECHA PROMESA']!),
-          _buildTableCell(item['ESTATUS TRAMITE']!),
+          _buildTableCell(item['id'] ?? ''),
+          _buildTableCell(item['contratante'] ?? ''),
+          _buildTableCell(item['poliza'] ?? ''),
+          _buildTableCell(item['folio_gnp'] ?? ''),
+          _buildTableCell(item['fecha_promesa'] ?? ''),
+          _buildTableCell(item['estatus_tramite'] ?? ''),
         ],
       );
     }).toList();
@@ -358,31 +350,24 @@ class _VidaState extends State<Vida> {
     );
   }
 
-
   Widget _buildTableContainer() {
     return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Table(
-              columnWidths: const <int, TableColumnWidth>{
-                0: FixedColumnWidth(100.0),
-                1: FixedColumnWidth(150.0),
-                2: FixedColumnWidth(100.0),
-                3: FixedColumnWidth(100.0),
-                4: FixedColumnWidth(150.0),
-                5: FixedColumnWidth(150.0),
-              },
-              border: TableBorder.all(color: Colors.grey),
-              children: [
-                _buildTableHeaderRow(),
-                ..._buildTableRows(),
-              ],
-            ),
-          ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Table(
+          columnWidths: const <int, TableColumnWidth>{
+            0: FixedColumnWidth(100.0),
+            1: FixedColumnWidth(150.0),
+            2: FixedColumnWidth(100.0),
+            3: FixedColumnWidth(100.0),
+            4: FixedColumnWidth(150.0),
+            5: FixedColumnWidth(150.0),
+          },
+          border: TableBorder.all(color: Colors.grey),
+          children: [
+            _buildTableHeaderRow(),
+            ..._buildTableRows(),
+          ],
         ),
       ),
     );
@@ -452,28 +437,8 @@ class _VidaState extends State<Vida> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: _isLoading
-                    ? Center(child: CircularProgressIndicator())
-                    : SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Table(
-                      columnWidths: const <int, TableColumnWidth>{
-                        0: FixedColumnWidth(100.0),
-                        1: FixedColumnWidth(150.0),
-                        2: FixedColumnWidth(100.0),
-                        3: FixedColumnWidth(100.0),
-                        4: FixedColumnWidth(150.0),
-                        5: FixedColumnWidth(150.0),
-                      },
-                      border: TableBorder.all(color: Colors.grey),
-                      children: [
-                        _buildTableHeaderRow(),
-                        ..._buildTableRows(),
-                      ],
-                    ),
-                  ),
-                ),
+                    ? const Center(child: CircularProgressIndicator())
+                    : _buildTableContainer(),
               ),
             ),
             const SizedBox(height: 8.0),
@@ -483,6 +448,4 @@ class _VidaState extends State<Vida> {
       ),
     );
   }
-
-
 }
