@@ -414,7 +414,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-              SizedBox(height: screenHeight * 0.05),
+              SizedBox(height: screenHeight * 0.1),
               Text(
                 '© 2019 Grupo Administrativo Mexicano S.A de C.V | Todos los derechos reservados',
                 textAlign: TextAlign.center,

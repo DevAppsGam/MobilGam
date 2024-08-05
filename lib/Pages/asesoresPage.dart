@@ -1,8 +1,8 @@
 import 'dart:async';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:appgam/Pages/Contacto/contactoVidaPage.dart';
-import 'package:appgam/Pages/Graficas/graficasPage.dart';
 import 'package:appgam/Pages/MenuAsesores/autosPage.dart';
 import 'package:appgam/Pages/MenuAsesores/gmmPage.dart';
 import 'package:appgam/Pages/MenuAsesores/recursosPage.dart';
@@ -198,7 +198,7 @@ class _AsesoresState extends State<Asesores> {
                         {
                           'imagePath': 'assets/img/Recursos_Blanco.png',
                           'title': 'RECURSOS',
-                          'colo!r': const Color.fromRGBO(115, 117, 121, 1),
+                          'color': const Color.fromRGBO(115, 117, 121, 1),
                         },
                       ];
 
@@ -275,13 +275,17 @@ class IconWithText extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         double iconSize = constraints.maxWidth * 0.6; // Ajusta el tamaño del ícono al 60% del ancho del contenedor
-        double fontSize = MediaQuery.textScalerOf(context).scale(16); // Ajustado según TextScaler
+
+        double baseFontSize = 22; // Define un tamaño de fuente base
+        double textScaleFactor = MediaQuery.of(context).textScaleFactor; // Obtiene el factor de escala de texto
+        double fontSize = baseFontSize * textScaleFactor; // Ajusta el tamaño de la fuente según el factor de escala
+
         return GestureDetector(
           onTap: () async {
             showLoadingDialog(context);
             switch (title) {
               case 'VIDA':
-                await Future.delayed(const Duration(seconds: 2)); // Simula una operación de carga
+                await Future.delayed(const Duration(seconds: 5)); // Simula una operación de carga
                 Navigator.of(context).pop(); // Cierra el diálogo de carga
                 Navigator.push(
                   context,
@@ -320,14 +324,6 @@ class IconWithText extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => Recurso(nombreUsuario: nombreUsuario)),
                 );
                 break;
-              case 'ESTADISTICAS':
-                await Future.delayed(const Duration(seconds: 2)); // Simula una operación de carga
-                Navigator.of(context).pop(); // Cierra el diálogo de carga
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Graficas(nombreUsuario: nombreUsuario)),
-                );
-                break;
             }
           },
           child: Column(
@@ -354,7 +350,7 @@ class IconWithText extends StatelessWidget {
               const SizedBox(height: 8),
               FractionallySizedBox(
                 widthFactor: 0.6, // Ajusta el tamaño del contenedor al 60% del ancho del contenedor padre
-                child: Text(
+                child: AutoSizeText(
                   title,
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -363,6 +359,9 @@ class IconWithText extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     color: color ?? Colors.black,
                   ),
+                  maxLines: 1,
+                  minFontSize: 10,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
