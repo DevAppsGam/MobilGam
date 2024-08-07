@@ -34,8 +34,8 @@ void showErrorDialog(BuildContext context, String errorMessage) {
 void showLoadingDialog(BuildContext context) {
   final screenWidth = MediaQuery.of(context).size.width;
   final screenHeight = MediaQuery.of(context).size.height;
-  final imageWidth = screenWidth * 0.3; // Ajusta este valor según sea necesario
-  final imageHeight = screenHeight * 0.2; // Ajusta este valor según sea necesario
+  final imageWidth = screenWidth * 0.2;
+  final imageHeight = screenHeight * 0.1;
 
   showDialog(
     context: context,
@@ -48,11 +48,11 @@ void showLoadingDialog(BuildContext context) {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/img/LOGOGAM.png',
+              'assets/img/logoApp.png',
               width: imageWidth,
               height: imageHeight,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             const CircularProgressIndicator(
               color: Color.fromRGBO(250, 161, 103, 2),
             ),
@@ -139,10 +139,9 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               Image.asset(
                 'assets/img/GAM_TV.png',
-                width: 200,
-                height: 200,
+                width: 160,
+                height: 130,
               ),
-              const SizedBox(height: 20),
               const CircularProgressIndicator(
                 color: Color.fromRGBO(250, 161, 103, 2),
               ),
@@ -174,8 +173,16 @@ class _LoginPageState extends State<LoginPage> {
 
     if (username.isEmpty || password.isEmpty) {
       setState(() {
-        errorMessage = 'Por favor, complete todos los campos.';
+        isLoading = false;
       });
+
+      if (username.isEmpty && password.isEmpty) {
+        showErrorDialog(context, 'Por favor, ingrese el usuario y la contraseña.');
+      } else if (username.isEmpty) {
+        showErrorDialog(context, 'Por favor, ingrese el usuario.');
+      } else if (password.isEmpty) {
+        showErrorDialog(context, 'Por favor, ingrese la contraseña.');
+      }
       return;
     }
 
@@ -184,7 +191,7 @@ class _LoginPageState extends State<LoginPage> {
       errorMessage = '';
     });
 
-    showLoadingDialog(context);  // Mostrar el diálogo de carga
+    showLoadingDialog(context);
 
     try {
       final response = await http.post(
@@ -199,11 +206,12 @@ class _LoginPageState extends State<LoginPage> {
         isLoading = false;
       });
 
+      Navigator.of(context).pop();
+
       if (response.statusCode == 200) {
         final dynamic responseData = jsonDecode(response.body);
 
         if (responseData is Map<String, dynamic>) {
-          Navigator.of(context).pop();  // Cerrar el diálogo de carga
           if (responseData.containsKey("error")) {
             showErrorDialog(context, responseData["error"]);
           } else {
@@ -274,13 +282,13 @@ class _LoginPageState extends State<LoginPage> {
           child: ListView(
             padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
             children: <Widget>[
-              SizedBox(height: screenHeight * 0.25),
+              SizedBox(height: screenHeight * 0.20),
               Image.asset(
                 'assets/img/IntraGAM.png',
                 width: screenWidth * 0.3,
                 height: screenHeight * 0.1,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 15),
               Center(
                 child: Text(
                   'Bienvenido',
@@ -289,7 +297,6 @@ class _LoginPageState extends State<LoginPage> {
                     fontWeight: FontWeight.bold,
                     color: const Color.fromRGBO(73, 78, 84, 1),
                     fontFamily: 'Roboto',
-
                   ),
                 ),
               ),
@@ -297,7 +304,7 @@ class _LoginPageState extends State<LoginPage> {
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
                 decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(50)),
+                  borderRadius: BorderRadius.all(Radius.circular(100)),
                   color: Colors.transparent,
                   boxShadow: [
                     BoxShadow(
@@ -307,10 +314,9 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
                 child: TextFormField(
-                  //textScaler: MediaQuery.textScalerOf(context),
                   style: TextStyle(
                     fontFamily: 'Roboto',
-                    fontSize: MediaQuery.textScalerOf(context).scale(25),
+                    fontSize: MediaQuery.textScalerOf(context).scale(15),
                   ),
                   controller: controllerUser,
                   autofocus: false,
@@ -342,10 +348,9 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 child: Center(
                   child: TextField(
-                    //textScaler: MediaQuery.textScalerOf(context),
-                    style:  TextStyle(
+                    style: TextStyle(
                       fontFamily: 'Roboto',
-                      fontSize: MediaQuery.textScalerOf(context).scale(25),
+                      fontSize: MediaQuery.textScalerOf(context).scale(15),
                     ),
                     controller: controllerPass,
                     obscureText: obscurePassword,
@@ -405,12 +410,12 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
               ),
-              SizedBox(height: screenHeight * 0.05),
+              SizedBox(height: screenHeight * 0.09),
               Text(
                 '© 2019 Grupo Administrativo Mexicano S.A de C.V | Todos los derechos reservados',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: MediaQuery.textScalerOf(context).scale(12),
+                  fontSize: MediaQuery.textScalerOf(context).scale(11),
                   color: const Color.fromRGBO(42, 37, 37, 1.0),
                   fontFamily: 'Roboto',
                 ),

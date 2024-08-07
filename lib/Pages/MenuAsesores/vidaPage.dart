@@ -1,10 +1,9 @@
 import 'dart:convert';
+import 'package:appgam/Pages/asesoresPage.dart';
 import 'package:appgam/main.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:appgam/Pages/MenuAsesores/Detalles/vidaDetallePage.dart';
 import 'dart:async';
 
 class Vida extends StatefulWidget {
@@ -17,9 +16,10 @@ class Vida extends StatefulWidget {
 }
 
 class _VidaState extends State<Vida> {
+  bool _isLoading = false;
+  bool _isSearchVisible = false;
   late Timer _inactivityTimer;
-
-  List<Map<String, String>> datos = [];
+  List<Map<String, dynamic>> datos = [];
   final int _perPage = 4;
   int _currentPage = 0;
   String filtroAplicado = '';
@@ -28,9 +28,10 @@ class _VidaState extends State<Vida> {
     'PAGOS': 'PAGOS',
     'MOVIMIENTOS': 'MOVIMIENTOS',
   };
-
   Set<String> activeFilters = <String>{};
   String searchTerm = '';
+
+  bool isFilterActive(String filterName) => activeFilters.contains(filterName);
 
   @override
   void initState() {
@@ -44,33 +45,28 @@ class _VidaState extends State<Vida> {
   }
 
   Future<void> fetchData() async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
       final response = await http.get(Uri.parse(
           'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?username=${widget.nombreUsuario}'));
       if (response.statusCode == 200) {
-        if (response.body.isNotEmpty) {
-          final jsonResponse = json.decode(response.body) as List<dynamic>;
+        final jsonResponse = json.decode(response.body) as List;
+        if (jsonResponse.isNotEmpty) {
           setState(() {
-            datos = jsonResponse.map((dynamic item) {
-              Map<String, String> mappedItem = {};
-              if (item is Map<String, dynamic>) {
-                item.forEach((key, value) {
-                  // Manejar campos numéricos vacíos
-                  mappedItem[key] = value?.toString() ?? '';
-                });
-              }
-              return mappedItem;
-            }).toList();
+            datos = jsonResponse.map((item) => Map<String, dynamic>.from(item)).toList();
           });
-        } else {
-          print('Error al con json.decode');
         }
       } else {
         _showErrorDialog('Hubo un problema al obtener los datos.');
       }
     } catch (e) {
-      print('Error al decodificar JSON: $e');
       _showErrorDialog('Hubo un problema al decodificar los datos JSON.');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -85,18 +81,9 @@ class _VidaState extends State<Vida> {
       final response = await http.get(Uri.parse(
           'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?filter=$combinedFilters&username=${widget.nombreUsuario}'));
       if (response.statusCode == 200) {
-        List<dynamic> jsonResponse = json.decode(response.body);
+        final jsonResponse = json.decode(response.body) as List;
         setState(() {
-          datos = jsonResponse.map((dynamic item) {
-            Map<String, String> mappedItem = {};
-            if (item is Map<String, dynamic>) {
-              item.forEach((key, value) {
-                mappedItem[key] = value?.toString() ?? '';
-              });
-            }
-            return mappedItem;
-          }).toList();
-          filtroAplicado = filterButtonText[filterNames] ?? '';
+          datos = jsonResponse.map((item) => Map<String, dynamic>.from(item)).toList();
         });
       } else {
         _showErrorDialog('Hubo un problema al obtener los datos. Código de estado: ${response.statusCode}');
@@ -124,37 +111,21 @@ class _VidaState extends State<Vida> {
     );
   }
 
-  void toggleFiltro(String filterName, String buttonText) {
+  void toggleFiltro(String filterName) {
     setState(() {
       if (isFilterActive(filterName)) {
         activeFilters.remove(filterName);
       } else {
-        activeFilters.clear();
         activeFilters.add(filterName);
       }
-
-      if (['A TIEMPO', 'POR VENCER', 'VENCIDOS'].contains(filterName)) {
-        filtroAplicado = buttonText;
-      } else {
-        filtroAplicado = activeFilters.isNotEmpty ? activeFilters.join(', ') : '';
-      }
+      filtroAplicado = activeFilters.isNotEmpty ? activeFilters.join(', ') : '';
+      applyFilters();
     });
-
-    if (['A TIEMPO', 'POR VENCER', 'VENCIDOS'].contains(filterName)) {
-      fetchDataWithFilter(filterName);
-    } else {
-      applySecondFilter(filterName);
-    }
   }
 
-  void applySecondFilter(String filterName) {
-    if (activeFilters.isNotEmpty) {
-      String primaryFilter = activeFilters.first;
-      String combinedFilters = '$primaryFilter,$filterName';
-      fetchDataWithFilter(combinedFilters);
-    } else {
-      fetchDataWithFilter(filterName);
-    }
+  void applyFilters() {
+    String filters = activeFilters.join(',');
+    fetchDataWithFilter(filters);
   }
 
   void performSearch() {
@@ -162,13 +133,7 @@ class _VidaState extends State<Vida> {
       setState(() {
         final filteredData = datos.where((item) {
           final searchString = searchTerm.toLowerCase();
-          return item.values.any((value) {
-            final lowerValue = value.toLowerCase();
-            if (lowerValue.contains(searchString)) {
-              return true;
-            }
-            return double.tryParse(searchTerm) != null && double.tryParse(value) == double.tryParse(searchTerm);
-          });
+          return item.values.any((value) => value.toLowerCase().contains(searchString));
         }).toList();
         if (filteredData.isEmpty) {
           _showNoResultsAlert();
@@ -186,9 +151,7 @@ class _VidaState extends State<Vida> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text(
-            'Sin Resultados', style: TextStyle(fontFamily: 'Roboto'),
-          ),
+          title: const Text('Sin Resultados', style: TextStyle(fontFamily: 'Roboto')),
           content: const Text('No se encontraron resultados.'),
           actions: [
             TextButton(
@@ -204,232 +167,298 @@ class _VidaState extends State<Vida> {
     );
   }
 
-  Future<void> fetchDataWithGreenSemaforo() async {
-    try {
-      final url = 'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?filter=A_TIEMPO&username=${widget.nombreUsuario}';
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        List<dynamic> jsonResponse = json.decode(response.body);
-        setState(() {
-          datos = jsonResponse.map((dynamic item) {
-            Map<String, String> mappedItem = {};
-            if (item is Map<String, dynamic>) {
-              item.forEach((key, value) {
-                mappedItem[key] = value?.toString() ?? '';
-              });
-            }
-            return mappedItem;
-          }).toList();
-          filtroAplicado = 'A TIEMPO';
-        });
-      } else {
-        _showErrorDialog('Hubo un problema al obtener los datos. Código de estado: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error al decodificar JSON: $e');
-      _showErrorDialog('Hubo un problema al decodificar los datos JSON.');
-    }
-  }
-
-  void fetchDataWithYellowSemaforo() async {
+  Future<void> fetchDataWithSemaforo(String semaforo) async {
     try {
       final response = await http.get(Uri.parse(
-          'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?filter=POR_VENCER&username=${widget.nombreUsuario}'));
+          'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?filter=$semaforo&username=${widget.nombreUsuario}'));
       if (response.statusCode == 200) {
-        List<dynamic> jsonResponse = json.decode(response.body);
+        final jsonResponse = json.decode(response.body) as List;
         setState(() {
-          datos = jsonResponse.map((dynamic item) {
-            Map<String, String> mappedItem = {};
-            if (item is Map<String, dynamic>) {
-              item.forEach((key, value) {
-                mappedItem[key] = value?.toString() ?? '';
-              });
-            }
-            return mappedItem;
-          }).toList();
-          filtroAplicado = 'POR VENCER';
+          datos = jsonResponse.map((item) => Map<String, dynamic>.from(item)).toList();
+          filtroAplicado = semaforo.replaceAll('_', ' ');
         });
       } else {
         _showErrorDialog('Hubo un problema al obtener los datos. Código de estado: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error al decodificar JSON: $e');
       _showErrorDialog('Hubo un problema al decodificar los datos JSON.');
     }
-  }
-
-  void fetchDataWithRedSemaforo() async {
-    try {
-      final response = await http.get(Uri.parse(
-          'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?filter=VENCIDOS&username=${widget.nombreUsuario}'));
-      if (response.statusCode == 200) {
-        List<dynamic> jsonResponse = json.decode(response.body);
-        setState(() {
-          datos = jsonResponse.map((dynamic item) {
-            Map<String, String> mappedItem = {};
-            if (item is Map<String, dynamic>) {
-              item.forEach((key, value) {
-                mappedItem[key] = value?.toString() ?? '';
-              });
-            }
-            return mappedItem;
-          }).toList();
-          filtroAplicado = 'VENCIDOS';
-        });
-      } else {
-        _showErrorDialog('Hubo un problema al obtener los datos. Código de estado: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error al decodificar JSON: $e');
-      _showErrorDialog('Hubo un problema al decodificar los datos JSON.');
-    }
-  }
-
-  void _startInactivityTimer() {
-    _inactivityTimer = Timer.periodic(const Duration(minutes: 5), (Timer timer) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (BuildContext context) => const MyApp(),
-        ),
-      );
-    });
   }
 
   @override
   void dispose() {
-    _inactivityTimer.cancel();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     super.dispose();
+    _inactivityTimer.cancel();
   }
 
-  bool isFilterActive(String filterName) {
-    return activeFilters.contains(filterName);
+  void _startInactivityTimer() {
+    const inactivityDuration = Duration(seconds: 420);
+    _inactivityTimer = Timer(inactivityDuration, () {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) => const MyApp()),
+            (Route<dynamic> route) => false,
+      );
+    });
+  }
+
+  void _resetInactivityTimer() {
+    _inactivityTimer.cancel();
+    _startInactivityTimer();
+  }
+
+  TableRow _buildTableHeaderRow() {
+    return TableRow(
+      children: [
+        _buildTableHeaderCell('Folio GAM'),
+        _buildTableHeaderCell('Contratante'),
+        _buildTableHeaderCell('N° Póliza'),
+        _buildTableHeaderCell('Folio GNP'),
+        _buildTableHeaderCell('Fecha Promesa'),
+        _buildTableHeaderCell('Estatus Trámite'),
+      ],
+    );
+  }
+
+  Widget _buildTableHeaderCell(String text) {
+    return TableCell(
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Color.fromRGBO(15, 132, 194, 1),
+        ),
+        constraints: const BoxConstraints.expand(height: 70.0),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 13.0),
+          child: Center(
+            child: Text(
+              text,
+              style: const TextStyle(
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<TableRow> _buildTableRows() {
+    List<Map<String, dynamic>> paginatedData = datos
+        .skip(_currentPage * _perPage)
+        .take(_perPage)
+        .toList();
+    return paginatedData.map((item) {
+      return TableRow(
+        children: [
+          _buildTableCell(item['id'] ?? ''),
+          _buildTableCell(item['contratante'] ?? ''),
+          _buildTableCell(item['poliza'] ?? ''),
+          _buildTableCell(item['folio_gnp'] ?? ''),
+          _buildTableCell(item['fecha_promesa'] ?? ''),
+          _buildTableCell(item['estatus_tramite'] ?? ''),
+        ],
+      );
+    }).toList();
+  }
+
+  Widget _buildTableCell(String text) {
+    return TableCell(
+      child: Container(
+        constraints: const BoxConstraints.expand(height: 70.0),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 6.0),
+          child: Center(
+            child: Text(
+              text,
+              style: const TextStyle(fontFamily: 'Roboto'),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTableContainer() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Table(
+        border: TableBorder.all(color: Colors.grey.shade300),
+        children: [
+          _buildTableHeaderRow(),
+          ..._buildTableRows(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterButton(String filterName, String buttonText, Color color, Color pressedColor) {
+    return ElevatedButton(
+      onPressed: () {
+        toggleFiltro(filterName);
+      },
+      style: ElevatedButton.styleFrom(
+        primary: isFilterActive(filterName) ? pressedColor : color,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+      ),
+      child: Text(buttonText, style: const TextStyle(fontFamily: 'Roboto')),
+    );
+  }
+
+  Widget _buildPaginationControls() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: _currentPage > 0 ? () {
+            setState(() {
+              _currentPage--;
+            });
+          } : null,
+        ),
+        Text(
+          'Página ${_currentPage + 1}',
+          style: const TextStyle(fontFamily: 'Roboto'),
+        ),
+        IconButton(
+          icon: const Icon(Icons.arrow_forward),
+          onPressed: datos.length > (_currentPage + 1) * _perPage ? () {
+            setState(() {
+              _currentPage++;
+            });
+          } : null,
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Vida'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: DataSearch(
-                  onSearch: (searchTerm) {
-                    setState(() {
-                      this.searchTerm = searchTerm;
-                    });
-                    performSearch();
-                  },
-                ),
+    return GestureDetector(
+      onTap: _resetInactivityTimer,
+      onPanDown: (_) => _resetInactivityTimer(),
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_outlined),
+            onPressed: (){
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) => Asesores(nombreUsuario: widget.nombreUsuario,)),
+                    (Route<dynamic> route) => false, // Esto elimina todas las rutas anteriores
               );
             },
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  fetchDataWithGreenSemaforo();
-                },
-                child: const Text('A TIEMPO'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  fetchDataWithYellowSemaforo();
-                },
-                child: const Text('POR VENCER'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  fetchDataWithRedSemaforo();
-                },
-                child: const Text('VENCIDOS'),
-              ),
-            ],
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: datos.length,
-              itemBuilder: (context, index) {
-                final item = datos[index];
-                return Card(
-                  child: ListTile(
-                    title: AutoSizeText(item['Nombre'] ?? 'No disponible'),
-                    subtitle: AutoSizeText(item['Descripción'] ?? 'No disponible'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DetalleVida(id: widget.nombreUsuario, nombreUsuario: '',),
-                        ),
-                      );
-                    },
+          title:  Text('Detalles de Folios de Vida de ${widget.nombreUsuario}', style: TextStyle(fontFamily: 'Roboto')),
+          backgroundColor: const Color.fromRGBO(15, 132, 194, 1),
+        ),
+        body: Column(
+          children: [
+            if (filtroAplicado.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Filtro aplicado: $filtroAplicado',
+                  style: const TextStyle(
+                    fontFamily: 'Roboto',
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
-                );
-              },
+                ),
+              ),
+            Wrap(
+              spacing: 8.0, // Espacio horizontal entre los botones
+              runSpacing: 4.0, // Espacio vertical entre las líneas de botones
+              alignment: WrapAlignment.center,
+              children: [
+                SizedBox(
+                  width: 90.0, // Ajustar el ancho para que se ajuste mejor
+                  child: _buildFilterButton('ALTA DE POLIZA', 'ALTA', Colors.blue[300]!, Colors.blue[900]!),
+                ),
+                SizedBox(
+                  width: 95.0,
+                  child: _buildFilterButton('PAGOS', 'PAGOS', Colors.blue[300]!, Colors.blue[900]!),
+                ),
+                SizedBox(
+                  width: 150.0,
+                  child: _buildFilterButton('MOVIMIENTOS', 'MOVIMIENTOS', Colors.blue[300]!, Colors.blue[900]!),
+                ),
+                SizedBox(
+                  width: 120.0,
+                  child: _buildFilterButton('A TIEMPO', 'A TIEMPO', Colors.green, Colors.green[900]!),
+                ),
+                SizedBox(
+                  width: 150.0,
+                  child: _buildFilterButton('POR VENCER', 'POR VENCER', Colors.yellow, Colors.yellow[900]!),
+                ),
+                SizedBox(
+                  width: 120.0,
+                  child: _buildFilterButton('VENCIDOS', 'VENCIDOS', Colors.red, Colors.red[900]!),
+                ),
+                IconButton(
+                  icon: Icon(
+                    _isSearchVisible ? Icons.close : Icons.search,
+                    color: const Color.fromRGBO(15, 132, 194, 1),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _isSearchVisible = !_isSearchVisible;
+                    });
+                  },
+                ),
+              ],
             ),
-          ),
-        ],
+            if (_isSearchVisible)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  onChanged: (value) {
+                    setState(() {
+                      searchTerm = value;
+                    });
+                    performSearch();
+                  },
+                  decoration: const InputDecoration(
+                    labelText: 'Buscar...',
+                    border: OutlineInputBorder(),
+                    suffixIcon: Icon(Icons.search),
+                  ),
+                ),
+              ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : _buildTableContainer(),
+              ),
+            ),
+            const SizedBox(height: 8.0),
+            _buildPaginationControls(),
+          ],
+        ),
       ),
-    );
-  }
-}
-
-class DataSearch extends SearchDelegate<String> {
-  final Function(String) onSearch;
-
-  DataSearch({required this.onSearch});
-
-  @override
-  List<Widget>? buildActions(BuildContext context) {
-    return [
-      IconButton(
-        icon: const Icon(Icons.clear),
-        onPressed: () {
-          query = '';
-        },
-      ),
-    ];
-  }
-
-  @override
-  Widget? buildLeading(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.arrow_back),
-      onPressed: () {
-        Navigator.pop(context);
-      },
-    );
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    onSearch(query);
-    return Container();
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    final suggestions = [];
-    return ListView.builder(
-      itemCount: suggestions.length,
-      itemBuilder: (context, index) {
-        final suggestion = suggestions[index];
-        return ListTile(
-          title: Text(suggestion),
-          onTap: () {
-            query = suggestion;
-            showResults(context);
-          },
-        );
-      },
     );
   }
 }
