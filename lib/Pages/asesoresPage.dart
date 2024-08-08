@@ -164,51 +164,58 @@ class _AsesoresState extends State<Asesores> {
                 ),
               ),
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                    ),
-                    itemCount: 5,
-                    itemBuilder: (BuildContext context, int index) {
-                      final items = [
-                        {
-                          'imagePath': 'assets/img/Vida_Blanco.png',
-                          'title': 'VIDA',
-                          'color': const Color.fromRGBO(67, 198, 80, 1),
-                        },
-                        {
-                          'imagePath': 'assets/img/Siniestros_Blanco.png',
-                          'title': 'SINIESTROS',
-                          'color': const Color.fromRGBO(249, 224, 128, 1.0),
-                        },
-                        {
-                          'imagePath': 'assets/img/Autos_Blanco.png',
-                          'title': 'AUTOS',
-                          'color': const Color.fromRGBO(214, 117, 55, 1),
-                        },
-                        {
-                          'imagePath': 'assets/img/GMM_Blanco.png',
-                          'title': 'GMM',
-                          'color': const Color.fromRGBO(53, 162, 219, 1),
-                        },
-                        {
-                          'imagePath': 'assets/img/Recursos_Blanco.png',
-                          'title': 'RECURSOS',
-                          'color': const Color.fromRGBO(115, 117, 121, 1),
-                        },
-                      ];
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Wrap(
+                        spacing: 10, // Espacio horizontal entre los íconos
+                        runSpacing: 10, // Espacio vertical entre las filas de íconos
+                        alignment: WrapAlignment.center, // Centrar los íconos horizontalmente
+                        children: List.generate(5, (index) {
+                          final items = [
+                            {
+                              'imagePath': 'assets/img/Vida_Blanco.png',
+                              'title': 'VIDA',
+                              'color': const Color.fromRGBO(67, 198, 80, 1),
+                            },
+                            {
+                              'imagePath': 'assets/img/Siniestros_Blanco.png',
+                              'title': 'SINIESTROS',
+                              'color': const Color.fromRGBO(249, 224, 128, 1.0),
+                            },
+                            {
+                              'imagePath': 'assets/img/Autos_Blanco.png',
+                              'title': 'AUTOS',
+                              'color': const Color.fromRGBO(214, 117, 55, 1),
+                            },
+                            {
+                              'imagePath': 'assets/img/GMM_Blanco.png',
+                              'title': 'GMM',
+                              'color': const Color.fromRGBO(53, 162, 219, 1),
+                            },
+                            {
+                              'imagePath': 'assets/img/Recursos_Blanco.png',
+                              'title': 'RECURSOS',
+                              'color': const Color.fromRGBO(115, 117, 121, 1),
+                            },
+                          ];
 
-                      return IconWithText(
-                        imagePath: items[index]['imagePath'] as String,
-                        title: items[index]['title'] as String,
-                        color: items[index]['color'] as Color,
-                        nombreUsuario: widget.nombreUsuario,
-                      );
-                    },
+                          return SizedBox(
+                            width: MediaQuery.of(context).size.width / 2 - 20, // Ancho ajustado a la mitad de la pantalla menos el espacio entre íconos
+                            height: MediaQuery.of(context).size.width / 2 - 20, // Altura igual al ancho para mantener la proporción cuadrada
+                            child: IconWithText(
+                              imagePath: items[index]['imagePath'] as String,
+                              title: items[index]['title'] as String,
+                              color: items[index]['color'] as Color,
+                              nombreUsuario: widget.nombreUsuario,
+                            ),
+                          );
+                        }),
+                      ),
+                      // Agrega la paginación aquí, si es necesario
+                      // Por ejemplo:
+                      // PaginationWidget(),
+                    ],
                   ),
                 ),
               ),

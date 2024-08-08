@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:appgam/Pages/asesoresPage.dart';
 import 'package:appgam/main.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -316,12 +317,18 @@ class _VidaState extends State<Vida> {
         toggleFiltro(filterName);
       },
       style: ElevatedButton.styleFrom(
-        primary: isFilterActive(filterName) ? pressedColor : color,
+        backgroundColor: isFilterActive(filterName) ? pressedColor : color,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),
         ),
       ),
-      child: Text(buttonText, style: const TextStyle(fontFamily: 'Roboto')),
+      child: AutoSizeText(
+        buttonText,
+        style: const TextStyle(fontFamily: 'Roboto'),
+        maxLines: 1, // Ajusta el tamaño en una sola línea
+        minFontSize: 8, // Tamaño mínimo del texto
+        maxFontSize: 16, // Tamaño máximo del texto
+      ),
     );
   }
 
@@ -355,6 +362,7 @@ class _VidaState extends State<Vida> {
 
   @override
   Widget build(BuildContext context) {
+    double appBarTextSize = MediaQuery.textScalerOf(context).scale(16);
     return GestureDetector(
       onTap: _resetInactivityTimer,
       onPanDown: (_) => _resetInactivityTimer(),
@@ -370,65 +378,35 @@ class _VidaState extends State<Vida> {
               );
             },
           ),
-          title:  Text('Detalles de Folios de Vida de ${widget.nombreUsuario}', style: TextStyle(fontFamily: 'Roboto')),
-          backgroundColor: const Color.fromRGBO(15, 132, 194, 1),
+          title:
+            Text(
+                'Folios de Vida de ${widget.nombreUsuario}',
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: appBarTextSize,
+                color: const Color.fromRGBO(246, 246, 246, 1),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
+          actions: [
+            if (!_isSearchVisible)
+              IconButton(
+                icon: const Icon(
+                  Icons.search,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _isSearchVisible = true;
+                  });
+                },
+              ),
+          ],
         ),
         body: Column(
           children: [
-            if (filtroAplicado.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Filtro aplicado: $filtroAplicado',
-                  style: const TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            Wrap(
-              spacing: 8.0, // Espacio horizontal entre los botones
-              runSpacing: 4.0, // Espacio vertical entre las líneas de botones
-              alignment: WrapAlignment.center,
-              children: [
-                SizedBox(
-                  width: 90.0, // Ajustar el ancho para que se ajuste mejor
-                  child: _buildFilterButton('ALTA DE POLIZA', 'ALTA', Colors.blue[300]!, Colors.blue[900]!),
-                ),
-                SizedBox(
-                  width: 95.0,
-                  child: _buildFilterButton('PAGOS', 'PAGOS', Colors.blue[300]!, Colors.blue[900]!),
-                ),
-                SizedBox(
-                  width: 150.0,
-                  child: _buildFilterButton('MOVIMIENTOS', 'MOVIMIENTOS', Colors.blue[300]!, Colors.blue[900]!),
-                ),
-                SizedBox(
-                  width: 120.0,
-                  child: _buildFilterButton('A TIEMPO', 'A TIEMPO', Colors.green, Colors.green[900]!),
-                ),
-                SizedBox(
-                  width: 150.0,
-                  child: _buildFilterButton('POR VENCER', 'POR VENCER', Colors.yellow, Colors.yellow[900]!),
-                ),
-                SizedBox(
-                  width: 120.0,
-                  child: _buildFilterButton('VENCIDOS', 'VENCIDOS', Colors.red, Colors.red[900]!),
-                ),
-                IconButton(
-                  icon: Icon(
-                    _isSearchVisible ? Icons.close : Icons.search,
-                    color: const Color.fromRGBO(15, 132, 194, 1),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _isSearchVisible = !_isSearchVisible;
-                    });
-                  },
-                ),
-              ],
-            ),
+            //esta es la barra de busqeda
             if (_isSearchVisible)
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -446,18 +424,90 @@ class _VidaState extends State<Vida> {
                   ),
                 ),
               ),
+            Wrap(
+              alignment: WrapAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: _buildFilterButton('ALTA DE POLIZA', 'ALTA', Colors.blue[300]!, Colors.blue[900]!),
+                    ),
+                    const SizedBox(width: 8.0),
+                    Flexible(
+                      child: _buildFilterButton('PAGOS', 'PAGOS', Colors.blue[300]!, Colors.blue[900]!),
+                    ),
+                    const SizedBox(width: 8.0),
+                    Flexible(
+                      child: _buildFilterButton('MOVIMIENTOS', 'MOVIMIENTOS', Colors.blue[300]!, Colors.blue[900]!),
+                    ),
+                    const SizedBox(width: 8.0),
+                    Flexible(
+                      child: _buildFilterButton('A TIEMPO', 'A TIEMPO', Colors.green, Colors.green[900]!),
+                    ),
+                    const SizedBox(width: 8.0),
+                    Flexible(
+                      child: _buildFilterButton('POR VENCER', 'POR VENCER', Colors.yellow, Colors.yellow[900]!),
+                    ),
+                    const SizedBox(width: 8.0),
+                    Flexible(
+                      child: _buildFilterButton('VENCIDOS', 'VENCIDOS', Colors.red, Colors.red[900]!),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            //este es el mensaje de los filtros
+            if (filtroAplicado.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Filtro aplicado: $filtroAplicado',
+                  style: const TextStyle(
+                    fontFamily: 'Roboto',
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: _isLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(
+                        color: Color.fromRGBO(250, 161, 103, 2),
+                      ), // Puedes cambiarlo por otro widget
+                      SizedBox(height: 16.0),
+                      Text(
+                        'Cargando datos, por favor espera...',
+                        style: TextStyle(fontFamily: 'Roboto', fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                )
                     : _buildTableContainer(),
               ),
             ),
+
             const SizedBox(height: 8.0),
             _buildPaginationControls(),
           ],
         ),
+        floatingActionButton: _isSearchVisible
+            ? FloatingActionButton(
+          onPressed: () {
+            setState(() {
+              _isSearchVisible = false;
+            });
+          },
+          backgroundColor: Colors.red,
+          child: const Icon(Icons.close),
+        )
+            : null,
       ),
     );
   }
