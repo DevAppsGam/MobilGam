@@ -261,9 +261,9 @@ class _VidaState extends State<Vida> {
           _buildTableCell(item['id'] ?? ''),
           _buildTableCell(item['contratante'] ?? ''),
           _buildTableCell(item['poliza'] ?? ''),
-          _buildTableCell(item['folio_gnp'] ?? ''),
+          _buildTableCell(item['fgnp'] ?? ''),
           _buildTableCell(item['fecha_promesa'] ?? ''),
-          _buildTableCell(item['estatus_tramite'] ?? ''),
+          _buildTableCell(item['estado'] ?? ''),
         ],
       );
     }).toList();
@@ -288,25 +288,28 @@ class _VidaState extends State<Vida> {
   }
 
   Widget _buildTableContainer() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.3),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Table(
-        border: TableBorder.all(color: Colors.grey.shade300),
-        children: [
-          _buildTableHeaderRow(),
-          ..._buildTableRows(),
-        ],
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.3),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Table(
+          border: TableBorder.all(color: Colors.grey.shade300),
+          children: [
+            _buildTableHeaderRow(),
+            ..._buildTableRows(),
+          ],
+        ),
       ),
     );
   }
@@ -359,10 +362,10 @@ class _VidaState extends State<Vida> {
       ],
     );
   }
-
   @override
   Widget build(BuildContext context) {
     double appBarTextSize = MediaQuery.textScalerOf(context).scale(16);
+
     return GestureDetector(
       onTap: _resetInactivityTimer,
       onPanDown: (_) => _resetInactivityTimer(),
@@ -370,24 +373,23 @@ class _VidaState extends State<Vida> {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_outlined),
-            onPressed: (){
+            onPressed: () {
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (BuildContext context) => Asesores(nombreUsuario: widget.nombreUsuario,)),
-                    (Route<dynamic> route) => false, // Esto elimina todas las rutas anteriores
+                    (Route<dynamic> route) => false,
               );
             },
           ),
-          title:
-            Text(
-                'Folios de Vida de ${widget.nombreUsuario}',
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: appBarTextSize,
-                color: const Color.fromRGBO(246, 246, 246, 1),
-                fontWeight: FontWeight.bold,
-              ),
+          title: Text(
+            'Folios de Vida de ${widget.nombreUsuario}',
+            style: TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: appBarTextSize,
+              color: const Color.fromRGBO(246, 246, 246, 1),
+              fontWeight: FontWeight.bold,
             ),
+          ),
           backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
           actions: [
             if (!_isSearchVisible)
@@ -406,7 +408,6 @@ class _VidaState extends State<Vida> {
         ),
         body: Column(
           children: [
-            //esta es la barra de busqeda
             if (_isSearchVisible)
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -457,7 +458,6 @@ class _VidaState extends State<Vida> {
                 ),
               ],
             ),
-            //este es el mensaje de los filtros
             if (filtroAplicado.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -470,6 +470,29 @@ class _VidaState extends State<Vida> {
                   ),
                 ),
               ),
+            // Encabezados fijos utilizando una Table
+            Container(
+              color: Colors.grey[200],
+              child: Table(
+                border: TableBorder.all(color: Colors.grey.shade300),
+                children: [
+                  TableRow(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                    ),
+                    children: [
+                      _buildTableHeaderCell('FOLIO GAM'),
+                      _buildTableHeaderCell('CONTRATANTE'),
+                      _buildTableHeaderCell('N° PÓLIZA'),
+                      _buildTableHeaderCell('FOLIO GNP'),
+                      _buildTableHeaderCell('FECHA PROMESA'),
+                      _buildTableHeaderCell('ESTATUS TRÁMITE'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            // Datos desplazables
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -480,19 +503,27 @@ class _VidaState extends State<Vida> {
                     children: [
                       CircularProgressIndicator(
                         color: Color.fromRGBO(250, 161, 103, 2),
-                      ), // Puedes cambiarlo por otro widget
+                      ),
                       SizedBox(height: 16.0),
                       Text(
                         'Cargando datos, por favor espera...',
-                        style: TextStyle(fontFamily: 'Roboto', fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
                 )
-                    : _buildTableContainer(),
+                    : SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Table(
+                    border: TableBorder.all(color: Colors.grey.shade300),
+                    children: _buildTableRows(),
+                  ),
+                ),
               ),
             ),
-
             const SizedBox(height: 8.0),
             _buildPaginationControls(),
           ],
@@ -511,4 +542,6 @@ class _VidaState extends State<Vida> {
       ),
     );
   }
+
+
 }
