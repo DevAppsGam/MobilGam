@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:appgam/Pages/MenuAsesores/Detalles/vidaDetallePage.dart';
 import 'package:appgam/Pages/asesoresPage.dart';
 import 'package:appgam/main.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -233,7 +234,7 @@ class _VidaState extends State<Vida> {
         ),
         constraints: const BoxConstraints.expand(height: 70.0),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 13.0),
+          padding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 12.0),
           child: Center(
             child: Text(
               text,
@@ -241,6 +242,7 @@ class _VidaState extends State<Vida> {
                 fontFamily: 'Roboto',
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
+                fontSize: 12,
               ),
               textAlign: TextAlign.center,
             ),
@@ -258,7 +260,10 @@ class _VidaState extends State<Vida> {
     return paginatedData.map((item) {
       return TableRow(
         children: [
-          _buildTableCell(item['id'] ?? ''),
+          _buildTableCell(
+            isFolio: true,
+            item['id'] ?? '',
+          ),
           _buildTableCell(item['contratante'] ?? ''),
           _buildTableCell(item['poliza'] ?? ''),
           _buildTableCell(item['fgnp'] ?? ''),
@@ -269,17 +274,36 @@ class _VidaState extends State<Vida> {
     }).toList();
   }
 
-  Widget _buildTableCell(String text) {
+
+  Widget _buildTableCell(String text, {bool isFolio = false}) {
     return TableCell(
-      child: Container(
-        constraints: const BoxConstraints.expand(height: 70.0),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 6.0),
-          child: Center(
-            child: Text(
-              text,
-              style: const TextStyle(fontFamily: 'Roboto'),
-              textAlign: TextAlign.center,
+      child: GestureDetector(
+        onTap: isFolio ? () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetalleVida(
+                nombreUsuario: widget.nombreUsuario,
+                id: text,
+              ),
+            ),
+          );
+        } : null,
+        child: Container(
+          //ANCHO DE LAS CELDAS DE LA TABLA
+          constraints: const BoxConstraints.expand(height: 75.0),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 5.0),
+            child: Center(
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontFamily: 'Roboto',
+                  color: isFolio ? Colors.blue : Colors.black,
+                  decoration: isFolio ? TextDecoration.underline : TextDecoration.none,
+                ),
+                textAlign: TextAlign.center,
+              ),
             ),
           ),
         ),
@@ -330,7 +354,7 @@ class _VidaState extends State<Vida> {
         style: const TextStyle(fontFamily: 'Roboto'),
         maxLines: 1, // Ajusta el tamaño en una sola línea
         minFontSize: 8, // Tamaño mínimo del texto
-        maxFontSize: 16, // Tamaño máximo del texto
+        maxFontSize: 14, // Tamaño máximo del texto
       ),
     );
   }
@@ -465,7 +489,7 @@ class _VidaState extends State<Vida> {
                   'Filtro aplicado: $filtroAplicado',
                   style: const TextStyle(
                     fontFamily: 'Roboto',
-                    fontSize: 16,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -504,7 +528,7 @@ class _VidaState extends State<Vida> {
                       CircularProgressIndicator(
                         color: Color.fromRGBO(250, 161, 103, 2),
                       ),
-                      SizedBox(height: 16.0),
+                      SizedBox(height: 14.0),
                       Text(
                         'Cargando datos, por favor espera...',
                         style: TextStyle(
@@ -542,6 +566,4 @@ class _VidaState extends State<Vida> {
       ),
     );
   }
-
-
 }
