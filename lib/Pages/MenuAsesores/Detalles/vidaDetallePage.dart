@@ -31,11 +31,34 @@ class _DetalleVidaState extends State<DetalleVida> {
 
   List<Map<String, dynamic>>? dataForThirdTable;
 
+  bool _isLoading = true; // Estado de carga inicial
+  List<Map<String, dynamic>>? _secondTableData;
+  List<Map<String, dynamic>>? _dataForThirdTable;
+
   @override
   void initState() {
     super.initState();
     fetchDataFromPHP();
     fetchDataForThirdTable();
+  }
+
+  Future<void> _loadData() async {
+    try {
+      // Simula una carga de datos
+      await Future.delayed(const Duration(seconds: 5));
+      // Aquí obtendrás tus datos de la API o de donde provengan
+      setState(() {
+        // Asignar datos a las variables
+        _secondTableData = []; // Reemplaza con tus datos
+        _dataForThirdTable = []; // Reemplaza con tus datos
+        _isLoading = false; // Cambia el estado a no cargando
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      // Manejo de errores
+    }
   }
 
   DataColumn createDataColumnForFirstTable(String label, List<Map<String, dynamic>> data) {
@@ -302,17 +325,20 @@ class _DetalleVidaState extends State<DetalleVida> {
 
   @override
   Widget build(BuildContext context) {
+    double appBarTextSize = MediaQuery.textScalerOf(context).scale(16);
     final Paint? foreground;
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Detalles de la Solicitud de ${widget.nombreUsuario}',
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: 'Roboto',
-            fontSize: 17,
-            color: Color.fromRGBO(246, 246, 246, 1),
+            color: const Color.fromRGBO(246, 246, 246, 1),
+            fontSize: appBarTextSize,
+            fontWeight: FontWeight.bold,
           ),
         ),
+        backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
       ),
       body: Container(
         padding: const EdgeInsets.all(10),
@@ -345,176 +371,70 @@ class _DetalleVidaState extends State<DetalleVida> {
                 Table(
                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   children: [
-                    TableRow(
-                        decoration: const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)),
-                        children: [
-                          buildTableCell('Folio GAM', isHeader: true),
-                          buildTableCell('Línea de Negocio', isHeader: true),
-                          buildTableCell('Fecha de Solicitud', isHeader: true),
-                          buildTableCell('Estado', isHeader: true),
-                      ]),
-                    TableRow(children: [
-                      buildTableCell(data['id'] ?? '***'),
-                      buildTableCell(data['negocio'] ?? '***'),
-                      buildTableCell(data['fecha'] ?? '***'),
-                      buildTableCell(data['estado'] ?? '***'),
+                    buildTableRow([
+                      'Folio GAM',
+                      'Línea de Negocio',
+                      'Fecha de Solicitud',
+                      'Estado',
+                    ], isHeader: true),
+                    buildTableRow([
+                      data['id'],
+                      data['negocio'],
+                      data['fecha'],
+                      data['estado'],
                     ]),
-                    TableRow(
-                        decoration: const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)),
-                        children: [
-                      buildTableCell('Contratante', isHeader: true),
-                      buildTableCell('Póliza', isHeader: true),
-                      buildTableCell('Tipo de Solicitud', isHeader: true),
-                      buildTableCell('Comentarios', isHeader: true),
+                    buildTableRow([
+                      'Contratante',
+                      'Póliza',
+                      'Tipo de Solicitud',
+                      'Comentarios',
+                    ], isHeader: true),
+                    buildTableRow([
+                      data['contratante'],
+                      data['t_solicitud'] == 'MOVIMIENTOS' ? data['poliza'] : data['polizap'],
+                      data['t_solicitud'],
+                      data['comentarios'],
                     ]),
-                    TableRow(children: [
-                      buildTableCell(data['contratante'] ?? '***'),
-                      buildTableCell(
-                        data['t_solicitud'] == 'MOVIMIENTOS'
-                            ? data['poliza'] ?? '***'
-                            : data['t_solicitud'] == 'PAGOS'
-                            ? data['polizap'] ?? '***'
-                            : data['polizap'] ?? '***',
-                      ),
-                      buildTableCell(data['t_solicitud'] ?? '***'),
-                      buildTableCell(data['comentarios'] ?? '***'),
+                    buildTableRow([
+                      'Prioridad',
+                      data['t_solicitud'] == 'ALTA DE POLIZA'
+                          ? 'Prima'
+                          : data['t_solicitud'] == 'PAGOS'
+                          ? 'Monto'
+                          : 'Tipo de Movimiento',
+                      data['t_solicitud'] == 'ALTA DE POLIZA' || data['t_solicitud'] == 'PAGOS'
+                          ? 'Folio GNP'
+                          : '',
+                      data['t_solicitud'] == 'ALTA DE POLIZA' || data['t_solicitud'] == 'PAGOS'
+                          ? 'Moneda'
+                          : '',
+                    ], isHeader: true),
+                    buildTableRow([
+                      data['prioridad'],
+                      data['t_solicitud'] == 'ALTA DE POLIZA'
+                          ? data['prima']
+                          : data['t_solicitud'] == 'PAGOS'
+                          ? data['monto']
+                          : data['movimiento'],
+                      data['t_solicitud'] == 'ALTA DE POLIZA' || data['t_solicitud'] == 'PAGOS'
+                          ? data['fgnp']
+                          : '',
+                      data['t_solicitud'] == 'ALTA DE POLIZA' || data['t_solicitud'] == 'PAGOS'
+                          ? data['monedap']
+                          : '',
                     ]),
-                    TableRow(
-                        children: [
-                          Container(
-                            decoration: const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)), // Aplica la decoración si el tipo de solicitud es 'MOVIMIENTOS'
-                            child: buildTableCell(
-                              'Prioridad',
-                              isHeader: true,
-                            ),
-                          ),
-                          Container(
-                            decoration:  const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)),
-                            child: buildTableCell(
-                                data['t_solicitud'] == 'MOVIMIENTOS'
-                                    ? 'Tipo de Movimiento'
-                                    : data['t_solicitud'] == 'PAGOS'
-                                    ? 'Moneda'
-                                    : 'Moneda',
-                                isHeader: true
-                            ),
-                          ),
-                          Container(
-                            decoration: data['t_solicitud'] == 'PAGOS'
-                                ? const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)) // Aplica la decoración si el tipo de solicitud es 'MOVIMIENTOS
-                                : data['t_solicitud'] == 'ALTA DE POLIZA'
-                                ? const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1))
-                                : null,
-                            child: buildTableCell(
-                                data['t_solicitud'] == 'MOVIMIENTOS'
-                                    ? ''
-                                    : data['t_solicitud'] == 'PAGOS'
-                                    ? 'Monto'
-                                    : 'Producto',
-                                isHeader: true
-                            ),
-                          ),
-                          Container(
-                            decoration: data['t_solicitud'] == 'PAGOS'
-                                ? const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)) // Aplica la decoración si el tipo de solicitud es 'MOVIMIENTOS
-                                : data['t_solicitud'] == 'ALTA DE POLIZA'
-                                ? const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1))
-                                : null,
-                            child: buildTableCell(
-                                data['t_solicitud'] == 'MOVIMIENTOS'
-                                    ? ''
-                                    : data['t_solicitud'] == 'PAGOS'
-                                    ? 'Folio GNP'
-                                    : 'Folio GNP',
-                                isHeader: true
-                            ),
-                          ),
-                    ]),
-                    TableRow(
-                        children: [
-                        buildTableCell(data['prioridad'] ?? '***'),
-                      buildTableCell(
-                        data['t_solicitud'] == 'MOVIMIENTOS'
-                            ?  data['movimiento'] ?? '***'
-                            : data['t_solicitud'] == 'PAGOS'
-                            ? data['moneda_pagos'] ?? ''
-                            : data['t_solicitud'] == 'ALTA DE POLIZA'
-                            ? data['monedap'] ?? '***'
-                            : data['monedap'] ?? '***',
-                      ),
-                      buildTableCell(
-                        data['t_solicitud'] == 'MOVIMIENTOS'
-                            ?  ''
-                            : data['t_solicitud'] == 'PAGOS'
-                            ? data['monto'] ?? ''
-                            : data['producto'] ?? '',
-                      ),
-                      buildTableCell(
-                        data['t_solicitud'] == 'MOVIMIENTOS'
-                            ? ''
-                            : data['t_solicitud'] == 'PAGOS'
-                            ? data['fgnp'] ?? ''
-                            : data['fgnp'] ?? '',
-                      ),
-                    ]),
-                    TableRow(
-                        children: [
-                          Container(
-                            decoration: data['t_solicitud'] == 'ALTA DE POLIZA'
-                                ? const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)) // Aplica la decoración si el tipo de solicitud es 'MOVIMIENTOS
-                                : null,
-                            child: buildTableCell(
-                                data['t_solicitud'] == 'MOVIMIENTOS'
-                                    ? ''
-                                    : data['t_solicitud'] == 'PAGOS'
-                                    ? ''
-                                    : 'Rango',
-                                isHeader: true
-                            ),
-                          ),
-                      Container(
-                        decoration: data['t_solicitud'] == 'ALTA DE POLIZA'
-                            ? const BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)) // Aplica la decoración si el tipo de solicitud es 'MOVIMIENTOS
-                            : null,
-                        child: buildTableCell(
-                            data['t_solicitud'] == 'MOVIMIENTOS'
-                                ?  ''
-                                : data['t_solicitud'] == 'PAGOS'
-                                ? ''
-                                : data['t_solicitud'] == 'ALTA DE POLIZA'
-                                ? 'Prima'
-                                : '',
-                            isHeader: true
-                        ),
-                      ),
-                      buildTableCell('', isHeader: true),
-                      buildTableCell('', isHeader: true),
-                    ]),
-                    TableRow(children: [
-                      buildTableCell(
-                        data['t_solicitud'] == 'MOVIMIENTOS'
-                            ?  ''
-                            : data['t_solicitud'] == 'PAGOS'
-                            ? ''
-                            : data['t_solicitud'] == 'ALTA DE POLIZA'
-                            ? data['rango'] ?? ''
-                            : '',
-                      ),
-                      buildTableCell(
-                        data['t_solicitud'] == 'MOVIMIENTOS'
-                            ?  ''
-                            : data['t_solicitud'] == 'PAGOS'
-                            ? ''
-                            : data['t_solicitud'] == 'ALTA DE POLIZA'
-                            ? data['prima'] ?? '***'
-                            : '',
-                      ),
-                      buildTableCell(
-                        ''
-                      ),
-                      buildTableCell(
-                          ''
-                      ),
+                    // Aquí aplicamos el estilo de encabezado solo a los dos primeros campos
+                    buildTableRow([
+                      data['t_solicitud'] == 'MOVIMIENTOS' ? '' : 'Producto',
+                      data['t_solicitud'] == 'MOVIMIENTOS' ? '' : 'Rango',
+                      '',
+                      '',
+                    ], isHeader: true, headerIndices: [0, 1]), // Aquí aplicamos el estilo de encabezado solo a los dos primeros campos
+                    buildTableRow([
+                      data['t_solicitud'] == 'MOVIMIENTOS' ? '' : data['producto'],
+                      data['t_solicitud'] == 'MOVIMIENTOS' ? '' : data['rango'],
+                      '',
+                      '',
                     ]),
                   ],
                 ),
@@ -1089,4 +1009,15 @@ class _DetalleVidaState extends State<DetalleVida> {
       ),
     );
   }
+
+  TableRow buildTableRow(List<String> cells, {bool isHeader = false, List<int>? headerIndices}) {
+    return TableRow(
+      children: List.generate(cells.length, (index) {
+        // Aplica el estilo de encabezado a todas las celdas si `headerIndices` es nulo o a las celdas especificadas
+        bool applyHeaderStyle = isHeader && (headerIndices == null || headerIndices.contains(index));
+        return buildTableCell(cells[index], isHeader: applyHeaderStyle);
+      }),
+    );
+  }
+
 }
