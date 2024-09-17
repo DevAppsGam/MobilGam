@@ -269,8 +269,6 @@ class _DetalleVidaState extends State<DetalleVida> {
     }
   }
 
-
-
   Future<void> _mostrarDialogoCerrarFolio() async {
     return showDialog<void>(
       context: context,
@@ -327,6 +325,10 @@ class _DetalleVidaState extends State<DetalleVida> {
   Widget build(BuildContext context) {
     double appBarTextSize = MediaQuery.textScalerOf(context).scale(16);
     final Paint? foreground;
+    const String ALTA_POLIZA = 'ALTA DE POLIZA';
+    const String PAGOS = 'PAGOS';
+    const String MOVIMIENTOS = 'MOVIMIENTOS';
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -378,10 +380,10 @@ class _DetalleVidaState extends State<DetalleVida> {
                       'Estado',
                     ], isHeader: true),
                     buildTableRow([
-                      data['id'],
-                      data['negocio'],
-                      data['fecha'],
-                      data['estado'],
+                      data['id'] ?? 'N/A',
+                      data['negocio'] ?? 'N/A',
+                      data['fecha'] ?? 'N/A',
+                      data['estado'] ?? 'N/A',
                     ]),
                     buildTableRow([
                       'Contratante',
@@ -390,49 +392,32 @@ class _DetalleVidaState extends State<DetalleVida> {
                       'Comentarios',
                     ], isHeader: true),
                     buildTableRow([
-                      data['contratante'],
-                      data['t_solicitud'] == 'MOVIMIENTOS' ? data['poliza'] : data['polizap'],
-                      data['t_solicitud'],
-                      data['comentarios'],
+                      data['contratante'] ?? 'N/A',
+                      data['t_solicitud'] == MOVIMIENTOS ? data['poliza'] ?? 'N/A' : data['polizap'] ?? 'N/A',
+                      data['t_solicitud'] ?? 'N/A',
+                      data['comentarios'] ?? 'N/A',
                     ]),
                     buildTableRow([
                       'Prioridad',
-                      data['t_solicitud'] == 'ALTA DE POLIZA'
-                          ? 'Prima'
-                          : data['t_solicitud'] == 'PAGOS'
-                          ? 'Monto'
-                          : 'Tipo de Movimiento',
-                      data['t_solicitud'] == 'ALTA DE POLIZA' || data['t_solicitud'] == 'PAGOS'
-                          ? 'Folio GNP'
-                          : '',
-                      data['t_solicitud'] == 'ALTA DE POLIZA' || data['t_solicitud'] == 'PAGOS'
-                          ? 'Moneda'
-                          : '',
+                      getCampoPrioridad(data),
+                      getCampoFolio(data),
+                      getCampoMoneda(data),
                     ], isHeader: true),
                     buildTableRow([
-                      data['prioridad'],
-                      data['t_solicitud'] == 'ALTA DE POLIZA'
-                          ? data['prima']
-                          : data['t_solicitud'] == 'PAGOS'
-                          ? data['monto']
-                          : data['movimiento'],
-                      data['t_solicitud'] == 'ALTA DE POLIZA' || data['t_solicitud'] == 'PAGOS'
-                          ? data['fgnp']
-                          : '',
-                      data['t_solicitud'] == 'ALTA DE POLIZA' || data['t_solicitud'] == 'PAGOS'
-                          ? data['monedap']
-                          : '',
+                      data['prioridad'] ?? 'N/A',
+                      data['t_solicitud'] == ALTA_POLIZA ? data['prima'] ?? 'N/A' : data['t_solicitud'] == PAGOS ? data['monto'] ?? 'N/A' : data['movimiento'] ?? 'N/A',
+                      data['t_solicitud'] == ALTA_POLIZA || data['t_solicitud'] == PAGOS ? data['fgnp'] ?? 'N/A' : '',
+                      data['t_solicitud'] == ALTA_POLIZA || data['t_solicitud'] == PAGOS ? data['monedap'] ?? 'N/A' : '',
                     ]),
-                    // Aquí aplicamos el estilo de encabezado solo a los dos primeros campos
                     buildTableRow([
-                      data['t_solicitud'] == 'MOVIMIENTOS' ? '' : 'Producto',
-                      data['t_solicitud'] == 'MOVIMIENTOS' ? '' : 'Rango',
+                      data['t_solicitud'] == MOVIMIENTOS ? '' : 'Producto',
+                      data['t_solicitud'] == MOVIMIENTOS ? '' : 'Rango',
                       '',
                       '',
-                    ], isHeader: true, headerIndices: [0, 1]), // Aquí aplicamos el estilo de encabezado solo a los dos primeros campos
+                    ], isHeader: true, headerIndices: [0, 1]),
                     buildTableRow([
-                      data['t_solicitud'] == 'MOVIMIENTOS' ? '' : data['producto'],
-                      data['t_solicitud'] == 'MOVIMIENTOS' ? '' : data['rango'],
+                      data['t_solicitud'] == MOVIMIENTOS ? '' : data['producto'] ?? 'N/A',
+                      data['t_solicitud'] == MOVIMIENTOS ? '' : data['rango'] ?? 'N/A',
                       '',
                       '',
                     ]),
@@ -1020,4 +1005,22 @@ class _DetalleVidaState extends State<DetalleVida> {
     );
   }
 
+}
+
+String getCampoPrioridad(Map<String, dynamic> data) {
+  if (data['t_solicitud'] == 'ALTA_POLIZA') return 'Prima';
+  if (data['t_solicitud'] == 'PAGOS') return 'Monto';
+  return 'Tipo de Movimiento';
+}
+
+String getCampoFolio(Map<String, dynamic> data) {
+  return (data['t_solicitud'] == 'ALTA_POLIZA' || data['t_solicitud'] == 'PAGOS')
+      ? 'Folio GNP'
+      : '';
+}
+
+String getCampoMoneda(Map<String, dynamic> data) {
+  return (data['t_solicitud'] == 'ALTA_POLIZA' || data['t_solicitud'] == 'PAGOS')
+      ? 'Moneda'
+      : '';
 }
