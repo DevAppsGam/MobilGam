@@ -58,6 +58,7 @@ class _VidaState extends State<Vida> {
         if (jsonResponse.isNotEmpty) {
           setState(() {
             datos = jsonResponse.map((item) => Map<String, dynamic>.from(item)).toList();
+            _applyLocalFilters(); // Aplica los filtros locales al cargar los datos
           });
         }
       } else {
@@ -72,30 +73,44 @@ class _VidaState extends State<Vida> {
     }
   }
 
+
   Future<void> fetchDataWithFilter(String? filterNames) async {
     if (filterNames != null) {
       String combinedFilters = filterNames;
 
+      // Si se añaden filtros adicionales
       if (activeFilters.isNotEmpty) {
-        combinedFilters += ',${activeFilters.join(',')}';
+        combinedFilters = activeFilters.toSet().join(','); // Usa un Set para evitar duplicados
       }
+
+      // Imprimir la URL de la solicitud con filtros para depuración
+      print('URL de la solicitud con filtros: https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?filter=$combinedFilters&username=${widget.nombreUsuario}');
 
       try {
         final response = await http.get(Uri.parse(
             'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliosvida.php?filter=$combinedFilters&username=${widget.nombreUsuario}'));
         if (response.statusCode == 200) {
           final jsonResponse = json.decode(response.body) as List;
-          setState(() {
-            datos = jsonResponse.map((item) => Map<String, dynamic>.from(item)).toList();
-          });
+          if (jsonResponse.isNotEmpty) {
+            setState(() {
+              datos = jsonResponse.map((item) => Map<String, dynamic>.from(item)).toList();
+              // Aplicar filtros adicionales en los datos obtenidos si es necesario
+              _applyLocalFilters();
+            });
+          }
         } else {
           _showErrorDialog('Hubo un problema al obtener los datos. Código de estado: ${response.statusCode}');
         }
       } catch (e) {
         _showErrorDialog('Hubo un problema: ${e.toString()}');
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
+
 
   void _showErrorDialog(String message) {
     showDialog(
@@ -125,14 +140,20 @@ class _VidaState extends State<Vida> {
         activeFilters.add(filterName);
       }
       filtroAplicado = activeFilters.isNotEmpty ? activeFilters.join(', ') : '';
+      print('Filtros activos: $activeFilters');
       applyFilters();
     });
   }
 
+
+
+
   void applyFilters() {
     String filters = activeFilters.join(',');
+    print('Aplicando filtros: $filters'); // Imprime los filtros que se están aplicando
     fetchDataWithFilter(filters);
   }
+
 
   void performSearch() {
     if (searchTerm.isNotEmpty) {
@@ -171,6 +192,24 @@ class _VidaState extends State<Vida> {
         );
       },
     );
+  }
+
+  // Función para determinar el color según el valor del semáforo
+  Color _getColorForFechaPromesa(String semaforo) {
+    switch (semaforo.toLowerCase()) {
+      case 'verde':
+        return Colors.green;
+      case 'amarillo':
+        return Colors.yellow;
+      case 'rojo':
+        return Colors.red;
+      case 'sin_asignar':
+      return Colors.blueGrey;
+      case '***':
+      return Colors.blueGrey;
+      default:
+        return Colors.grey;
+    }
   }
 
   @override
@@ -246,24 +285,31 @@ class _VidaState extends State<Vida> {
     return paginatedData.map((item) {
       return TableRow(
         children: [
-          _buildTableCell(
-            isFolio: true,
-            item['id'] ?? '',
-          ),
+          _buildTableCell(item['id'] ?? '', isFolio: true),
           _buildTableCell(item['contratante'] ?? ''),
           _buildTableCell(item['poliza'] ?? ''),
           _buildTableCell(item['fgnp'] ?? ''),
-          _buildTableCell(item['fecha_promesa'] ?? ''),
+          _buildTableCell(item['fecha_promesa'] ?? '', semaforo: item['semaforo'] ?? '***', isFechaPromesa: true), // Aquí indicamos que es la columna 'Fecha Promesa'
           _buildTableCell(item['estado'] ?? ''),
         ],
       );
     }).toList();
   }
 
-  Widget _buildTableCell(String text, {bool isFolio = false}) {
+  Widget _buildTableCell(String text, {bool isFolio = false, String semaforo = '***', bool isFechaPromesa = false}) {
+    Color textColor;
+
+    // Solo cambiar el color del texto si es la columna de Fecha Promesa
+    if (isFechaPromesa) {
+      textColor = _getColorForFechaPromesa(semaforo);
+    } else {
+      textColor = Colors.black; // Color de texto normal para otras columnas
+    }
+
     return TableCell(
       child: GestureDetector(
-        onTap: isFolio ? () {
+        onTap: isFolio
+            ? () {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -273,9 +319,11 @@ class _VidaState extends State<Vida> {
               ),
             ),
           );
-        } : null,
+        }
+            : null,
         child: Container(
           constraints: const BoxConstraints.expand(height: 75.0),
+          color: Colors.white, // Mantener el fondo blanco
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 5.0),
             child: Center(
@@ -283,7 +331,7 @@ class _VidaState extends State<Vida> {
                 text,
                 style: TextStyle(
                   fontFamily: 'Roboto',
-                  color: isFolio ? Colors.blue : Colors.black,
+                  color: isFolio ? Colors.blue : textColor, // Aplicar el color del texto según el semáforo
                   decoration: isFolio ? TextDecoration.underline : TextDecoration.none,
                 ),
                 textAlign: TextAlign.center,
@@ -294,6 +342,7 @@ class _VidaState extends State<Vida> {
       ),
     );
   }
+
 
   Widget _buildTableContainer() {
     return SingleChildScrollView(
@@ -409,7 +458,7 @@ class _VidaState extends State<Vida> {
                       ),
                       const SizedBox(width: 8.0),
                       Flexible(
-                        child: _buildFilterButton('POR VENCER', 'POR VENCER', Colors.yellow, Colors.yellow[900]!),
+                        child: _buildFilterButton('POR VENCER', 'POR VENCER', Colors.yellow, Colors.yellow[800]!),
                       ),
                       const SizedBox(width: 8.0),
                       Flexible(
@@ -549,12 +598,12 @@ class _VidaState extends State<Vida> {
 
     return GestureDetector(
       onTap: () {
-        toggleFiltro(filterName);
+        toggleFiltro(filterName); // Asegúrate de que el nombre del filtro es correcto
       },
       child: Container(
         constraints: const BoxConstraints(
-          minWidth: 100.0, // Ancho mínimo para uniformidad (ajusta según necesites)
-          minHeight: 50.0, // Altura mínima fija para todos los botones
+          minWidth: 100.0,
+          minHeight: 50.0,
         ),
         padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
         decoration: BoxDecoration(
@@ -583,5 +632,22 @@ class _VidaState extends State<Vida> {
       ),
     );
   }
+
+  void _applyLocalFilters() {
+    List<Map<String, dynamic>> filteredData = datos;
+
+    // Filtrar por filtros locales
+    if (activeFilters.isNotEmpty) {
+      filteredData = datos.where((item) {
+        final estadoSemaforo = item['estadosemaforo'] ?? '';
+        return activeFilters.contains(estadoSemaforo);
+      }).toList();
+    }
+
+    setState(() {
+      datos = filteredData;
+    });
+  }
+
 
 }
