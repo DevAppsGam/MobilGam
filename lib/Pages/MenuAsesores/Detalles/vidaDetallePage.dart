@@ -304,22 +304,30 @@ class _DetalleVidaState extends State<DetalleVida> {
     );
   }
 
-  Widget buildTableCell(String text, {bool isHeader = false}) {
+  Widget buildTableCell(String content, {bool isHeader = false, bool isTransparent = false}) {
     return Container(
       padding: const EdgeInsets.all(8.0),
-      alignment: Alignment.center,
-      child: Text(
-        text,
-        style: TextStyle(
-          fontFamily: 'Roboto',
-          fontSize: 20,
-          color: isHeader ? Colors.white : Colors.black,
-          fontWeight: isHeader ? FontWeight.bold : null,
-          // Aquí, si es un encabezado, se usa el color azul; de lo contrario, se usa el color negro.
+      constraints: const BoxConstraints(
+        maxHeight: 130.0, // Limitar la altura máxima
+      ),
+      decoration: BoxDecoration(
+        color: isTransparent ? Colors.transparent : (isHeader ? Colors.blueAccent : Colors.white),
+        border: isTransparent ? const Border() : Border.all(color: Colors.grey),
+      ),
+      child: Center( // Centrar el texto verticalmente
+        child: Text(
+          content,
+          maxLines: 5, // Limitar a 3 líneas
+          overflow: TextOverflow.ellipsis, // Mostrar "..." si hay más texto
+          style: TextStyle(
+            fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
+          ),
         ),
       ),
     );
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -370,6 +378,9 @@ class _DetalleVidaState extends State<DetalleVida> {
                   ),
                 ),
                 const SizedBox(height: 16,),
+                if(isLoading)
+                  const Center(child: CircularProgressIndicator())
+                else
                 Table(
                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                   children: [
@@ -995,15 +1006,33 @@ class _DetalleVidaState extends State<DetalleVida> {
     );
   }
 
-  TableRow buildTableRow(List<String> cells, {bool isHeader = false, List<int>? headerIndices}) {
+  TableRow buildTableRow(
+      List<String> cells, {
+        bool isHeader = false,
+        List<int>? headerIndices,
+      }) {
     return TableRow(
       children: List.generate(cells.length, (index) {
-        // Aplica el estilo de encabezado a todas las celdas si `headerIndices` es nulo o a las celdas especificadas
+        // Verifica si el índice actual está en headerIndices o si headerIndices es null
         bool applyHeaderStyle = isHeader && (headerIndices == null || headerIndices.contains(index));
-        return buildTableCell(cells[index], isHeader: applyHeaderStyle);
+        String cellContent = cells[index];
+
+        // Aquí puedes imprimir para depurar
+        print('Célula: $cellContent, Estilo de encabezado: $applyHeaderStyle');
+
+        // Verifica si la celda está vacía
+        if (cellContent.isEmpty) {
+          // Devuelve una celda vacía con estilo transparente
+          return buildTableCell('', isHeader: false, isTransparent: true); // Asegúrate de que buildTableCell maneje el nuevo parámetro
+        } else {
+          // Devuelve la celda construida normalmente
+          return buildTableCell(cellContent, isHeader: applyHeaderStyle);
+        }
       }),
     );
   }
+
+
 
 }
 
