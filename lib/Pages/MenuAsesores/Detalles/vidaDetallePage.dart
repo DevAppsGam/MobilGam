@@ -306,27 +306,37 @@ class _DetalleVidaState extends State<DetalleVida> {
 
   Widget buildTableCell(String content, {bool isHeader = false, bool isTransparent = false}) {
     return Container(
-      padding: const EdgeInsets.all(8.0),
-      constraints: const BoxConstraints(
-        maxHeight: 130.0, // Limitar la altura máxima
+      padding: const EdgeInsets.all(4.0),
+      constraints: BoxConstraints(
+        minHeight: isHeader ? 40 : 80, // Ajusta según sea necesario
       ),
       decoration: BoxDecoration(
         color: isTransparent ? Colors.transparent : (isHeader ? Colors.blueAccent : Colors.white),
         border: isTransparent ? const Border() : Border.all(color: Colors.grey),
       ),
-      child: Center( // Centrar el texto verticalmente
+      child: isHeader
+          ? Center(
         child: Text(
           content,
-          maxLines: 5, // Limitar a 3 líneas
-          overflow: TextOverflow.ellipsis, // Mostrar "..." si hay más texto
-          style: TextStyle(
-            fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
           ),
         ),
+      )
+          : Row(
+        children: [
+          Expanded(
+            child: Text(
+              content,
+              style: const TextStyle(
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
-
 
 
   @override
