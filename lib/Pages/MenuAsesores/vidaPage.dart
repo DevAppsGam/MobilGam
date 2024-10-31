@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:appgam/Pages/MenuAsesores/Detalles/vidaDetallePage.dart';
 import 'package:appgam/Pages/asesoresPage.dart';
 import 'package:appgam/main.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;

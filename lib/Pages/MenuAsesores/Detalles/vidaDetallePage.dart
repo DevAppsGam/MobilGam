@@ -343,7 +343,7 @@ class _DetalleVidaState extends State<DetalleVida> {
   Widget build(BuildContext context) {
     double appBarTextSize = MediaQuery.textScalerOf(context).scale(16);
     final Paint? foreground;
-    const String ALTA_POLIZA = 'ALTA DE POLIZA';
+    const String altaPoliza = 'ALTA DE POLIZA';
     const String PAGOS = 'PAGOS';
     const String MOVIMIENTOS = 'MOVIMIENTOS';
 
@@ -426,9 +426,9 @@ class _DetalleVidaState extends State<DetalleVida> {
                     ], isHeader: true),
                     buildTableRow([
                       data['prioridad'] ?? 'N/A',
-                      data['t_solicitud'] == ALTA_POLIZA ? data['prima'] ?? 'N/A' : data['t_solicitud'] == PAGOS ? data['monto'] ?? 'N/A' : data['movimiento'] ?? 'N/A',
-                      data['t_solicitud'] == ALTA_POLIZA || data['t_solicitud'] == PAGOS ? data['fgnp'] ?? 'N/A' : '',
-                      data['t_solicitud'] == ALTA_POLIZA || data['t_solicitud'] == PAGOS ? data['monedap'] ?? 'N/A' : '',
+                      data['t_solicitud'] == altaPoliza ? data['prima'] ?? 'N/A' : data['t_solicitud'] == PAGOS ? data['monto'] ?? 'N/A' : data['movimiento'] ?? 'N/A',
+                      data['t_solicitud'] == altaPoliza || data['t_solicitud'] == PAGOS ? data['fgnp'] ?? 'N/A' : '',
+                      data['t_solicitud'] == altaPoliza || data['t_solicitud'] == PAGOS ? data['monedap'] ?? 'N/A' : '',
                     ]),
                     buildTableRow([
                       data['t_solicitud'] == MOVIMIENTOS ? '' : 'Producto',
