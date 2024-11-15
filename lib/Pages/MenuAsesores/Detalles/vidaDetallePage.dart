@@ -391,59 +391,59 @@ class _DetalleVidaState extends State<DetalleVida> {
                 if(isLoading)
                   const Center(child: CircularProgressIndicator())
                 else
-                Table(
-                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                  children: [
-                    buildTableRow([
-                      'Folio GAM',
-                      'Línea de Negocio',
-                      'Fecha de Solicitud',
-                      'Estado',
-                    ], isHeader: true),
-                    buildTableRow([
-                      data['id'] ?? 'N/A',
-                      data['negocio'] ?? 'N/A',
-                      data['fecha'] ?? 'N/A',
-                      data['estado'] ?? 'N/A',
-                    ]),
-                    buildTableRow([
-                      'Contratante',
-                      'Póliza',
-                      'Tipo de Solicitud',
-                      'Comentarios',
-                    ], isHeader: true),
-                    buildTableRow([
-                      data['contratante'] ?? 'N/A',
-                      data['t_solicitud'] == MOVIMIENTOS ? data['poliza'] ?? 'N/A' : data['polizap'] ?? 'N/A',
-                      data['t_solicitud'] ?? 'N/A',
-                      data['comentarios'] ?? 'N/A',
-                    ]),
-                    buildTableRow([
-                      'Prioridad',
-                      getCampoPrioridad(data),
-                      getCampoFolio(data),
-                      getCampoMoneda(data),
-                    ], isHeader: true),
-                    buildTableRow([
-                      data['prioridad'] ?? 'N/A',
-                      data['t_solicitud'] == altaPoliza ? data['prima'] ?? 'N/A' : data['t_solicitud'] == PAGOS ? data['monto'] ?? 'N/A' : data['movimiento'] ?? 'N/A',
-                      data['t_solicitud'] == altaPoliza || data['t_solicitud'] == PAGOS ? data['fgnp'] ?? 'N/A' : '',
-                      data['t_solicitud'] == altaPoliza || data['t_solicitud'] == PAGOS ? data['monedap'] ?? 'N/A' : '',
-                    ]),
-                    buildTableRow([
-                      data['t_solicitud'] == MOVIMIENTOS ? '' : 'Producto',
-                      data['t_solicitud'] == MOVIMIENTOS ? '' : 'Rango',
-                      '',
-                      '',
-                    ], isHeader: true, headerIndices: [0, 1]),
-                    buildTableRow([
-                      data['t_solicitud'] == MOVIMIENTOS ? '' : data['producto'] ?? 'N/A',
-                      data['t_solicitud'] == MOVIMIENTOS ? '' : data['rango'] ?? 'N/A',
-                      '',
-                      '',
-                    ]),
-                  ],
-                ),
+                  Table(
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    children: [
+                      buildTableRow([
+                        'Folio GAM',
+                        'Línea de Negocio',
+                        'Fecha de Solicitud',
+                        'Estado',
+                      ], isHeader: true),
+                      buildTableRow([
+                        data['id'] ?? 'N/A',
+                        data['negocio'] ?? 'N/A',
+                        data['fecha'] ?? 'N/A',
+                        data['estado'] ?? 'N/A',
+                      ]),
+                      buildTableRow([
+                        'Contratante',
+                        'Póliza',
+                        'Tipo de Solicitud',
+                        'Comentarios',
+                      ], isHeader: true),
+                      buildTableRow([
+                        data['contratante'] ?? 'N/A',
+                        data['t_solicitud'] == MOVIMIENTOS ? data['poliza'] ?? 'N/A' : data['polizap'] ?? 'N/A',
+                        data['t_solicitud'] ?? 'N/A',
+                        data['comentarios'] ?? 'N/A',
+                      ]),
+                      buildTableRow([
+                        'Prioridad',
+                        getCampoPrioridad(data),
+                        getCampoFolio(data),
+                        getCampoMoneda(data),
+                      ], isHeader: true),
+                      buildTableRow([
+                        data['prioridad'] ?? 'N/A',
+                        data['t_solicitud'] == altaPoliza ? data['prima'] ?? 'N/A' : data['t_solicitud'] == PAGOS ? data['monto'] ?? 'N/A' : data['movimiento'] ?? 'N/A',
+                        data['t_solicitud'] == altaPoliza || data['t_solicitud'] == PAGOS ? data['fgnp'] ?? 'N/A' : '',
+                        data['t_solicitud'] == altaPoliza || data['t_solicitud'] == PAGOS ? data['monedap'] ?? 'N/A' : '',
+                      ]),
+                      buildTableRow([
+                        data['t_solicitud'] == MOVIMIENTOS ? '' : 'Producto',
+                        data['t_solicitud'] == MOVIMIENTOS ? '' : 'Rango',
+                        '',
+                        '',
+                      ], isHeader: true, headerIndices: [0, 1]),
+                      buildTableRow([
+                        data['t_solicitud'] == MOVIMIENTOS ? '' : data['producto'] ?? 'N/A',
+                        data['t_solicitud'] == MOVIMIENTOS ? '' : data['rango'] ?? 'N/A',
+                        '',
+                        '',
+                      ]),
+                    ],
+                  ),
                 const SizedBox(height: 16),
                 const Center(
                   child: Text(
@@ -459,212 +459,212 @@ class _DetalleVidaState extends State<DetalleVida> {
                 const SizedBox(height: 16),
                 if (isLoading)
                   const CircularProgressIndicator()
-                  else
-                    SingleChildScrollView(
-                      child: FutureBuilder<List<Map<String, dynamic>>?>(
-                        future: fetchDataForSecondTable(),
-                        builder: (context, snapshot) {
-                          if (isLoading) {
-                            return const CircularProgressIndicator();
-                          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                            return const Text('No hay documentos en esta póliza.',style: TextStyle(fontFamily: 'Roboto',fontSize: 20,color: Color.fromRGBO(15, 132, 194, 1),),);
-                          } else if (snapshot.hasError) {
-                            return Text('Error al cargar los datos de la segunda tabla: ${snapshot.error}');
-                          } else {
-                            final List<Map<String, dynamic>> secondTableData = snapshot.data!;
+                else
+                  SingleChildScrollView(
+                    child: FutureBuilder<List<Map<String, dynamic>>?>(
+                      future: fetchDataForSecondTable(),
+                      builder: (context, snapshot) {
+                        if (isLoading) {
+                          return const CircularProgressIndicator();
+                        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return const Text('No hay documentos en esta póliza.',style: TextStyle(fontFamily: 'Roboto',fontSize: 20,color: Color.fromRGBO(15, 132, 194, 1),),);
+                        } else if (snapshot.hasError) {
+                          return Text('Error al cargar los datos de la segunda tabla: ${snapshot.error}');
+                        } else {
+                          final List<Map<String, dynamic>> secondTableData = snapshot.data!;
 
-                            return Table(
-                              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                              border: TableBorder.all(),
-                              children: [
-                                const TableRow(
-                                  decoration: BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)),
-                                  children: [
-                                    TableCell(
+                          return Table(
+                            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                            border: TableBorder.all(),
+                            children: [
+                              const TableRow(
+                                decoration: BoxDecoration(color: Color.fromRGBO(15, 132, 194, 1)),
+                                children: [
+                                  TableCell(
+                                    child: Center(
+                                      child: Text(
+                                        'Usuario',
+                                        style: TextStyle(
+                                          fontFamily: 'Roboto',
+                                          fontSize: 18,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  TableCell(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(9.5),
                                       child: Center(
                                         child: Text(
-                                          'Usuario',
+                                          'Nombre del Archivo',
                                           style: TextStyle(
                                             fontFamily: 'Roboto',
                                             fontSize: 18,
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
                                           ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  TableCell(
+                                    child: Center(
+                                      child: Text(
+                                        'Ver',
+                                        style: TextStyle(
+                                          fontFamily: 'Roboto',
+                                          fontSize: 18,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  TableCell(
+                                    child: Center(
+                                      child: Text(
+                                        'Descargar',
+                                        style: TextStyle(
+                                          fontFamily: 'Roboto',
+                                          fontSize: 18,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  TableCell(
+                                    child: Center(
+                                      child: Text(
+                                        'Aprobado',
+                                        style: TextStyle(
+                                          fontFamily: 'Roboto',
+                                          fontSize: 18,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  TableCell(
+                                    child: Center(
+                                      child: Text(
+                                        'Fecha de Carga',
+                                        style: TextStyle(
+                                          fontFamily: 'Roboto',
+                                          fontSize: 18,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              for (var data in secondTableData)
+                                TableRow(
+                                  children: [
+                                    TableCell(
+                                      child: Center(
+                                        child: Text(
+                                          data['nomusuario'] ?? '***',
+                                          style: const TextStyle(fontFamily: 'Roboto', fontSize: 18),
                                         ),
                                       ),
                                     ),
                                     TableCell(
                                       child: Padding(
-                                        padding: EdgeInsets.all(9.5),
+                                        padding: const EdgeInsets.all(9.5),
                                         child: Center(
                                           child: Text(
-                                            'Nombre del Archivo',
-                                            style: TextStyle(
-                                              fontFamily: 'Roboto',
-                                              fontSize: 18,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                            data['nombre'] ?? '***',
+                                            style: const TextStyle(fontFamily: 'Roboto', fontSize: 16),
                                           ),
                                         ),
                                       ),
                                     ),
                                     TableCell(
                                       child: Center(
-                                        child: Text(
-                                          'Ver',
-                                          style: TextStyle(
-                                            fontFamily: 'Roboto',
-                                            fontSize: 18,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                        child: IconButton(
+                                          onPressed: () {
+
+                                          },
+                                          icon: const Icon(Icons.search), // Cambia el icono aquí
+                                        ),
+                                      ),
+                                    ),
+                                    TableCell(
+                                      child: Center(
+                                        child: IconButton(
+                                          onPressed: () async {
+                                            // Extrae el nombre del archivo eliminando el prefijo '../'
+                                            String nombreSinPrefijo = data['nombre']?.replaceFirst('../', '') ?? '';
+
+                                            // Construye la URL del archivo PDF
+                                            String pdfUrl = "https://www.asesoresgam.com.mx/sistemas/$nombreSinPrefijo";
+
+                                            try {
+                                              // Utiliza la función downloadFile para descargar el archivo
+                                              File? downloadedFile = await FileDownloader.downloadFile(
+                                                url: pdfUrl,
+                                                name: nombreSinPrefijo,
+                                                onProgress: (String? fileName, double progress) {
+                                                  print('EL ARCHIVO $fileName TIENE UN PROGRESO DE $progress');
+                                                },
+                                                onDownloadCompleted: (String path) {
+                                                  print('ARCHIVO DESCARGADO EN LA RUTA: $path');
+
+                                                  // Abre el gestor de archivos después de la descarga
+                                                  OpenFilex.open(path);
+                                                },
+                                                onDownloadError: (String error) {
+                                                  print('ERROR DE DESCARGA: $error');
+                                                },
+                                              );
+
+                                              if (downloadedFile != null) {
+                                                // El archivo se ha descargado y puedes realizar otras acciones según tus necesidades
+                                              }
+                                            } catch (e) {
+                                              print('ERROR DURANTE LA DESCARGA: $e');
+                                            }
+                                          },
+                                          icon: const Icon(Icons.file_download),
+                                        ),
+                                      ),
+                                    ),
+
+                                    TableCell(
+                                      child: Center(
+                                        child: data['validado'] == true
+                                            ? const Icon(
+                                          Icons.check,
+                                          color: Colors.green, // Color verde para el ícono de paloma
+                                        )
+                                            : const Icon(
+                                          Icons.cancel,
+                                          color: Colors.red, // Color rojo para el ícono de tache
                                         ),
                                       ),
                                     ),
                                     TableCell(
                                       child: Center(
                                         child: Text(
-                                          'Descargar',
-                                          style: TextStyle(
-                                            fontFamily: 'Roboto',
-                                            fontSize: 18,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    TableCell(
-                                      child: Center(
-                                        child: Text(
-                                          'Aprobado',
-                                          style: TextStyle(
-                                            fontFamily: 'Roboto',
-                                            fontSize: 18,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    TableCell(
-                                      child: Center(
-                                        child: Text(
-                                          'Fecha de Carga',
-                                          style: TextStyle(
-                                            fontFamily: 'Roboto',
-                                            fontSize: 18,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                          data['fecha_creacion'] ?? '***',
+                                          style: const TextStyle(fontFamily: 'Roboto', fontSize: 18),
                                         ),
                                       ),
                                     ),
                                   ],
                                 ),
-                                for (var data in secondTableData)
-                                  TableRow(
-                                    children: [
-                                      TableCell(
-                                        child: Center(
-                                          child: Text(
-                                            data['nomusuario'] ?? '***',
-                                            style: const TextStyle(fontFamily: 'Roboto', fontSize: 18),
-                                          ),
-                                        ),
-                                      ),
-                                      TableCell(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(9.5),
-                                          child: Center(
-                                            child: Text(
-                                              data['nombre'] ?? '***',
-                                              style: const TextStyle(fontFamily: 'Roboto', fontSize: 16),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      TableCell(
-                                        child: Center(
-                                          child: IconButton(
-                                            onPressed: () {
-
-                                            },
-                                            icon: const Icon(Icons.search), // Cambia el icono aquí
-                                          ),
-                                        ),
-                                      ),
-                                      TableCell(
-                                        child: Center(
-                                          child: IconButton(
-                                            onPressed: () async {
-                                              // Extrae el nombre del archivo eliminando el prefijo '../'
-                                              String nombreSinPrefijo = data['nombre']?.replaceFirst('../', '') ?? '';
-
-                                              // Construye la URL del archivo PDF
-                                              String pdfUrl = "https://www.asesoresgam.com.mx/sistemas/$nombreSinPrefijo";
-
-                                              try {
-                                                // Utiliza la función downloadFile para descargar el archivo
-                                                File? downloadedFile = await FileDownloader.downloadFile(
-                                                  url: pdfUrl,
-                                                  name: nombreSinPrefijo,
-                                                  onProgress: (String? fileName, double progress) {
-                                                    print('EL ARCHIVO $fileName TIENE UN PROGRESO DE $progress');
-                                                  },
-                                                  onDownloadCompleted: (String path) {
-                                                    print('ARCHIVO DESCARGADO EN LA RUTA: $path');
-
-                                                    // Abre el gestor de archivos después de la descarga
-                                                    OpenFilex.open(path);
-                                                  },
-                                                  onDownloadError: (String error) {
-                                                    print('ERROR DE DESCARGA: $error');
-                                                  },
-                                                );
-
-                                                if (downloadedFile != null) {
-                                                  // El archivo se ha descargado y puedes realizar otras acciones según tus necesidades
-                                                }
-                                              } catch (e) {
-                                                print('ERROR DURANTE LA DESCARGA: $e');
-                                              }
-                                            },
-                                            icon: const Icon(Icons.file_download),
-                                          ),
-                                        ),
-                                      ),
-
-                                      TableCell(
-                                        child: Center(
-                                          child: data['validado'] == true
-                                              ? const Icon(
-                                            Icons.check,
-                                            color: Colors.green, // Color verde para el ícono de paloma
-                                          )
-                                              : const Icon(
-                                            Icons.cancel,
-                                            color: Colors.red, // Color rojo para el ícono de tache
-                                          ),
-                                        ),
-                                      ),
-                                      TableCell(
-                                        child: Center(
-                                          child: Text(
-                                            data['fecha_creacion'] ?? '***',
-                                            style: const TextStyle(fontFamily: 'Roboto', fontSize: 18),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                              ],
-                            );
-                          }
-                        },
-                      ),
+                            ],
+                          );
+                        }
+                      },
                     ),
+                  ),
                 const SizedBox(height: 32),
                 const Center(
                   child: Text(
@@ -890,10 +890,10 @@ class _DetalleVidaState extends State<DetalleVida> {
                             TableCell(
                               child: Center(
                                 child: Text(data['usuario'] ?? '***',
-                                style: const TextStyle(
-                                  fontFamily: 'roboto',
-                                  fontSize: 17,
-                                ),),
+                                  style: const TextStyle(
+                                    fontFamily: 'roboto',
+                                    fontSize: 17,
+                                  ),),
                               ),
                             ),
                             TableCell(
@@ -999,13 +999,13 @@ class _DetalleVidaState extends State<DetalleVida> {
                 ),
                 Center(
                   child: ElevatedButton(
-                      onPressed: () {
-                        _mostrarDialogoCerrarFolio();
-                      },
+                    onPressed: () {
+                      _mostrarDialogoCerrarFolio();
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                     ),
-                      child: const Text('¿Deseas cerrar el folio?',style: TextStyle(fontFamily: 'Roboto', fontSize: 30),),
+                    child: const Text('¿Deseas cerrar el folio?',style: TextStyle(fontFamily: 'Roboto', fontSize: 30),),
                   ),
                 ),
               ],
