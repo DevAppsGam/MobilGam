@@ -19,21 +19,14 @@ class Siniestro extends StatefulWidget {
 class _SiniestroState extends State<Siniestro> {
   late Timer _inactivityTimer;
 
-  List<Map<String, String>> datos = [];
+  List<Map<String, String>> datosOriginales = [];
+  List<Map<String, String>> datosFiltrados = [];
   final int _perPage = 10;
   int _currentPage = 0;
   String searchTerm = '';
-  ScrollController _scrollController = ScrollController();
-
-  void _scrollListener() {
-    if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
-      setState(() {
-        // Incrementa la página actual para la paginación
-        _currentPage++;
-      });
-    }
-  }
+  final ScrollController _scrollController = ScrollController();
+  bool isLoading = false;
+  bool noMoreData = false;
 
   @override
   void initState() {
@@ -47,37 +40,70 @@ class _SiniestroState extends State<Siniestro> {
     _scrollController.addListener(_scrollListener);
   }
 
-  Future<void> fetchData() async {
+  Future<void> fetchData({int page = 0}) async {
+    if (isLoading || noMoreData) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
     try {
       final response = await http.get(Uri.parse(
-          'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliossiniestros.php?username=${widget.nombreUsuario}'));
-      if (response.statusCode == 200) {
-        if (response.body.isNotEmpty) {
-          final jsonResponse = json.decode(response.body);
-          List<dynamic> data = jsonResponse;
+          'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliossiniestros.php?username=${widget.nombreUsuario}&page=$page&perPage=$_perPage'));
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        final List<dynamic> siniestros = data['data'];
+
+        if (siniestros.isEmpty) {
           setState(() {
-            datos = data.map((dynamic item) {
-              Map<String, String> mappedItem = {};
-              item.forEach((key, value) {
-                if (value is num || (value is String && value.isNotEmpty)) {
-                  mappedItem[key] = value.toString();
-                } else {
-                  mappedItem[key] = value;
-                }
-              });
-              return mappedItem;
-            }).toList();
+            noMoreData = true;
           });
         } else {
-          print('Error al con json.decode');
+          setState(() {
+            datosOriginales.addAll(siniestros.map<Map<String, String>>((dynamic item) {
+              return item.map<String, String>((key, value) {
+                return MapEntry(
+                  key.toString(),
+                  value?.toString() ?? "",
+                );
+              });
+            }).toList());
+
+            datosFiltrados = List.from(datosOriginales);
+          });
         }
       } else {
-        _showErrorDialog('Hubo un problema al obtener los datos.');
+        _showErrorDialog('Error al obtener los datos del servidor.');
       }
     } catch (e) {
-      print('Error al decodificar JSON: $e');
-      _showErrorDialog('Hubo un problema al decodificar los datos JSON.');
+      _showErrorDialog('Error al decodificar JSON: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      _currentPage++;
+      fetchData(page: _currentPage);
+    }
+  }
+
+  void performSearch() {
+    setState(() {
+      if (searchTerm.isEmpty) {
+        datosFiltrados = List.from(datosOriginales);
+      } else {
+        final searchString = searchTerm.toLowerCase();
+        datosFiltrados = datosOriginales.where((item) {
+          return item.values.any((value) =>
+          value.toLowerCase().contains(searchString) ||
+              double.tryParse(value) == double.tryParse(searchTerm));
+        }).toList();
+      }
+    });
   }
 
   void _showErrorDialog(String message) {
@@ -89,9 +115,7 @@ class _SiniestroState extends State<Siniestro> {
           content: Text(message),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
               child: const Text('OK'),
             ),
           ],
@@ -100,83 +124,17 @@ class _SiniestroState extends State<Siniestro> {
     );
   }
 
-  void performSearch() {
-    if (searchTerm.isNotEmpty) {
-      setState(() {
-        final filteredData = datos.where((item) {
-          final searchString = searchTerm.toLowerCase();
-          for (var value in item.values) {
-            final lowerValue = value.toLowerCase();
-            if (lowerValue.contains(searchString)) {
-              return true;
-            }
-          }
-          if (double.tryParse(searchTerm) != null) {
-            for (var value in item.values) {
-              if (double.tryParse(value) == double.tryParse(searchTerm)) {
-                return true;
-              }
-            }
-          }
-          return false;
-        }).toList();
-        if (filteredData.isEmpty) {
-          _showNoResultsAlert();
-        } else {
-          datos = filteredData;
-        }
-      });
-    } else {
-      fetchData();
-    }
-  }
-
-  void _showNoResultsAlert() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(
-            'Sin Resultados',
-            style: TextStyle(fontFamily: 'Roboto'),
-          ),
-          content: const Text('No se encontraron resultados.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                fetchData();
-              },
-              child: const Text('Cerrar'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  @override
   @override
   void dispose() {
-    // Configurar las orientaciones permitidas
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-
-    // Quitar el listener del scroll
     _scrollController.removeListener(_scrollListener);
-
-    // Cancelar el temporizador de inactividad
     _inactivityTimer.cancel();
-
-    // Liberar el controlador de scroll
     _scrollController.dispose();
-
-    // Llamar al método dispose del padre
     super.dispose();
   }
-
 
   void _startInactivityTimer() {
     const inactivityDuration = Duration(seconds: 300);
@@ -187,11 +145,6 @@ class _SiniestroState extends State<Siniestro> {
             (Route<dynamic> route) => false,
       );
     });
-  }
-
-  void _resetInactivityTimer() {
-    _inactivityTimer.cancel();
-    _startInactivityTimer();
   }
 
   TableRow _buildTableHeaderRow() {
@@ -215,26 +168,20 @@ class _SiniestroState extends State<Siniestro> {
           color: Color.fromRGBO(15, 132, 194, 1),
         ),
         constraints: const BoxConstraints.expand(height: 70.0),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: 0.0,
-            horizontal: 13.0,
-          ),
-          child: Center(
-            child: AutoSizeText(
-              text,
-              style: const TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-              textAlign: TextAlign.justify,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              minFontSize: 9,
-              stepGranularity: 1,
+        child: Center(
+          child: AutoSizeText(
+            text,
+            style: const TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
+            textAlign: TextAlign.justify,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            minFontSize: 9,
+            stepGranularity: 1,
           ),
         ),
       ),
@@ -256,11 +203,6 @@ class _SiniestroState extends State<Siniestro> {
   }
 
   Widget _buildTableCell(String text, Map<String, String> datos, String columna) {
-    Color textColor = columna == 'id'
-        ? const Color.fromRGBO(15, 132, 194, 1)
-        : Colors.black;
-    String nPolizaValue = datos['n_poliza'] ?? '';
-
     return TableCell(
       child: GestureDetector(
         onTap: () {
@@ -268,28 +210,25 @@ class _SiniestroState extends State<Siniestro> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    DetalleSiniestro(
-                      nombreUsuario: widget.nombreUsuario,
-                      id: text,
-                    ),
+                builder: (context) => DetalleSiniestro(
+                  nombreUsuario: widget.nombreUsuario,
+                  id: text,
+                ),
               ),
             );
           }
         },
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: 5.0,
-            horizontal: 13.0,
-          ),
+          padding: const EdgeInsets.all(10.0),
           child: Center(
             child: Text(
-              columna == 'poliza' ? nPolizaValue : text,
+              text,
               style: TextStyle(
                 fontFamily: 'Roboto',
                 fontSize: 16,
-                color: textColor,
-                fontWeight: FontWeight.bold,
+                color: columna == 'id'
+                    ? const Color.fromRGBO(15, 132, 194, 1)
+                    : Colors.black,
               ),
             ),
           ),
@@ -300,11 +239,6 @@ class _SiniestroState extends State<Siniestro> {
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, String>> allData = List.from(datos);
-    List<Map<String, String>> filteredData = List.from(datos);
-
-    int totalElementos = filteredData.length;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
@@ -313,7 +247,7 @@ class _SiniestroState extends State<Siniestro> {
           style: const TextStyle(
             fontFamily: 'Roboto',
             fontSize: 17,
-            color: Color.fromRGBO(246, 246, 246, 1),
+            color: Colors.white,
           ),
         ),
       ),
@@ -324,28 +258,29 @@ class _SiniestroState extends State<Siniestro> {
             fit: BoxFit.cover,
           ),
         ),
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: TextField(
-                  onChanged: (value) {
-                    setState(() {
-                      searchTerm = value;
-                    });
-                    performSearch();
-                  },
-                  decoration: const InputDecoration(
-                    hintText: 'Buscar...',
-                    suffixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(),
-                  ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
+                onChanged: (value) {
+                  searchTerm = value;
+                  performSearch();
+                },
+                decoration: const InputDecoration(
+                  hintText: 'Buscar...',
+                  suffixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
+            ),
+            Expanded(
+              child: datosFiltrados.isEmpty
+                  ? isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : const Center(child: Text('No hay datos disponibles.'))
+                  : SingleChildScrollView(
+                controller: _scrollController,
                 child: Table(
                   border: TableBorder.all(
                     color: const Color.fromRGBO(15, 132, 194, 1),
@@ -353,16 +288,17 @@ class _SiniestroState extends State<Siniestro> {
                   ),
                   children: [
                     _buildTableHeaderRow(),
-                    ...filteredData
-                        .skip(_currentPage * _perPage)
-                        .take(_perPage)
-                        .map((e) => _buildTableRow(e))
-                        .toList(),
+                    ...datosFiltrados.map((e) => _buildTableRow(e)),
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+            if (isLoading)
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: CircularProgressIndicator(),
+              ),
+          ],
         ),
       ),
     );

@@ -42,6 +42,8 @@ class _AsesoresState extends State<Asesores> {
     super.dispose();
   }
 
+
+
   void _startInactivityTimer() {
     const inactivityDuration = Duration(seconds: 600); // 10 minutos de inactividad
     _inactivityTimer = Timer(inactivityDuration, () {
@@ -289,7 +291,7 @@ class IconWithText extends StatelessWidget {
 
         return GestureDetector(
           onTap: () async {
-            showLoadingDialog(context);
+            //showLoadingDialog(context);
             switch (title) {
               case 'VIDA':
                 await Future.delayed(const Duration(seconds: 5)); // Simula una operación de carga
