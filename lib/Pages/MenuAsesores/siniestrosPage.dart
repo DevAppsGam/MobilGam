@@ -1,11 +1,41 @@
+import 'dart:async';
 import 'dart:convert';
-import 'package:appgam/Pages/MenuAsesores/Detalles/siniestroDetallePage.dart';
-import 'package:appgam/main.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'dart:async';
+import 'package:appgam/Pages/asesoresPage.dart';
+
+class SiniestroModel {
+  final String id;
+  final String ramo;
+  final String contratante;
+  final String afectado;
+  final String nPoliza;
+  final String fecha;
+  final String estado;
+
+  SiniestroModel({
+    required this.id,
+    required this.ramo,
+    required this.contratante,
+    required this.afectado,
+    required this.nPoliza,
+    required this.fecha,
+    required this.estado,
+  });
+
+  factory SiniestroModel.fromJson(Map<String, dynamic> json) {
+    return SiniestroModel(
+      id: json['id'] ?? '',
+      ramo: json['linea_s'] ?? '',
+      contratante: json['contratante'] ?? '',
+      afectado: json['afectado'] ?? '',
+      nPoliza: json['n_poliza'] ?? '',
+      fecha: json['fecha'] ?? '',
+      estado: json['estado'] ?? '',
+    );
+  }
+}
 
 class Siniestro extends StatefulWidget {
   final String nombreUsuario;
@@ -17,91 +47,118 @@ class Siniestro extends StatefulWidget {
 }
 
 class _SiniestroState extends State<Siniestro> {
-  late Timer _inactivityTimer;
-
-  List<Map<String, String>> datosOriginales = [];
-  List<Map<String, String>> datosFiltrados = [];
-  final int _perPage = 10;
+  final List<SiniestroModel> _datosOriginales = [];
+  List<SiniestroModel> _datosFiltrados = [];
+  int _rowsPerPage = 10;
   int _currentPage = 0;
-  String searchTerm = '';
-  final ScrollController _scrollController = ScrollController();
-  bool isLoading = false;
-  bool noMoreData = false;
+  String _searchTerm = '';
+  bool _isLoading = false;
+  bool _isSearchVisible = false;
+
+  String _sortColumn = 'id';
+  bool _isAscending = true;
+
+  late Timer _inactivityTimer;
+  Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
-    fetchData();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+    _fetchData();
     _startInactivityTimer();
-    _scrollController.addListener(_scrollListener);
   }
 
-  Future<void> fetchData({int page = 0}) async {
-    if (isLoading || noMoreData) return;
+  Future<void> _fetchData() async {
+    if (_isLoading) return;
 
-    setState(() {
-      isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
-      final response = await http.get(Uri.parse(
-          'https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliossiniestros.php?username=${widget.nombreUsuario}&page=$page&perPage=$_perPage'));
-      if (response.statusCode == 200 && response.body.isNotEmpty) {
-        final Map<String, dynamic> data = json.decode(response.body);
+      final url = Uri.parse('https://www.asesoresgam.com.mx/sistemas1/gam/tablafoliossiniestros.php?username=${widget.nombreUsuario}');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
         final List<dynamic> siniestros = data['data'];
 
-        if (siniestros.isEmpty) {
-          setState(() {
-            noMoreData = true;
-          });
-        } else {
-          setState(() {
-            datosOriginales.addAll(siniestros.map<Map<String, String>>((dynamic item) {
-              return item.map<String, String>((key, value) {
-                return MapEntry(
-                  key.toString(),
-                  value?.toString() ?? "",
-                );
-              });
-            }).toList());
+        final nuevosDatos = siniestros.map((item) => SiniestroModel.fromJson(item)).toList();
 
-            datosFiltrados = List.from(datosOriginales);
-          });
-        }
+        setState(() {
+          _datosOriginales.addAll(nuevosDatos);
+          _datosFiltrados = List.from(_datosOriginales);
+        });
       } else {
-        _showErrorDialog('Error al obtener los datos del servidor.');
+        _showErrorDialog('Error al obtener datos del servidor.');
       }
     } catch (e) {
-      _showErrorDialog('Error al decodificar JSON: $e');
+      _showErrorDialog('Error al cargar datos: ${e.toString()}');
     } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  // Búsqueda con debounce
+  void _performSearch(String searchTerm) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
       setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
-  void _scrollListener() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      _currentPage++;
-      fetchData(page: _currentPage);
-    }
-  }
-
-  void performSearch() {
-    setState(() {
-      if (searchTerm.isEmpty) {
-        datosFiltrados = List.from(datosOriginales);
-      } else {
-        final searchString = searchTerm.toLowerCase();
-        datosFiltrados = datosOriginales.where((item) {
-          return item.values.any((value) =>
-          value.toLowerCase().contains(searchString) ||
-              double.tryParse(value) == double.tryParse(searchTerm));
+        _searchTerm = searchTerm;
+        _datosFiltrados = _searchTerm.isEmpty
+            ? List.from(_datosOriginales)
+            : _datosOriginales.where((siniestro) {
+          return siniestro.id.contains(searchTerm) ||
+              siniestro.contratante.toLowerCase().contains(searchTerm.toLowerCase());
         }).toList();
+      });
+    });
+  }
+
+  void _sortTable(String column) {
+    setState(() {
+      if (_sortColumn == column) {
+        _isAscending = !_isAscending;
+      } else {
+        _sortColumn = column;
+        _isAscending = true;
+      }
+
+      _datosFiltrados.sort((a, b) {
+        final aValue = _getValueForColumn(a, column);
+        final bValue = _getValueForColumn(b, column);
+
+        return _isAscending
+            ? aValue.compareTo(bValue)
+            : bValue.compareTo(aValue);
+      });
+    });
+  }
+
+  dynamic _getValueForColumn(SiniestroModel siniestro, String column) {
+    switch (column) {
+      case 'id':
+        return siniestro.id;
+      case 'ramo':
+        return siniestro.ramo;
+      case 'contratante':
+        return siniestro.contratante;
+      case 'fecha':
+        return siniestro.fecha;
+      default:
+        return '';
+    }
+  }
+
+  void _changePage(bool isNext) {
+    setState(() {
+      if (isNext) {
+        if ((_currentPage + 1) * _rowsPerPage < _datosFiltrados.length) {
+          _currentPage++;
+        }
+      } else {
+        if (_currentPage > 0) {
+          _currentPage--;
+        }
       }
     });
   }
@@ -109,198 +166,175 @@ class _SiniestroState extends State<Siniestro> {
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Error'),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
+      builder: (_) => AlertDialog(
+        title: const Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
     );
+  }
+
+  void _startInactivityTimer() {
+    const duration = Duration(seconds: 300);
+    _inactivityTimer = Timer(duration, () {
+      Navigator.popUntil(context, (route) => route.isFirst);
+    });
   }
 
   @override
   void dispose() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-    _scrollController.removeListener(_scrollListener);
+    _debounce?.cancel();
     _inactivityTimer.cancel();
-    _scrollController.dispose();
     super.dispose();
-  }
-
-  void _startInactivityTimer() {
-    const inactivityDuration = Duration(seconds: 300);
-    _inactivityTimer = Timer(inactivityDuration, () {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (BuildContext context) => const LoginPage()),
-            (Route<dynamic> route) => false,
-      );
-    });
-  }
-
-  TableRow _buildTableHeaderRow() {
-    return TableRow(
-      children: [
-        _buildTableHeaderCell('Folio GAM'),
-        _buildTableHeaderCell('RAMO'),
-        _buildTableHeaderCell('Contratante'),
-        _buildTableHeaderCell('Nombre del Afectado'),
-        _buildTableHeaderCell('N Póliza'),
-        _buildTableHeaderCell('Fecha solicitud'),
-        _buildTableHeaderCell('Estatus Trámite'),
-      ],
-    );
-  }
-
-  TableCell _buildTableHeaderCell(String text) {
-    return TableCell(
-      child: Container(
-        decoration: const BoxDecoration(
-          color: Color.fromRGBO(15, 132, 194, 1),
-        ),
-        constraints: const BoxConstraints.expand(height: 70.0),
-        child: Center(
-          child: AutoSizeText(
-            text,
-            style: const TextStyle(
-              fontFamily: 'Roboto',
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-            textAlign: TextAlign.justify,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            minFontSize: 9,
-            stepGranularity: 1,
-          ),
-        ),
-      ),
-    );
-  }
-
-  TableRow _buildTableRow(Map<String, String> datos) {
-    return TableRow(
-      children: [
-        _buildTableCell(datos['id'] ?? '', datos, 'id'),
-        _buildTableCell(datos['linea_s'] ?? '', datos, 'linea_s'),
-        _buildTableCell(datos['contratante'] ?? '', datos, 'contratante'),
-        _buildTableCell(datos['afectado'] ?? '', datos, 'afectado'),
-        _buildTableCell(datos['n_poliza'] ?? '', datos, 'n_poliza'),
-        _buildTableCell(datos['fecha'] ?? '', datos, 'fecha'),
-        _buildTableCell(datos['estado'] ?? '', datos, 'estado'),
-      ],
-    );
-  }
-
-  Widget _buildTableCell(String text, Map<String, String> datos, String columna) {
-    return TableCell(
-      child: GestureDetector(
-        onTap: () {
-          if (columna == 'id') {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DetalleSiniestro(
-                  nombreUsuario: widget.nombreUsuario,
-                  id: text,
-                ),
-              ),
-            );
-          }
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Center(
-            child: Text(
-              text,
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: 16,
-                color: columna == 'id'
-                    ? const Color.fromRGBO(15, 132, 194, 1)
-                    : Colors.black,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final start = _currentPage * _rowsPerPage;
+    final end = (_currentPage + 1) * _rowsPerPage;
+    final visibleRows = _datosFiltrados.sublist(
+      start,
+      end > _datosFiltrados.length ? _datosFiltrados.length : end,
+    );
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
-        title: Text(
-          'Bienvenido ${widget.nombreUsuario}',
-          style: const TextStyle(
-            fontFamily: 'Roboto',
-            fontSize: 17,
-            color: Colors.white,
-          ),
+        title: Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back_outlined),
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        Asesores(nombreUsuario: widget.nombreUsuario),
+                  ),
+                      (Route<dynamic> route) => false,
+                );
+              },
+            ),
+            Text('Bienvenido, ${widget.nombreUsuario}'),
+          ],
         ),
+        backgroundColor: Colors.blue,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              setState(() {
+                _isSearchVisible = !_isSearchVisible;
+              });
+            },
+          ),
+        ],
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/img/back.jpg'),
-            fit: BoxFit.cover,
-          ),
-        ),
+      body: SingleChildScrollView(  // Agregado para permitir desplazamiento
         child: Column(
           children: [
+            if (_isSearchVisible)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextField(
+                  onChanged: _performSearch,
+                  decoration: const InputDecoration(
+                    hintText: 'Buscar...',
+                    suffixIcon: Icon(Icons.search),
+                  ),
+                ),
+              ),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                onChanged: (value) {
-                  searchTerm = value;
-                  performSearch();
-                },
-                decoration: const InputDecoration(
-                  hintText: 'Buscar...',
-                  suffixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-            Expanded(
-              child: datosFiltrados.isEmpty
-                  ? isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : const Center(child: Text('No hay datos disponibles.'))
-                  : SingleChildScrollView(
-                controller: _scrollController,
-                child: Table(
-                  border: TableBorder.all(
-                    color: const Color.fromRGBO(15, 132, 194, 1),
-                    width: 1,
+              child: ConstrainedBox(  // Asegura que la tabla no crezca más allá de un límite
+                constraints: BoxConstraints(maxHeight: 500),  // Ajusta la altura máxima
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    columns: [
+                      DataColumn(
+                        label: const Text('Folio GAM'),
+                        onSort: (columnIndex, ascending) => _sortTable('id'),
+                      ),
+                      DataColumn(
+                        label: const Text('RAMO'),
+                        onSort: (columnIndex, ascending) => _sortTable('ramo'),
+                      ),
+                      DataColumn(
+                        label: const Text('Contratante'),
+                        onSort: (columnIndex, ascending) => _sortTable('contratante'),
+                      ),
+                      DataColumn(
+                        label: const Text('Fecha'),
+                        onSort: (columnIndex, ascending) => _sortTable('fecha'),
+                      ),
+                    ],
+                    rows: visibleRows.map((siniestro) {
+                      return DataRow(
+                        cells: [
+                          DataCell(Text(siniestro.id)),
+                          DataCell(Text(siniestro.ramo)),
+                          DataCell(Text(siniestro.contratante)),
+                          DataCell(Text(siniestro.fecha)),
+                        ],
+                      );
+                    }).toList(),
                   ),
-                  children: [
-                    _buildTableHeaderRow(),
-                    ...datosFiltrados.map((e) => _buildTableRow(e)),
-                  ],
                 ),
               ),
             ),
-            if (isLoading)
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: CircularProgressIndicator(),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: () => _changePage(false),
+                    child: const Text('< Anterior'),
+                  ),
+                  TextButton(
+                    onPressed: () => _changePage(true),
+                    child: const Text('Siguiente >'),
+                  ),
+                ],
               ),
+            ),
           ],
         ),
       ),
     );
   }
+
+}
+
+class _DataSource extends DataTableSource {
+  final List<SiniestroModel> _datos;
+
+  _DataSource(this._datos);
+
+  @override
+  DataRow getRow(int index) {
+    final siniestro = _datos[index];
+    return DataRow(
+      cells: [
+        DataCell(Text(siniestro.id)),
+        DataCell(Text(siniestro.ramo)),
+        DataCell(Text(siniestro.contratante)),
+        DataCell(Text(siniestro.fecha)),
+      ],
+    );
+  }
+
+  @override
+  int get rowCount => _datos.length;
+
+  @override
+  bool get isRowCountApproximate => false;
+
+  @override
+  int get selectedRowCount => 0;
 }
