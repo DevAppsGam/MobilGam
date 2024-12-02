@@ -362,7 +362,7 @@ class IconWithText extends StatelessWidget {
                 child: AutoSizeText(
                   title,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style:TextStyle(
                     fontFamily: 'Roboto',
                     fontSize: fontSize,
                     fontWeight: FontWeight.bold,

@@ -1,90 +1,25 @@
-import 'package:appgam/Pages/Contacto/ContactoDetalleVida.dart';
-import 'package:appgam/Pages/asesoresPage.dart';
-import 'package:appgam/main.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class contactoVida extends StatelessWidget {
   final String nombreUsuario;
 
-  const contactoVida({super.key, required this.nombreUsuario});
+  const contactoVida({Key? key, required this.nombreUsuario}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
-        title: GestureDetector(
-          onTap: () {
-            Scaffold.of(context).openDrawer();
-          },
-          child: Text(
-            "Bienvenido $nombreUsuario",
-            style: TextStyle(
-              fontFamily: 'Roboto',
-              fontWeight: FontWeight.bold,
-              fontSize: MediaQuery.textScalerOf(context).scale(20),
-              color: const Color.fromRGBO(246, 246, 246, 1),
-            ),
+        title: Text(
+          "Bienvenido $nombreUsuario",
+          style: const TextStyle(
+            fontFamily: 'Roboto',
+            fontWeight: FontWeight.bold,
+            fontSize: 18, // Tamaño reducido para evitar desbordamientos
+            color: Colors.white,
           ),
-        ),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            ListTile(
-              title: const Text(
-                'Inicio',
-                style: TextStyle(
-                  fontFamily: 'Roboto',
-                  color: Colors.blueAccent,
-                  fontSize: 24,
-                ),
-              ),
-              onTap: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (BuildContext context) => Asesores(nombreUsuario: nombreUsuario)),
-                      (Route<dynamic> route) => false,
-                );
-              },
-            ),
-            ListTile(
-              title: const Text(
-                'Contactos',
-                style: TextStyle(
-                  fontFamily: 'Roboto',
-                  color: Colors.blueGrey,
-                  fontSize: 24,
-                ),
-              ),
-              onTap: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (BuildContext context) => contactoVida(nombreUsuario: nombreUsuario)),
-                      (Route<dynamic> route) => false,
-                );
-              },
-            ),
-            ListTile(
-              title: const Text(
-                'Cerrar sesión',
-                style: TextStyle(
-                  fontFamily: 'Roboto',
-                  color: Colors.deepOrange,
-                  fontSize: 24,
-                ),
-              ),
-              onTap: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (BuildContext context) => const LoginPage()),
-                      (Route<dynamic> route) => false,
-                );
-              },
-            ),
-          ],
         ),
       ),
       body: Container(
@@ -96,15 +31,15 @@ class contactoVida extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            const SizedBox(height: 20),
-             Padding(
-              padding: const EdgeInsets.all(16.0),
+          children: [
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
                 'Contacto de VIDA',
                 style: TextStyle(
                   fontFamily: 'Roboto',
-                  fontSize: MediaQuery.textScalerOf(context).scale(25),
+                  fontSize: MediaQuery.of(context).size.width * 0.05, // Ajustado
                   fontWeight: FontWeight.bold,
                   color: Colors.blueGrey,
                 ),
@@ -112,205 +47,133 @@ class contactoVida extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                childAspectRatio: .65,
-                padding: const EdgeInsets.all(16),
-                children: const [
-                  IconWithText(
-                    icon: Icons.woman_2_outlined,
-                    title: 'Patricia Moctezuma',
-                    subtitle: 'Gerente de Promoción de Vida',
-                    color: Colors.blueGrey,
-                    rutaDeLaFoto: 'fotosPerfil/Patricia M.png',
-                  ),
-                  IconWithText(
-                    icon: Icons.woman_2_outlined,
-                    title: 'Diana Castro',
-                    subtitle: 'Consultor Especializado Vida',
-                    color: Colors.blueGrey,
-                    rutaDeLaFoto: 'fotosPerfil/Diana C.png',
-                  ),
-                  IconWithText(
-                    icon: Icons.woman_2_outlined,
-                    title: 'Veronica Sanchez',
-                    subtitle: 'Consultor Integral',
-                    color: Colors.blueGrey,
-                    rutaDeLaFoto: 'fotosPerfil/Veronica S.png',
-                  ),
-                  IconWithText(
-                    icon: Icons.woman_2_outlined,
-                    title: 'Carolina Hernández',
-                    subtitle: 'Gerente de operación y servicio',
-                    color: Colors.blueGrey,
-                    rutaDeLaFoto: 'fotosPerfil/Carolina H.png',
-                  ),
-                  IconWithText(
-                    icon: Icons.man_2_outlined,
-                    title: 'Manuel Ramírez',
-                    subtitle: 'Director de soporte, promoción y ventas',
-                    color: Colors.blueGrey,
-                    rutaDeLaFoto: 'fotosPerfil/Manuel R.png',
-                  ),
-                ],
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: IconButton(
-                onPressed: () {
-                  const url = 'https://www.example.com';
-                  launchUrl(url as Uri);
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final crossAxisCount = constraints.maxWidth > 600 ? 3 : 2;
+                  return GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                      childAspectRatio: 0.75,
+                    ),
+                    padding: const EdgeInsets.all(10),
+                    itemCount: 5,
+                    itemBuilder: (context, index) {
+                      return _buildContactCard(index, context);
+                    },
+                  );
                 },
-                icon: const Icon(
-                  Icons.message_rounded,
-                  size: 42,
-                  color: Colors.blueAccent,
-                ),
               ),
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          const url = 'https://www.example.com';
+          launchUrl(Uri.parse(url));
+        },
+        backgroundColor: Colors.blueAccent,
+        child: const Icon(Icons.message_rounded, size: 28),
       ),
     );
   }
-}
 
-class IconWithText extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final Color? color;
-  final String subtitle;
-  final String rutaDeLaFoto;
-  final double iconSize;
+  Widget _buildContactCard(int index, BuildContext context) {
+    final title = _getContactTitle(index);
+    final subtitle = _getContactSubtitle(index);
+    final imagePath = _getImagePath(index);
 
-  const IconWithText({
-    super.key,
-    required this.icon,
-    required this.title,
-    this.color,
-    required this.subtitle,
-    required this.rutaDeLaFoto,
-    this.iconSize = 24.0,
-  });
-
-  @override
-  Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (title == 'Patricia Moctezuma') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const contactoDetalle(
-                nombre: 'PATRICIA MOCTEZUMA',
-                rol: 'GERENTE PROMOCIÓN VIDA',
-                TEL: '5529417281',
-                ext: '',
-                mail: 'promocionvida@asesoresgam.com.mx',
-                rutaDeLaFoto: 'fotosPerfil/Patricia M.png',
-              ),
-            ),
-          );
-        } else if (title == 'Diana Castro') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const contactoDetalle(
-                nombre: 'DIANA CASTRO GARCIA',
-                rol: 'CONSULTOR ESPECIALIZADO VIDA',
-                TEL: '5530608727',
-                ext: '',
-                mail: 'vida@asesoresgam.com.mx',
-                rutaDeLaFoto: 'fotosPerfil/Diana C.png',
-              ),
-            ),
-          );
-        } else if (title == 'Veronica Sanchez') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const contactoDetalle(
-                nombre: 'VERONICA SANCHEZ MONTESINOS',
-                rol: 'CONSULTOR INTEGRAL',
-                TEL: '5532202334',
-                ext: '0',
-                mail: 'lomasverdes@asesoresgam.com.mx',
-                rutaDeLaFoto: 'fotosPerfil/Veronica S.png',
-              ),
-            ),
-          );
-        } else if (title == 'Carolina Hernández') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const contactoDetalle(
-                nombre: 'CAROLINA HERNÁNDEZ',
-                rol: 'GERENTE DE OPERACIÓN',
-                TEL: '5532202334',
-                ext: '0',
-                mail: 'calidad@asesoresgam.com.mx',
-                rutaDeLaFoto: 'fotosPerfil/Carolina H.png',
-              ),
-            ),
-          );
-        } else if (title == 'Manuel Ramírez') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const contactoDetalle(
-                nombre: 'MANUEL RAMÍREZ',
-                rol: 'DIRECTOR DE SOPORTE, PROMOCIÓN Y VENTAS',
-                TEL: '5527586554',
-                ext: '0',
-                mail: 'm.ramirez@asesoresgam.com.mx',
-                rutaDeLaFoto: 'fotosPerfil/Manuel R.png',
-              ),
-            ),
-          );
-        } else {
-          // Repite para otros casos
-        }
+        // Navegación a contacto detalle
       },
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-
-          children: <Widget>[
-            AspectRatio(
-              aspectRatio: 1, // Mantener una relación de aspecto cuadrada
-              child: CachedNetworkImage(
-                imageUrl: 'http://www.asesoresgam.com.mx/sistemas1/$rutaDeLaFoto',
-                placeholder: (context, url) => const CircularProgressIndicator(),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-              ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AspectRatio(
+            aspectRatio: 1,
+            child: CachedNetworkImage(
+              imageUrl: 'http://www.asesoresgam.com.mx/sistemas1/$imagePath',
+              placeholder: (context, url) => const CircularProgressIndicator(),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+              fit: BoxFit.cover,
             ),
-            const SizedBox(height: 5),
-            Text(
-              title,
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: MediaQuery.textScalerOf(context).scale(18),
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-              textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: const TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: 6, // Tamaño ajustado
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
             ),
-            Text(
-              subtitle,
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: MediaQuery.textScalerOf(context).scale(16),
-                color: color,
-              ),
-              textAlign: TextAlign.center,
-              //maxLines: 1,
-              //overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+          ),
+          Text(
+            subtitle,
+            style: TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: 12,
+              color: Colors.grey[700],
             ),
-          ],
-        ),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
+  }
+
+  String _getContactTitle(int index) {
+    switch (index) {
+      case 0:
+        return 'Patricia Moctezuma';
+      case 1:
+        return 'Diana Castro';
+      case 2:
+        return 'Veronica Sanchez';
+      case 3:
+        return 'Carolina Hernández';
+      case 4:
+        return 'Manuel Ramírez';
+      default:
+        return 'Contacto $index';
+    }
+  }
+
+  String _getContactSubtitle(int index) {
+    switch (index) {
+      case 0:
+        return 'Gerente de Promoción de Vida';
+      case 1:
+        return 'Consultor Especializado Vida';
+      case 2:
+        return 'Consultor Integral';
+      case 3:
+        return 'Gerente de operación y servicio';
+      case 4:
+        return 'Director de soporte, promoción y ventas';
+      default:
+        return 'Subtítulo $index';
+    }
+  }
+
+  String _getImagePath(int index) {
+    switch (index) {
+      case 0:
+        return 'fotosPerfil/Patricia M.png';
+      case 1:
+        return 'fotosPerfil/Diana C.png';
+      case 2:
+        return 'fotosPerfil/Veronica S.png';
+      case 3:
+        return 'fotosPerfil/Carolina H.png';
+      case 4:
+        return 'fotosPerfil/Manuel R.png';
+      default:
+        return 'fotosPerfil/default.png';
+    }
   }
 }
