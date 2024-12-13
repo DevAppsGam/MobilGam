@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:appgam/Pages/asesoresPage.dart';
 
+import 'Detalles/siniestroDetallePage.dart';
+
 class SiniestroModel {
   final String id, ramo, contratante, afectado, nPoliza, fecha, estado;
 
@@ -121,12 +123,15 @@ class _SiniestroState extends State<Siniestro> {
         _sortColumn = column;
         _isAscending = true;
       }
+
       _datosFiltrados.sort((a, b) {
         final aValue = _getValueForColumn(a, column);
         final bValue = _getValueForColumn(b, column);
-        return _isAscending
-            ? aValue.compareTo(bValue)
-            : bValue.compareTo(aValue);
+        if (aValue is Comparable && bValue is Comparable) {
+          return _isAscending ? aValue.compareTo(bValue) : bValue.compareTo(aValue);
+        } else {
+          return 0;
+        }
       });
     });
   }
@@ -134,13 +139,13 @@ class _SiniestroState extends State<Siniestro> {
   dynamic _getValueForColumn(SiniestroModel siniestro, String column) {
     switch (column) {
       case 'id':
-        return siniestro.id;
+        return int.tryParse(siniestro.id) ?? 0; // Convierte a número.
       case 'ramo':
         return siniestro.ramo;
       case 'contratante':
-        return siniestro.contratante;
+        return siniestro.contratante.toLowerCase(); // Ignora mayúsculas.
       case 'fecha':
-        return siniestro.fecha;
+        return DateTime.tryParse(siniestro.fecha) ?? DateTime(1970);
       default:
         return '';
     }
@@ -183,10 +188,14 @@ class _SiniestroState extends State<Siniestro> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SiniestroDetallePage(siniestro: siniestro),
+        builder: (context) => DetalleSiniestro(
+          nombreUsuario: widget.nombreUsuario,
+          id: siniestro.id,
+        ),
       ),
     );
   }
+
 
   @override
   void dispose() {
@@ -321,31 +330,37 @@ class _SiniestroState extends State<Siniestro> {
   }
 }
 
-class SiniestroDetallePage extends StatelessWidget {
+class SiniestroDetallePage extends StatefulWidget {
   final SiniestroModel siniestro;
 
-  const SiniestroDetallePage({Key? key, required this.siniestro})
-      : super(key: key);
+  const SiniestroDetallePage({super.key, required this.siniestro});
 
+  @override
+  State<SiniestroDetallePage> createState() => _SiniestroDetallePageState();
+}
+
+class _SiniestroDetallePageState extends State<SiniestroDetallePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Detalle del Siniestro'),
+        backgroundColor: Colors.blue,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Folio GAM: ${siniestro.id}', style: const TextStyle(fontSize: 18)),
-            Text('Ramo: ${siniestro.ramo}', style: const TextStyle(fontSize: 18)),
-            Text('Contratante: ${siniestro.contratante}',
-                style: const TextStyle(fontSize: 18)),
-            Text('Afectado: ${siniestro.afectado}', style: const TextStyle(fontSize: 18)),
-            Text('No. Póliza: ${siniestro.nPoliza}', style: const TextStyle(fontSize: 18)),
-            Text('Fecha: ${siniestro.fecha}', style: const TextStyle(fontSize: 18)),
-            Text('Estado: ${siniestro.estado}', style: const TextStyle(fontSize: 18)),
+            Text('Folio: ${widget.siniestro.id}', style: const TextStyle(fontSize: 18)),
+            const SizedBox(height: 8),
+            Text('RAMO: ${widget.siniestro.ramo}', style: const TextStyle(fontSize: 18)),
+            const SizedBox(height: 8),
+            Text('Contratante: ${widget.siniestro.contratante}', style: const TextStyle(fontSize: 18)),
+            const SizedBox(height: 8),
+            Text('Fecha: ${widget.siniestro.fecha}', style: const TextStyle(fontSize: 18)),
+            const SizedBox(height: 8),
+            Text('Estado: ${widget.siniestro.estado}', style: const TextStyle(fontSize: 18)),
           ],
         ),
       ),

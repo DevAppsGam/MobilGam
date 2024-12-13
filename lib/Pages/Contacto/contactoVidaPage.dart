@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 class contactoVida extends StatelessWidget {
   final String nombreUsuario;
 
-  const contactoVida({Key? key, required this.nombreUsuario}) : super(key: key);
+  const contactoVida({super.key, required this.nombreUsuario});
 
   @override
   Widget build(BuildContext context) {
